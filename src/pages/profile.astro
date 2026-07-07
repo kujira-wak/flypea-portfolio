@@ -1,49 +1,16 @@
 ---
 import Container from "../components/Container.astro";
 import Section from "../components/Section.astro";
+import SocialIcon from "../components/SocialIcon.astro";
 import { siteConfig } from "../config/site";
+import { profileContent } from "../data/profile";
 import BaseLayout from "../layouts/BaseLayout.astro";
-
-const profile = {
-  name: "flypea",
-  role: "Web development learner / portfolio builder",
-  description:
-    "Web制作とWebアプリ開発を、作りながら学んでいます。flypea.techでは、制作物だけでなく、調べたこと、詰まったこと、公開までの流れも残していきます。",
-};
-
-const focusItems = [
-  {
-    title: "小さく作って公開する",
-    description: "まずは静的サイトとして軽く公開し、動く状態を保ちながら少しずつ広げます。",
-  },
-  {
-    title: "学習を見える形にする",
-    description: "完成したものだけでなく、試行錯誤や判断の理由もログとして残します。",
-  },
-  {
-    title: "Webアプリへ段階的に進む",
-    description: "Astroの土台から、Next.js、SolidJS、データベース、テストへ進めていきます。",
-  },
-];
-
-const nowItems = [
-  "Astro + TypeScript + Tailwind CSS v4でポートフォリオを構築",
-  "GitHub ActionsからロリポップへSFTPデプロイ",
-  "CloudflareでHTTPSとwwwリダイレクトを管理",
-  "学習ログと制作物一覧をMarkdownで育てる準備",
-];
-
-const nextItems = [
-  "WorksとLearning Logをcontent collection化",
-  "制作物の詳細ページを追加",
-  "app.flypea.techや別リポジトリでWebアプリ学習を開始",
-];
 ---
 
 <BaseLayout
-  title="Profile"
-  description="flypea.techを作っている人の軽い自己紹介ページです。"
-  pathname="/profile/"
+  title={profileContent.meta.title}
+  description={profileContent.meta.description}
+  pathname={profileContent.meta.pathname}
 >
   <main id="main-content">
     <section class="border-b border-zinc-200 bg-[#f8f6f0] py-8 sm:py-10">
@@ -62,27 +29,75 @@ const nextItems = [
 
         <div class="grid gap-10 lg:grid-cols-[1fr_0.8fr] lg:items-end">
           <div class="grid max-w-3xl gap-6">
-            <p class="text-sm font-semibold tracking-[0.16em] text-emerald-700 uppercase">
-              Profile
-            </p>
+            <div class="flex items-center gap-5">
+              {
+                profileContent.profile.image ? (
+                  <img
+                    class="h-24 w-24 border border-zinc-300 bg-white object-cover shadow-[5px_5px_0_0_#111827]"
+                    src={profileContent.profile.image.src}
+                    alt={profileContent.profile.image.alt}
+                    width="96"
+                    height="96"
+                  />
+                ) : (
+                  <div
+                    class="grid h-24 w-24 place-items-center border border-zinc-300 bg-zinc-950 text-xl font-bold tracking-[0.18em] text-white shadow-[5px_5px_0_0_#047857] uppercase"
+                    aria-hidden="true"
+                  >
+                    {profileContent.profile.fallbackInitials}
+                  </div>
+                )
+              }
+              <p class="text-sm font-semibold tracking-[0.16em] text-emerald-700 uppercase">
+                Profile
+              </p>
+            </div>
             <div class="grid gap-5">
               <h1 class="text-4xl font-bold leading-tight text-zinc-950 sm:text-6xl">
-                {profile.name}
+                {profileContent.profile.name}
               </h1>
-              <p class="text-lg font-semibold text-zinc-700">{profile.role}</p>
-              <p class="max-w-2xl text-lg leading-8 text-zinc-700">{profile.description}</p>
+              <p class="text-lg font-semibold text-zinc-700">{profileContent.profile.role}</p>
+              <p class="max-w-2xl text-lg leading-8 text-zinc-700">
+                {profileContent.profile.description}
+              </p>
             </div>
           </div>
 
           <aside class="border border-zinc-300 bg-white/70 p-6 shadow-[8px_8px_0_0_#111827]">
             <p class="text-xs font-bold tracking-[0.14em] text-zinc-500 uppercase">Current mode</p>
             <p class="mt-3 text-2xl font-bold leading-snug text-zinc-950">
-              静的サイトを入口に、制作と学習を積み上げる。
+              {profileContent.profile.currentMode}
             </p>
           </aside>
         </div>
       </Container>
     </section>
+
+    <Section
+      id="links"
+      eyebrow="Links"
+      title="リンク"
+      description="連絡先やSNSは、ここへ少しずつ追加していきます。今はGitHubとこのサイトを中心に置いています。"
+    >
+      <div class="grid gap-4 sm:grid-cols-3">
+        {
+          profileContent.links.map((link) => (
+            <a
+              class="group grid gap-4 border border-zinc-200 bg-white p-5 text-zinc-950 transition hover:border-emerald-700 hover:shadow-[5px_5px_0_0_#047857]"
+              href={link.href}
+            >
+              <span class="flex h-11 w-11 items-center justify-center border border-zinc-200 bg-zinc-50 text-zinc-950 transition group-hover:border-emerald-700 group-hover:text-emerald-700">
+                <SocialIcon name={link.icon} />
+              </span>
+              <span class="grid gap-1">
+                <span class="text-lg font-bold">{link.label}</span>
+                <span class="text-sm leading-6 text-zinc-600">{link.description}</span>
+              </span>
+            </a>
+          ))
+        }
+      </div>
+    </Section>
 
     <Section
       id="focus"
@@ -92,7 +107,7 @@ const nextItems = [
     >
       <div class="grid gap-4">
         {
-          focusItems.map((item) => (
+          profileContent.focusItems.map((item) => (
             <article class="border border-zinc-200 bg-white p-5">
               <h3 class="text-lg font-bold text-zinc-950">{item.title}</h3>
               <p class="mt-2 text-sm leading-7 text-zinc-700">{item.description}</p>
@@ -111,7 +126,7 @@ const nextItems = [
     >
       <ul class="grid gap-3">
         {
-          nowItems.map((item) => (
+          profileContent.nowItems.map((item) => (
             <li class="border-l-2 border-emerald-600 bg-white px-4 py-3 text-sm font-semibold leading-7 text-zinc-800">
               {item}
             </li>
@@ -129,7 +144,7 @@ const nextItems = [
       <div class="grid gap-5">
         <ol class="grid gap-3">
           {
-            nextItems.map((item, index) => (
+            profileContent.nextItems.map((item, index) => (
               <li class="grid grid-cols-[auto_1fr] gap-3 border border-zinc-200 bg-white p-4">
                 <span class="text-sm font-bold text-emerald-700">{String(index + 1).padStart(2, "0")}</span>
                 <span class="text-sm font-semibold leading-7 text-zinc-800">{item}</span>
