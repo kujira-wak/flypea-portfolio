@@ -27,31 +27,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           </nav>
         </header>
 
-        <div class="grid gap-10 lg:grid-cols-[1fr_0.8fr] lg:items-end">
-          <div class="grid max-w-3xl gap-6">
-            <div class="flex items-center gap-5">
-              {
-                profileContent.profile.image ? (
-                  <img
-                    class="h-24 w-24 border border-zinc-300 bg-white object-cover shadow-[5px_5px_0_0_#111827]"
-                    src={profileContent.profile.image.src}
-                    alt={profileContent.profile.image.alt}
-                    width="96"
-                    height="96"
-                  />
-                ) : (
-                  <div
-                    class="grid h-24 w-24 place-items-center border border-zinc-300 bg-zinc-950 text-xl font-bold tracking-[0.18em] text-white shadow-[5px_5px_0_0_#047857] uppercase"
-                    aria-hidden="true"
-                  >
-                    {profileContent.profile.fallbackInitials}
-                  </div>
-                )
-              }
-              <p class="text-sm font-semibold tracking-[0.16em] text-emerald-700 uppercase">
-                Profile
-              </p>
-            </div>
+        <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
+          <div class="grid max-w-3xl gap-6 lg:pt-6">
+            <p class="text-sm font-semibold tracking-[0.16em] text-emerald-700 uppercase">
+              Profile
+            </p>
             <div class="grid gap-5">
               <h1 class="text-4xl font-bold leading-tight text-zinc-950 sm:text-6xl">
                 {profileContent.profile.name}
@@ -63,12 +43,32 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             </div>
           </div>
 
-          <aside class="border border-zinc-300 bg-white/70 p-6 shadow-[8px_8px_0_0_#111827]">
-            <p class="text-xs font-bold tracking-[0.14em] text-zinc-500 uppercase">Current mode</p>
-            <p class="mt-3 text-2xl font-bold leading-snug text-zinc-950">
-              {profileContent.profile.currentMode}
-            </p>
-          </aside>
+          <div class="grid gap-5">
+            {
+              profileContent.profile.image ? (
+                <img
+                  class="aspect-square w-full max-w-[240px] border border-zinc-300 bg-white object-cover shadow-[8px_8px_0_0_#111827] sm:max-w-[300px]"
+                  src={profileContent.profile.image.src}
+                  alt={profileContent.profile.image.alt}
+                  width="300"
+                  height="300"
+                />
+              ) : (
+                <div
+                  class="grid aspect-square w-full max-w-[240px] place-items-center border border-zinc-300 bg-zinc-950 text-4xl font-bold tracking-[0.18em] text-white shadow-[8px_8px_0_0_#047857] uppercase sm:max-w-[300px]"
+                  aria-hidden="true"
+                >
+                  {profileContent.profile.fallbackInitials}
+                </div>
+              )
+            }
+            <aside class="border border-zinc-300 bg-white/70 p-5 shadow-[6px_6px_0_0_#047857]">
+              <p class="text-xs font-bold tracking-[0.14em] text-zinc-500 uppercase">Current mode</p>
+              <p class="mt-3 text-xl font-bold leading-snug text-zinc-950">
+                {profileContent.profile.currentMode}
+              </p>
+            </aside>
+          </div>
         </div>
       </Container>
     </section>
@@ -79,7 +79,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       title="リンク"
       description="連絡先やSNSは、ここへ少しずつ追加していきます。今はGitHubとこのサイトを中心に置いています。"
     >
-      <div class="grid gap-4 sm:grid-cols-3">
+      <div class="grid gap-4 sm:grid-cols-2 2xl:grid-cols-4">
         {
           profileContent.links.map((link) => (
             <a

@@ -14,7 +14,10 @@ export const profileContent = {
   profile: {
     name: "flypea",
     role: "Web development learner / portfolio builder",
-    image: null as ProfileImage | null,
+    image: {
+      src: "/images/profile.webp",
+      alt: "flypeaのプロフィールアイコン",
+    } satisfies ProfileImage,
     fallbackInitials: "fp",
     description:
       "Web制作とWebアプリ開発を、作りながら学んでいます。flypea.techでは、制作物だけでなく、調べたこと、詰まったこと、公開までの流れも残していきます。",
@@ -26,6 +29,12 @@ export const profileContent = {
       href: "https://github.com/kujira-wak",
       icon: "github",
       description: "コードと制作ログ",
+    },
+    {
+      label: "X",
+      href: "https://x.com/kujira_wak",
+      icon: "x",
+      description: "短い近況と制作メモ",
     },
     {
       label: "Repository",
