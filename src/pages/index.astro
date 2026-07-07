@@ -1,0 +1,48 @@
+---
+import "../styles/global.css";
+---
+
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content="flypea.tech portfolio and web development lab." />
+    <meta name="generator" content={Astro.generator} />
+    <title>flypea.tech</title>
+  </head>
+  <body>
+    <main class="mx-auto grid min-h-screen w-full max-w-5xl content-center gap-10 px-6 py-16">
+      <section class="grid gap-5">
+        <p class="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">
+          Portfolio / Web Lab
+        </p>
+        <div class="grid gap-4">
+          <h1 class="max-w-3xl text-5xl font-bold leading-tight text-zinc-950 sm:text-7xl">
+            flypea.tech
+          </h1>
+          <p class="max-w-2xl text-lg leading-8 text-zinc-700">
+            GitHubで育てるポートフォリオ兼Webアプリ学習環境です。まずはAstro、TypeScript、
+            Tailwind CSS、GitHub Actionsから始めます。
+          </p>
+        </div>
+      </section>
+
+      <section class="grid gap-4 sm:grid-cols-3">
+        <article class="border-t border-zinc-300 pt-4">
+          <h2 class="text-base font-semibold text-zinc-950">Build</h2>
+          <p class="mt-2 text-sm leading-6 text-zinc-700">Astroで静的出力し、ロリポップへ公開します。</p>
+        </article>
+        <article class="border-t border-zinc-300 pt-4">
+          <h2 class="text-base font-semibold text-zinc-950">Learn</h2>
+          <p class="mt-2 text-sm leading-6 text-zinc-700">TypeScript、UI、CI/CD、テストを段階的に追加します。</p>
+        </article>
+        <article class="border-t border-zinc-300 pt-4">
+          <h2 class="text-base font-semibold text-zinc-950">Ship</h2>
+          <p class="mt-2 text-sm leading-6 text-zinc-700">flypea.techで成果物と学習ログを公開します。</p>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>
