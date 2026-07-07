@@ -15,7 +15,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-a {
+a:not([class]) {
   color: inherit;
 }
 

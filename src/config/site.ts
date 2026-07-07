@@ -1,7 +1,7 @@
 export const siteConfig = {
   name: "flypea.tech",
   title: "flypea.tech",
-  description: "Portfolio and web development learning lab for flypea.tech.",
+  description: "flypea.techは、ポートフォリオとWeb開発の学習ログを育てる静的サイトです。",
   url: "https://flypea.tech",
   locale: "ja_JP",
   author: "flypea",

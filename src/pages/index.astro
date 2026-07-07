@@ -3,67 +3,303 @@ import Container from "../components/Container.astro";
 import Section from "../components/Section.astro";
 import { siteConfig } from "../config/site";
 import BaseLayout from "../layouts/BaseLayout.astro";
+
+const navItems = [
+  { href: "#about", label: "About" },
+  { href: "#skills", label: "Skills" },
+  { href: "#works", label: "Works" },
+  { href: "#log", label: "Log" },
+  { href: "#contact", label: "Contact" },
+];
+
+const highlights = [
+  { label: "Current", value: "Astro static site" },
+  { label: "Deploy", value: "GitHub Actions + SFTP" },
+  { label: "Focus", value: "Portfolio / Learning log" },
+];
+
+const skills = [
+  {
+    title: "Frontend foundation",
+    items: ["Astro", "TypeScript", "Tailwind CSS", "Responsive UI"],
+  },
+  {
+    title: "Ship and maintain",
+    items: ["GitHub Actions", "SFTP deploy", "Cloudflare DNS", "Biome"],
+  },
+  {
+    title: "Next learning targets",
+    items: ["Next.js", "SolidJS", "PostgreSQL", "Testing"],
+  },
+];
+
+const works = [
+  {
+    title: "flypea.tech",
+    status: "公開中",
+    description:
+      "ポートフォリオ兼Web開発学習ログ。静的サイトとして速く安全に公開し、ここから制作物を増やしていきます。",
+    tags: ["Astro", "Tailwind CSS", "GitHub Actions"],
+    href: "https://flypea.tech/",
+  },
+  {
+    title: "Portfolio foundation",
+    status: "整備中",
+    description:
+      "共通レイアウト、SEOメタ情報、content collection、CI/CD、ロリポップへの自動デプロイを整えた土台です。",
+    tags: ["TypeScript", "Biome", "Lolipop"],
+    href: siteConfig.githubUrl,
+  },
+  {
+    title: "Learning apps",
+    status: "Next",
+    description:
+      "Next.jsやDBを使うWebアプリ学習は、後続フェーズでapp.flypea.techや別リポジトリとして育てます。",
+    tags: ["Next.js", "PostgreSQL", "App phase"],
+  },
+];
+
+const learningLogs = [
+  {
+    date: "2026.07.07",
+    title: "Astro + Tailwind CSS v4で静的ポートフォリオの土台を作成",
+    description: "レイアウト、スタイル、CI、SFTPデプロイを整えて、公開までの流れを確認しました。",
+  },
+  {
+    date: "2026.07.07",
+    title: "Cloudflareとロリポップでflypea.techをHTTPS公開",
+    description: "独自ドメイン、SSL、wwwリダイレクト、Actions Secretsを整理しました。",
+  },
+  {
+    date: "Next",
+    title: "制作物一覧と学習ログをcontent collection化",
+    description: "Markdownで記事を追加し、トップページと一覧ページへ自然につなげます。",
+  },
+];
 ---
 
 <BaseLayout title={siteConfig.title} description={siteConfig.description}>
   <main id="main-content">
-    <section class="grid min-h-screen content-center py-16 sm:py-24">
-      <Container class="grid gap-10">
-        <div class="grid gap-5">
-          <p class="text-sm font-semibold uppercase text-emerald-700">Portfolio / Web Lab</p>
-          <div class="grid gap-4">
-            <h1 class="max-w-3xl text-5xl font-bold leading-tight text-zinc-950 sm:text-7xl">
-              flypea.tech
-            </h1>
-            <p class="max-w-2xl text-lg leading-8 text-zinc-700">
-              GitHubで育てるポートフォリオ兼Webアプリ学習環境です。まずはAstro、TypeScript、
-              Tailwind CSS、GitHub Actionsから始めます。
+    <section class="border-b border-zinc-200 bg-[#f8f6f0]">
+      <Container class="grid gap-8 py-8 sm:py-10">
+        <header class="flex flex-wrap items-center justify-between gap-4">
+          <a class="text-sm font-bold tracking-[0.18em] text-zinc-950 uppercase" href="/">
+            flypea.tech
+          </a>
+          <nav aria-label="主要セクション" class="flex flex-wrap gap-x-5 gap-y-2 text-sm text-zinc-700">
+            {
+              navItems.map((item) => (
+                <a class="transition hover:text-emerald-700" href={item.href}>
+                  {item.label}
+                </a>
+              ))
+            }
+          </nav>
+        </header>
+
+        <div class="grid items-end gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+          <div class="grid max-w-4xl gap-8">
+            <p class="text-sm font-semibold tracking-[0.16em] text-emerald-700 uppercase">
+              Portfolio / Web development log
             </p>
+            <div class="grid gap-6">
+              <h1 class="text-4xl font-bold leading-tight text-zinc-950 sm:text-6xl">
+                作って、学んで、公開する。
+              </h1>
+              <p class="max-w-2xl text-lg leading-8 text-zinc-700">
+                flypea.techは、ポートフォリオとWeb開発の学習ログを同じ場所で育てる静的サイトです。
+                小さく作って公開し、改善の履歴ごと見える形にしていきます。
+              </p>
+            </div>
+            <div class="flex flex-wrap gap-3">
+              <a
+                class="inline-flex items-center justify-center border border-zinc-950 bg-zinc-950 px-5 py-3 text-sm font-bold text-white transition hover:bg-emerald-700"
+                href="#works"
+              >
+                Worksを見る
+              </a>
+              <a
+                class="inline-flex items-center justify-center border border-zinc-300 px-5 py-3 text-sm font-bold text-zinc-950 transition hover:border-emerald-700 hover:text-emerald-700"
+                href={siteConfig.githubUrl}
+              >
+                GitHub
+              </a>
+            </div>
           </div>
+
+          <aside
+            class="hidden border border-zinc-300 bg-white/70 p-6 shadow-[8px_8px_0_0_#111827] lg:block"
+            aria-label="現在の制作状況"
+          >
+            <div class="flex items-center justify-between border-b border-zinc-200 pb-4">
+              <p class="text-sm font-bold text-zinc-950">Build status</p>
+              <p class="text-xs font-semibold text-emerald-700">Live</p>
+            </div>
+            <dl class="mt-5 grid gap-4">
+              {
+                highlights.map((item) => (
+                  <div class="grid gap-1 border-b border-zinc-200 pb-4 last:border-b-0 last:pb-0">
+                    <dt class="text-xs font-semibold tracking-[0.14em] text-zinc-500 uppercase">
+                      {item.label}
+                    </dt>
+                    <dd class="text-base font-semibold text-zinc-950">{item.value}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </aside>
         </div>
 
-        <div class="grid gap-4 sm:grid-cols-3">
-          <article class="border-t border-zinc-300 pt-4">
-            <h2 class="text-base font-semibold text-zinc-950">Build</h2>
-            <p class="mt-2 text-sm leading-6 text-zinc-700">
-              Astroで静的出力し、ロリポップへ公開します。
-            </p>
-          </article>
-          <article class="border-t border-zinc-300 pt-4">
-            <h2 class="text-base font-semibold text-zinc-950">Learn</h2>
-            <p class="mt-2 text-sm leading-6 text-zinc-700">
-              TypeScript、UI、CI/CD、テストを段階的に追加します。
-            </p>
-          </article>
-          <article class="border-t border-zinc-300 pt-4">
-            <h2 class="text-base font-semibold text-zinc-950">Ship</h2>
-            <p class="mt-2 text-sm leading-6 text-zinc-700">
-              flypea.techで成果物と学習ログを公開します。
-            </p>
-          </article>
+        <div class="grid gap-4 border-t border-zinc-200 pt-6 text-sm text-zinc-600 sm:grid-cols-3">
+          <p>Static first. Fast by default.</p>
+          <p>Learning in public, one commit at a time.</p>
+          <p>Next phase: app.flypea.tech.</p>
         </div>
       </Container>
     </section>
 
     <Section
-      id="foundation"
-      eyebrow="Foundation"
-      title="次の制作に備えた土台"
-      description="トップページを本格化する前に、共通レイアウト、サイト設定、再利用できるセクション、学習ログの受け皿を整えています。"
+      id="about"
+      eyebrow="About"
+      title="実験場としてのポートフォリオ"
+      description="完成品だけを並べる場所ではなく、設計、実装、公開、改善の流れを残していくためのWeb開発ノートです。"
     >
-      <div class="grid gap-4 sm:grid-cols-2">
-        <article class="border-t border-zinc-300 pt-4">
-          <h3 class="text-base font-semibold text-zinc-950">Shared layout</h3>
-          <p class="mt-2 text-sm leading-6 text-zinc-700">
-            SEOメタ情報、canonical URL、OGP、スキップリンクを共通化します。
-          </p>
-        </article>
-        <article class="border-t border-zinc-300 pt-4">
-          <h3 class="text-base font-semibold text-zinc-950">Content ready</h3>
-          <p class="mt-2 text-sm leading-6 text-zinc-700">
-            Learning LogをMarkdownで増やせるように、content collectionを用意します。
-          </p>
-        </article>
+      <div class="grid gap-6 text-base leading-8 text-zinc-700">
+        <p>
+          まずはAstroで軽い静的サイトを作り、flypea.techに安定して公開できる状態を優先しています。
+          後からNext.jsやPostgreSQLを学ぶ時も、ここを入口にして制作物と学習ログへつなげます。
+        </p>
+        <div class="grid gap-4 sm:grid-cols-3">
+          <article class="border-t border-zinc-300 pt-4">
+            <h3 class="font-semibold text-zinc-950">公開を前提に作る</h3>
+            <p class="mt-2 text-sm leading-6">ローカルで終わらせず、CIとデプロイまで含めて小さく出します。</p>
+          </article>
+          <article class="border-t border-zinc-300 pt-4">
+            <h3 class="font-semibold text-zinc-950">学習を記録する</h3>
+            <p class="mt-2 text-sm leading-6">できたこと、詰まったこと、次に直すことをログとして残します。</p>
+          </article>
+          <article class="border-t border-zinc-300 pt-4">
+            <h3 class="font-semibold text-zinc-950">制作物を育てる</h3>
+            <p class="mt-2 text-sm leading-6">ポートフォリオ、学習アプリ、UI実験を段階的に追加します。</p>
+          </article>
+        </div>
+      </div>
+    </Section>
+
+    <Section
+      id="skills"
+      eyebrow="Skills"
+      title="今使っている技術と次に学ぶ技術"
+      description="まずは静的サイトを速く安全に公開するための技術を固め、次のフェーズでWebアプリの領域へ広げます。"
+      class="bg-white/45"
+    >
+      <div class="grid gap-4">
+        {
+          skills.map((skill) => (
+            <article class="grid gap-4 border border-zinc-200 bg-white p-5 sm:grid-cols-[0.7fr_1.3fr]">
+              <h3 class="text-lg font-bold text-zinc-950">{skill.title}</h3>
+              <ul class="flex flex-wrap gap-2">
+                {skill.items.map((item) => (
+                  <li class="border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm font-semibold text-zinc-700">
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </article>
+          ))
+        }
+      </div>
+    </Section>
+
+    <Section
+      id="works"
+      eyebrow="Works"
+      title="制作物一覧"
+      description="いま公開しているもの、土台として整えたもの、これから作るものをまとめます。"
+    >
+      <div class="grid gap-5">
+        {
+          works.map((work) => (
+            <article class="grid gap-5 border border-zinc-200 bg-white p-5 sm:grid-cols-[1fr_auto] sm:items-start">
+              <div class="grid gap-3">
+                <div class="flex flex-wrap items-center gap-3">
+                  <h3 class="text-xl font-bold text-zinc-950">{work.title}</h3>
+                  <span class="border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700">
+                    {work.status}
+                  </span>
+                </div>
+                <p class="max-w-2xl text-sm leading-7 text-zinc-700">{work.description}</p>
+                <ul class="flex flex-wrap gap-2">
+                  {work.tags.map((tag) => (
+                    <li class="text-xs font-semibold text-zinc-500">#{tag}</li>
+                  ))}
+                </ul>
+              </div>
+              {
+                work.href && (
+                  <a
+                    class="inline-flex items-center justify-center border border-zinc-300 px-4 py-2 text-sm font-bold text-zinc-950 transition hover:border-emerald-700 hover:text-emerald-700"
+                    href={work.href}
+                  >
+                    開く
+                  </a>
+                )
+              }
+            </article>
+          ))
+        }
+      </div>
+    </Section>
+
+    <Section
+      id="log"
+      eyebrow="Learning Log"
+      title="最近の学習ログ"
+      description="作業の流れを短いログとして残し、あとから自分でも辿れるようにしていきます。"
+      class="bg-white/45"
+    >
+      <ol class="grid gap-4">
+        {
+          learningLogs.map((log) => (
+            <li class="grid gap-3 border-l-2 border-zinc-300 pl-5">
+              <time class="text-xs font-bold tracking-[0.14em] text-emerald-700 uppercase">
+                {log.date}
+              </time>
+              <div class="grid gap-2">
+                <h3 class="text-lg font-bold text-zinc-950">{log.title}</h3>
+                <p class="text-sm leading-7 text-zinc-700">{log.description}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </Section>
+
+    <Section
+      id="contact"
+      eyebrow="Contact"
+      title="制作物と学習ログをここから増やします"
+      description="しばらくはGitHubで更新履歴を見えるようにしながら、flypea.techをポートフォリオの入口として育てます。"
+    >
+      <div class="grid gap-6 border border-zinc-200 bg-zinc-950 p-6 text-white sm:p-8">
+        <p class="max-w-2xl text-base leading-8 text-zinc-200">
+          Webサイト制作、UI実験、アプリ学習の成果をこのページへ集約していきます。
+          次はWorksとLearning Logを実データ化し、一覧ページへ広げる予定です。
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <a
+            class="inline-flex items-center justify-center border border-white bg-white px-5 py-3 text-sm font-bold text-zinc-950 transition hover:bg-emerald-100"
+            href={siteConfig.githubUrl}
+          >
+            GitHubを見る
+          </a>
+          <a
+            class="inline-flex items-center justify-center border border-zinc-600 px-5 py-3 text-sm font-bold text-white transition hover:border-emerald-300 hover:text-emerald-200"
+            href="#main-content"
+          >
+            ページ上部へ
+          </a>
+        </div>
       </div>
     </Section>
   </main>
