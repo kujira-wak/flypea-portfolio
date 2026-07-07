@@ -6,6 +6,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
 const navItems = [
   { href: "#about", label: "About" },
+  { href: "/profile/", label: "Profile" },
   { href: "#skills", label: "Skills" },
   { href: "#works", label: "Works" },
   { href: "#log", label: "Log" },
@@ -120,9 +121,9 @@ const learningLogs = [
               </a>
               <a
                 class="inline-flex items-center justify-center border border-zinc-300 px-5 py-3 text-sm font-bold text-zinc-950 transition hover:border-emerald-700 hover:text-emerald-700"
-                href={siteConfig.githubUrl}
+                href="/profile/"
               >
-                GitHub
+                Profile
               </a>
             </div>
           </div>
@@ -168,6 +169,13 @@ const learningLogs = [
         <p>
           まずはAstroで軽い静的サイトを作り、flypea.techに安定して公開できる状態を優先しています。
           後からNext.jsやPostgreSQLを学ぶ時も、ここを入口にして制作物と学習ログへつなげます。
+        </p>
+        <p>
+          作っている人については、軽い自己紹介として
+          <a class="font-bold text-emerald-700 underline decoration-emerald-200 underline-offset-4" href="/profile/">
+            Profileページ
+          </a>
+          にまとめています。
         </p>
         <div class="grid gap-4 sm:grid-cols-3">
           <article class="border-t border-zinc-300 pt-4">
