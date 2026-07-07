@@ -57,4 +57,5 @@ gh repo create flypea-portfolio --private --source=. --remote=origin --push
 Astroは `npm run build` で `dist/` に静的ファイルを生成します。
 ロリポップへは `dist/` の中身だけをSFTP/FTPでアップロードします。
 
-自動デプロイは、ロリポップのSFTP情報をGitHub Actions Secretsに登録してから追加します。
+自動デプロイは `.github/workflows/deploy.yml` で準備済みです。
+詳しい手順は [deployment.md](deployment.md) を確認してください。

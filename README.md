@@ -29,7 +29,8 @@ http://127.0.0.1:4321
 Astro builds this site as static files into `dist/`.
 The contents of `dist/` can be uploaded to Lolipop via SFTP/FTP.
 
-GitHub Actions deployment will be added after the Lolipop SFTP credentials are available.
+GitHub Actions deployment is prepared in `.github/workflows/deploy.yml`.
+See [docs/deployment.md](docs/deployment.md) before enabling automatic deployment.
 
 ## Notes
 

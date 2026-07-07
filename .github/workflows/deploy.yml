@@ -1,0 +1,64 @@
+name: Deploy to Lolipop
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: lolipop-deploy
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_dispatch' || vars.LOLIPOP_DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    env:
+      ASTRO_TELEMETRY_DISABLED: "1"
+      LOLIPOP_SFTP_HOST: ${{ secrets.LOLIPOP_SFTP_HOST }}
+      LOLIPOP_SFTP_USER: ${{ secrets.LOLIPOP_SFTP_USER }}
+      LOLIPOP_SFTP_PASSWORD: ${{ secrets.LOLIPOP_SFTP_PASSWORD }}
+      LOLIPOP_SFTP_PORT: ${{ secrets.LOLIPOP_SFTP_PORT }}
+      LOLIPOP_DEPLOY_PATH: ${{ secrets.LOLIPOP_DEPLOY_PATH }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify and build
+        run: npm run verify
+
+      - name: Validate deploy secrets
+        run: |
+          test -n "$LOLIPOP_SFTP_HOST"
+          test -n "$LOLIPOP_SFTP_USER"
+          test -n "$LOLIPOP_SFTP_PASSWORD"
+          test -n "$LOLIPOP_DEPLOY_PATH"
+          if [ -z "$LOLIPOP_SFTP_PORT" ]; then
+            echo "LOLIPOP_SFTP_PORT=22" >> "$GITHUB_ENV"
+          fi
+
+      - name: Install SFTP client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lftp
+
+      - name: Upload dist to Lolipop
+        run: |
+          lftp \
+            -u "$LOLIPOP_SFTP_USER","$LOLIPOP_SFTP_PASSWORD" \
+            -p "$LOLIPOP_SFTP_PORT" \
+            "sftp://$LOLIPOP_SFTP_HOST" \
+            -e "set sftp:auto-confirm yes; set net:max-retries 2; mirror --reverse --verbose --parallel=2 dist \"$LOLIPOP_DEPLOY_PATH\"; bye"
