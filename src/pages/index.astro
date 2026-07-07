@@ -1,48 +1,70 @@
 ---
-import "../styles/global.css";
+import Container from "../components/Container.astro";
+import Section from "../components/Section.astro";
+import { siteConfig } from "../config/site";
+import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
-<html lang="ja">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="description" content="flypea.tech portfolio and web development lab." />
-    <meta name="generator" content={Astro.generator} />
-    <title>flypea.tech</title>
-  </head>
-  <body>
-    <main class="mx-auto grid min-h-screen w-full max-w-5xl content-center gap-10 px-6 py-16">
-      <section class="grid gap-5">
-        <p class="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">
-          Portfolio / Web Lab
-        </p>
-        <div class="grid gap-4">
-          <h1 class="max-w-3xl text-5xl font-bold leading-tight text-zinc-950 sm:text-7xl">
-            flypea.tech
-          </h1>
-          <p class="max-w-2xl text-lg leading-8 text-zinc-700">
-            GitHubで育てるポートフォリオ兼Webアプリ学習環境です。まずはAstro、TypeScript、
-            Tailwind CSS、GitHub Actionsから始めます。
-          </p>
+<BaseLayout title={siteConfig.title} description={siteConfig.description}>
+  <main id="main-content">
+    <section class="grid min-h-screen content-center py-16 sm:py-24">
+      <Container class="grid gap-10">
+        <div class="grid gap-5">
+          <p class="text-sm font-semibold uppercase text-emerald-700">Portfolio / Web Lab</p>
+          <div class="grid gap-4">
+            <h1 class="max-w-3xl text-5xl font-bold leading-tight text-zinc-950 sm:text-7xl">
+              flypea.tech
+            </h1>
+            <p class="max-w-2xl text-lg leading-8 text-zinc-700">
+              GitHubで育てるポートフォリオ兼Webアプリ学習環境です。まずはAstro、TypeScript、
+              Tailwind CSS、GitHub Actionsから始めます。
+            </p>
+          </div>
         </div>
-      </section>
 
-      <section class="grid gap-4 sm:grid-cols-3">
+        <div class="grid gap-4 sm:grid-cols-3">
+          <article class="border-t border-zinc-300 pt-4">
+            <h2 class="text-base font-semibold text-zinc-950">Build</h2>
+            <p class="mt-2 text-sm leading-6 text-zinc-700">
+              Astroで静的出力し、ロリポップへ公開します。
+            </p>
+          </article>
+          <article class="border-t border-zinc-300 pt-4">
+            <h2 class="text-base font-semibold text-zinc-950">Learn</h2>
+            <p class="mt-2 text-sm leading-6 text-zinc-700">
+              TypeScript、UI、CI/CD、テストを段階的に追加します。
+            </p>
+          </article>
+          <article class="border-t border-zinc-300 pt-4">
+            <h2 class="text-base font-semibold text-zinc-950">Ship</h2>
+            <p class="mt-2 text-sm leading-6 text-zinc-700">
+              flypea.techで成果物と学習ログを公開します。
+            </p>
+          </article>
+        </div>
+      </Container>
+    </section>
+
+    <Section
+      id="foundation"
+      eyebrow="Foundation"
+      title="次の制作に備えた土台"
+      description="トップページを本格化する前に、共通レイアウト、サイト設定、再利用できるセクション、学習ログの受け皿を整えています。"
+    >
+      <div class="grid gap-4 sm:grid-cols-2">
         <article class="border-t border-zinc-300 pt-4">
-          <h2 class="text-base font-semibold text-zinc-950">Build</h2>
-          <p class="mt-2 text-sm leading-6 text-zinc-700">Astroで静的出力し、ロリポップへ公開します。</p>
+          <h3 class="text-base font-semibold text-zinc-950">Shared layout</h3>
+          <p class="mt-2 text-sm leading-6 text-zinc-700">
+            SEOメタ情報、canonical URL、OGP、スキップリンクを共通化します。
+          </p>
         </article>
         <article class="border-t border-zinc-300 pt-4">
-          <h2 class="text-base font-semibold text-zinc-950">Learn</h2>
-          <p class="mt-2 text-sm leading-6 text-zinc-700">TypeScript、UI、CI/CD、テストを段階的に追加します。</p>
+          <h3 class="text-base font-semibold text-zinc-950">Content ready</h3>
+          <p class="mt-2 text-sm leading-6 text-zinc-700">
+            Learning LogをMarkdownで増やせるように、content collectionを用意します。
+          </p>
         </article>
-        <article class="border-t border-zinc-300 pt-4">
-          <h2 class="text-base font-semibold text-zinc-950">Ship</h2>
-          <p class="mt-2 text-sm leading-6 text-zinc-700">flypea.techで成果物と学習ログを公開します。</p>
-        </article>
-      </section>
-    </main>
-  </body>
-</html>
+      </div>
+    </Section>
+  </main>
+</BaseLayout>
