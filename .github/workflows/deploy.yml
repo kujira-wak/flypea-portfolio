@@ -19,11 +19,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ASTRO_TELEMETRY_DISABLED: "1"
-      LOLIPOP_SFTP_HOST: ${{ secrets.LOLIPOP_SFTP_HOST }}
-      LOLIPOP_SFTP_USER: ${{ secrets.LOLIPOP_SFTP_USER }}
-      LOLIPOP_SFTP_PASSWORD: ${{ secrets.LOLIPOP_SFTP_PASSWORD }}
-      LOLIPOP_SFTP_PORT: ${{ secrets.LOLIPOP_SFTP_PORT }}
-      LOLIPOP_DEPLOY_PATH: ${{ secrets.LOLIPOP_DEPLOY_PATH }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -41,10 +36,18 @@ jobs:
         run: npm run verify
 
       - name: Validate deploy secrets
+        env:
+          LOLIPOP_SFTP_HOST: ${{ secrets.LOLIPOP_SFTP_HOST }}
+          LOLIPOP_SFTP_USER: ${{ secrets.LOLIPOP_SFTP_USER }}
+          LOLIPOP_SFTP_PASSWORD: ${{ secrets.LOLIPOP_SFTP_PASSWORD }}
+          LOLIPOP_SFTP_PORT: ${{ secrets.LOLIPOP_SFTP_PORT }}
+          LOLIPOP_SFTP_KNOWN_HOSTS: ${{ secrets.LOLIPOP_SFTP_KNOWN_HOSTS }}
+          LOLIPOP_DEPLOY_PATH: ${{ secrets.LOLIPOP_DEPLOY_PATH }}
         run: |
           test -n "$LOLIPOP_SFTP_HOST"
           test -n "$LOLIPOP_SFTP_USER"
           test -n "$LOLIPOP_SFTP_PASSWORD"
+          test -n "$LOLIPOP_SFTP_KNOWN_HOSTS"
           test -n "$LOLIPOP_DEPLOY_PATH"
           if [ -z "$LOLIPOP_SFTP_PORT" ]; then
             echo "LOLIPOP_SFTP_PORT=22" >> "$GITHUB_ENV"
@@ -56,9 +59,20 @@ jobs:
           sudo apt-get install -y lftp
 
       - name: Upload dist to Lolipop
+        env:
+          LOLIPOP_SFTP_HOST: ${{ secrets.LOLIPOP_SFTP_HOST }}
+          LOLIPOP_SFTP_USER: ${{ secrets.LOLIPOP_SFTP_USER }}
+          LOLIPOP_SFTP_PASSWORD: ${{ secrets.LOLIPOP_SFTP_PASSWORD }}
+          LOLIPOP_SFTP_PORT: ${{ secrets.LOLIPOP_SFTP_PORT }}
+          LOLIPOP_SFTP_KNOWN_HOSTS: ${{ secrets.LOLIPOP_SFTP_KNOWN_HOSTS }}
+          LOLIPOP_DEPLOY_PATH: ${{ secrets.LOLIPOP_DEPLOY_PATH }}
         run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$LOLIPOP_SFTP_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
           lftp \
             -u "$LOLIPOP_SFTP_USER","$LOLIPOP_SFTP_PASSWORD" \
-            -p "$LOLIPOP_SFTP_PORT" \
+            -p "${LOLIPOP_SFTP_PORT:-22}" \
             "sftp://$LOLIPOP_SFTP_HOST" \
-            -e "set sftp:auto-confirm yes; set net:max-retries 2; mirror --reverse --verbose --parallel=2 dist \"$LOLIPOP_DEPLOY_PATH\"; bye"
+            -e "set sftp:auto-confirm no; set net:max-retries 2; mirror --reverse --verbose --parallel=2 dist \"$LOLIPOP_DEPLOY_PATH\"; bye"
