@@ -10,6 +10,8 @@ Portfolio and web development learning lab for `flypea.tech`.
 - Biome
 - GitHub Actions
 
+構成をやさしい日本語で読む: [docs/frontend-foundation.md](docs/frontend-foundation.md)
+
 ## Commands
 
 ```sh
