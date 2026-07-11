@@ -14,18 +14,15 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
-
 a:not([class]) {
   color: inherit;
 }
-
 button,
 input,
 textarea,
 select {
   font: inherit;
 }
-
 :focus-visible {
   outline: 3px solid #047857;
   outline-offset: 4px;
@@ -45,45 +42,63 @@ select {
   font-weight: 700;
   transition: transform 160ms ease;
 }
-
 .skip-link:focus {
   transform: translateY(0);
 }
 
-.prose :where(h2, h3) {
-  margin-block: 2rem 0.75rem;
+.prose-content,
+.prose {
+  color: #3f3f46;
+  font-size: 1rem;
+  line-height: 2;
+}
+.prose-content > * + *,
+.prose > * + * {
+  margin-top: 1.5rem;
+}
+.prose-content h2,
+.prose-content h3,
+.prose h2,
+.prose h3 {
   color: #18181b;
   font-weight: 700;
-  line-height: 1.3;
+  line-height: 1.4;
 }
-
+.prose-content h2,
 .prose h2 {
+  margin-top: 2.5rem;
   font-size: 1.5rem;
 }
-
+.prose-content h3,
 .prose h3 {
+  margin-top: 2rem;
   font-size: 1.25rem;
 }
-
-.prose :where(p, ul, ol) {
-  margin-block: 1rem;
-}
-
-.prose :where(ul, ol) {
-  padding-left: 1.5rem;
-}
-
-.prose ul {
-  list-style: disc;
-}
-
-.prose ol {
-  list-style: decimal;
-}
-
+.prose-content a,
 .prose a {
   color: #047857;
   font-weight: 700;
   text-decoration: underline;
   text-underline-offset: 0.25rem;
+}
+.prose-content ul,
+.prose-content ol,
+.prose ul,
+.prose ol {
+  padding-left: 1.5rem;
+}
+.prose-content ul,
+.prose ul {
+  list-style: disc;
+}
+.prose-content ol,
+.prose ol {
+  list-style: decimal;
+}
+.prose-content code,
+.prose code {
+  border: 1px solid #e4e4e7;
+  background: #fafafa;
+  padding: 0.1rem 0.35rem;
+  font-size: 0.9em;
 }

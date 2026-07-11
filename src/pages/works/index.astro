@@ -1,0 +1,59 @@
+---
+import { getCollection } from "astro:content";
+import Container from "../../components/Container.astro";
+import PageHeader from "../../components/PageHeader.astro";
+import WorkCard from "../../components/WorkCard.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const works = (await getCollection("works", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.order - a.data.order,
+);
+---
+
+<BaseLayout
+  title="Works"
+  description="flypea.techで公開している制作物、開発環境、これから作るものの一覧です。"
+  pathname="/works/"
+>
+  <main id="main-content">
+    <PageHeader
+      eyebrow="Works"
+      title="制作物と、その裏側"
+      description="完成したサイトだけでなく、公開を支える仕組みや次の学習テーマも、現在の状態が分かるようにまとめています。"
+      currentLabel="Works"
+    />
+
+    <section class="py-14 sm:py-20" aria-labelledby="works-list-title">
+      <Container>
+        <div class="grid gap-8 lg:grid-cols-[0.45fr_1.55fr] lg:gap-12">
+          <div>
+            <h2 id="works-list-title" class="text-2xl font-bold text-zinc-950">一覧</h2>
+            <p class="mt-3 text-sm leading-7 text-zinc-600">
+              「公開中」「改善中」「計画中」で、各項目の現在地を示しています。
+            </p>
+          </div>
+          <div class="grid gap-5 md:grid-cols-2">
+            {works.map((work) => <WorkCard work={work} />)}
+          </div>
+        </div>
+      </Container>
+    </section>
+
+    <section class="border-t border-zinc-200 bg-white/55 py-14 sm:py-16">
+      <Container class="grid gap-6 sm:grid-cols-[1fr_auto] sm:items-center">
+        <div class="grid max-w-2xl gap-2">
+          <h2 class="text-2xl font-bold text-zinc-950">制作の過程も記録しています</h2>
+          <p class="text-sm leading-7 text-zinc-700">
+            使用技術を並べるだけでなく、設定や実装で考えたことをLearning Logに残しています。
+          </p>
+        </div>
+        <a
+          class="inline-flex items-center justify-center border border-zinc-950 bg-zinc-950 px-5 py-3 text-sm font-bold text-white transition hover:bg-emerald-700"
+          href="/log/"
+        >
+          Learning Logへ
+        </a>
+      </Container>
+    </section>
+  </main>
+</BaseLayout>

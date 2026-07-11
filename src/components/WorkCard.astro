@@ -1,0 +1,48 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  work: CollectionEntry<"works">;
+}
+
+const { work } = Astro.props;
+
+const statusStyles: Record<string, string> = {
+  公開中: "border-emerald-200 bg-emerald-50 text-emerald-800",
+  整備中: "border-amber-200 bg-amber-50 text-amber-800",
+  Next: "border-zinc-200 bg-zinc-100 text-zinc-600",
+};
+---
+
+<article class="grid h-full gap-5 border border-zinc-200 bg-white p-5 sm:p-6">
+  <div class="flex flex-wrap items-start justify-between gap-3">
+    <div class="grid gap-2">
+      <p class="text-xs font-semibold tracking-[0.1em] text-zinc-500 uppercase">Work</p>
+      <h3 class="text-xl font-bold text-zinc-950">{work.data.title}</h3>
+    </div>
+    <span
+      class:list={[
+        "border px-2.5 py-1 text-xs font-bold",
+        statusStyles[work.data.status] ?? "border-zinc-200 bg-zinc-100 text-zinc-600",
+      ]}
+    >
+      {work.data.status}
+    </span>
+  </div>
+
+  <p class="text-sm leading-7 text-zinc-700">{work.data.description}</p>
+
+  <ul class="flex flex-wrap gap-x-3 gap-y-2" aria-label="使用技術">
+    {work.data.tags.map((tag) => <li class="text-xs font-semibold text-zinc-500">#{tag}</li>)}
+  </ul>
+
+  {
+    work.data.url && (
+      <div class="mt-auto border-t border-zinc-100 pt-4">
+        <a class="text-sm font-bold text-emerald-700 underline-offset-4 hover:underline" href={work.data.url}>
+          開く
+        </a>
+      </div>
+    )
+  }
+</article>

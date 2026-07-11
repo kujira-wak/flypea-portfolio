@@ -63,6 +63,20 @@ export const profileContent = {
       description: "Astroの土台から、Next.js、SolidJS、データベース、テストへ進めていきます。",
     },
   ],
+  skillGroups: [
+    {
+      title: "Frontend",
+      items: ["Astro", "TypeScript", "Tailwind CSS", "Responsive UI"],
+    },
+    {
+      title: "Publish & maintain",
+      items: ["GitHub Actions", "SFTP deploy", "Cloudflare", "Biome"],
+    },
+    {
+      title: "Learning next",
+      items: ["Next.js", "SolidJS", "PostgreSQL", "Testing"],
+    },
+  ],
   nowItems: [
     "Astro + TypeScript + Tailwind CSS v4でポートフォリオを構築",
     "GitHub ActionsからロリポップへSFTPデプロイ",

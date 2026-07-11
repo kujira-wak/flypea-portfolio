@@ -1,0 +1,49 @@
+---
+import Container from "./Container.astro";
+
+const currentPath = Astro.url.pathname;
+const navItems = [
+  { href: "/works/", label: "Works" },
+  { href: "/log/", label: "Log" },
+  { href: "/profile/", label: "Profile" },
+];
+
+const isCurrent = (href: string) => currentPath === href || currentPath.startsWith(href);
+---
+
+<header class="sticky top-0 z-40 border-b border-zinc-200 bg-[#f7f5ef]/95 backdrop-blur">
+  <Container class="flex min-h-16 flex-wrap items-center justify-between gap-x-6 gap-y-2 py-3">
+    <a class="flex items-center gap-3 text-zinc-950" href="/" aria-label="flypea.tech ホーム">
+      <span
+        class="grid h-9 w-9 place-items-center border border-zinc-950 bg-emerald-700 text-xs font-black text-white"
+        aria-hidden="true"
+      >
+        fp
+      </span>
+      <span class="text-sm font-bold tracking-[0.12em]">flypea.tech</span>
+    </a>
+
+    <nav aria-label="メインナビゲーション">
+      <ul class="flex items-center gap-1 text-sm font-semibold text-zinc-700">
+        {
+          navItems.map((item) => (
+            <li>
+              <a
+                class:list={[
+                  "block border-b-2 px-3 py-2 transition hover:text-emerald-700",
+                  isCurrent(item.href)
+                    ? "border-emerald-700 text-zinc-950"
+                    : "border-transparent",
+                ]}
+                href={item.href}
+                aria-current={isCurrent(item.href) ? "page" : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </Container>
+</header>

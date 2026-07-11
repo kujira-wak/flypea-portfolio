@@ -1,4 +1,6 @@
 ---
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHeader from "../components/SiteHeader.astro";
 import { siteConfig } from "../config/site";
 import "../styles/global.css";
 
@@ -38,6 +40,12 @@ const canonicalUrl = new URL(pathname, siteConfig.url);
   </head>
   <body>
     <a class="skip-link" href="#main-content">本文へ移動</a>
-    <slot />
+    <div class="flex min-h-screen flex-col">
+      <SiteHeader />
+      <div class="flex-1">
+        <slot />
+      </div>
+      <SiteFooter />
+    </div>
   </body>
 </html>
