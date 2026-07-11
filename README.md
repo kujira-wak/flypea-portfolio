@@ -12,6 +12,8 @@ Portfolio and web development learning lab for `flypea.tech`.
 
 構成をやさしい日本語で読む: [docs/frontend-foundation.md](docs/frontend-foundation.md)
 
+制作物・学習ログの更新方法: [docs/editing-content.md](docs/editing-content.md)
+
 ## Commands
 
 ```sh

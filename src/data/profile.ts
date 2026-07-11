@@ -70,8 +70,8 @@ export const profileContent = {
     "学習ログと制作物一覧をMarkdownで育てる準備",
   ],
   nextItems: [
-    "WorksとLearning Logをcontent collection化",
-    "制作物の詳細ページを追加",
+    "WorksとLearning LogのMarkdownコンテンツを増やす",
+    "制作物が増えたら詳細ページを追加",
     "app.flypea.techや別リポジトリでWebアプリ学習を開始",
   ],
 } as const;

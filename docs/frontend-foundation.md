@@ -15,7 +15,8 @@
 - `src/layouts/BaseLayout.astro`: head要素、SEOメタ情報、OGP、canonical URL、スキップリンク。
 - `src/components/Container.astro`: ページ幅と左右余白の共通化。
 - `src/components/Section.astro`: セクション見出しと本文領域の共通化。
-- `src/content.config.ts`: Learning Log用content collection。
+- `src/content.config.ts`: WorksとLearning Logの型付きcontent collection。
+- `src/content/works/`: 制作物を1件1ファイルで管理するディレクトリ。
 - `src/content/learningLog/`: Markdownログを置くためのディレクトリ。
 
 ## 次に作るトップページ
@@ -29,4 +30,4 @@
 - Learning Log
 - Contact
 
-まずは `src/pages/index.astro` に配列データを置いて実装し、量が増えた段階で `src/data/` やcontent collectionへ分離します。
+制作物と学習ログはcontent collectionへ分離済みです。編集方法は[コンテンツ編集ガイド](editing-content.md)を参照してください。
