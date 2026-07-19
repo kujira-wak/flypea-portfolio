@@ -1,0 +1,32 @@
+---
+import { type TopicId, taxonomyPath, topics } from "../data/taxonomy";
+import type { IndexEntry } from "../lib/content-index";
+
+interface Props {
+  entries: IndexEntry[];
+}
+const { entries } = Astro.props;
+const rows = (Object.keys(topics) as TopicId[])
+  .map((id) => ({
+    id,
+    count: entries.filter((entry) => entry.topics.includes(id)).length,
+  }))
+  .filter(({ count }) => count > 0);
+---
+
+<section class="frame-section py-section" aria-labelledby="topic-directory-title">
+  <div class="grid gap-8 lg:grid-cols-[4fr_8fr]">
+    <div><p class="micro-label text-signal">Browse by topic</p><h2 id="topic-directory-title" class="section-title mt-3">TOPIC<br />DIRECTORY</h2></div>
+    <ol class="grid border-t border-ink sm:grid-cols-2">
+      {rows.map(({ id, count }, index) => (
+        <li class:list={["border-b border-ink", index % 2 === 0 && "sm:border-r"]}>
+          <a class="grid min-h-24 grid-cols-[1fr_auto] content-between gap-4 p-4 transition-colors hover:bg-signal" href={taxonomyPath.topic(id)}>
+            <span class="font-display text-xl font-bold">{topics[id].label}</span>
+            <span class="micro-label text-muted">{String(count).padStart(2, "0")}</span>
+            <span class="col-span-2 text-sm leading-6 text-muted">{topics[id].description}</span>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>

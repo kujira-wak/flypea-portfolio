@@ -1,90 +1,45 @@
 ---
 import { getCollection } from "astro:content";
 import Container from "../components/Container.astro";
-import LogItem from "../components/LogItem.astro";
-import PopularLogs from "../components/PopularLogs.astro";
-import ReactionCountsClient from "../components/ReactionCountsClient.astro";
-import Section from "../components/Section.astro";
-import WorkCard from "../components/WorkCard.astro";
-import { siteConfig } from "../config/site";
+import CurrentSignal from "../components/CurrentSignal.astro";
+import FeaturedProject from "../components/FeaturedProject.astro";
+import PersonalIndexHero from "../components/PersonalIndexHero.astro";
+import RecentIndex from "../components/RecentIndex.astro";
+import ShelfPreview from "../components/ShelfPreview.astro";
+import TechnologyIndex from "../components/TechnologyIndex.astro";
+import TopicDirectory from "../components/TopicDirectory.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { getAllIndexEntries } from "../lib/content-index";
 
-const allLogs = (await getCollection("learningLog", ({ data }) => !data.draft)).sort(
-  (a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf(),
-);
-const latestLogs = allLogs.slice(0, 2);
-const featuredWorks = (await getCollection("works", ({ data }) => !data.draft && data.featured))
-  .sort((a, b) => b.data.order - a.data.order)
-  .slice(0, 2);
-
-const entryPoints = [
-  {
-    number: "01",
-    label: "Works",
-    title: "何を作ったかを見る",
-    description: "公開中のサイト、整えた仕組み、次に作るものをまとめています。",
-    href: "/works/",
-  },
-  {
-    number: "02",
-    label: "Learning Log",
-    title: "どう学んだかを読む",
-    description: "実装や公開で調べたこと、判断したことを短い記事で残します。",
-    href: "/log/",
-  },
-  {
-    number: "03",
-    label: "Profile",
-    title: "作っている人を知る",
-    description: "自己紹介、使っている技術、SNSやGitHubへのリンクがあります。",
-    href: "/profile/",
-  },
-];
+const [projects, shelf, indexEntries] = await Promise.all([
+  getCollection("projects", ({ data }) => !data.draft),
+  getCollection("shelf", ({ data }) => !data.draft),
+  getAllIndexEntries(),
+]);
+const featuredProject = projects
+  .filter(({ data }) => data.featured)
+  .sort((a, b) => b.data.order - a.data.order)[0];
+const recentEntries = indexEntries.slice(0, 4);
 ---
 
-<BaseLayout title={siteConfig.title} description={siteConfig.description}>
+<BaseLayout title="Personal Index" description="音楽、ゲーム、デバイス、ソフトウェア、制作、OSS、Notesを同じ目録で辿る個人アーカイブ。">
   <main id="main-content">
-    <section class="border-b border-zinc-200 bg-[#f8f6f0]">
-      <Container class="grid gap-10 py-14 sm:py-20 lg:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.55fr)] lg:items-end">
-        <div class="grid max-w-3xl gap-7">
-          <p class="text-sm font-semibold tracking-[0.12em] text-emerald-700 uppercase">Portfolio / Web development log</p>
-          <div class="grid gap-5">
-            <h1 class="text-4xl font-bold leading-tight text-zinc-950 sm:text-6xl">作ったものと、<br class="hidden sm:block" />学んだ過程を残す。</h1>
-            <p class="max-w-2xl text-lg leading-8 text-zinc-700">flypea.techは、Web制作の成果と学習記録を公開しながら育てるポートフォリオです。完成したものだけでなく、設計・実装・公開・改善の流れもまとめています。</p>
-          </div>
-          <div class="flex flex-wrap gap-3">
-            <a class="inline-flex items-center justify-center border border-zinc-950 bg-zinc-950 px-5 py-3 text-sm font-bold text-white transition hover:bg-emerald-700" href="/works/">制作物を見る</a>
-            <a class="inline-flex items-center justify-center border border-zinc-300 bg-white px-5 py-3 text-sm font-bold text-zinc-950 transition hover:border-emerald-700 hover:text-emerald-700" href="/log/">学習ログを読む</a>
-          </div>
+    <Container class="border-x border-ink bg-canvas">
+      <PersonalIndexHero />
+      <div class="grid border-b border-ink lg:grid-cols-[4fr_5fr_3fr]">
+        <div class="border-ink lg:border-r"><FeaturedProject project={featuredProject} /></div>
+        <div class="border-ink lg:border-r"><RecentIndex entries={recentEntries} /></div>
+        <CurrentSignal />
+      </div>
+      <TopicDirectory entries={indexEntries} />
+      {shelf.length ? (
+        <div class="grid border-y border-ink lg:grid-cols-2">
+          <div class="border-ink lg:border-r"><ShelfPreview entries={shelf.slice(0, 4)} /></div>
+          <TechnologyIndex entries={indexEntries} limit={8} />
         </div>
-        <aside class="border border-zinc-300 bg-white p-5 shadow-[7px_7px_0_0_#047857]" aria-label="現在の状況">
-          <p class="text-xs font-bold tracking-[0.12em] text-zinc-500 uppercase">Now building</p>
-          <p class="mt-3 text-xl font-bold leading-snug text-zinc-950">軽く、読みやすく、更新を続けられるサイトへ。</p>
-          <dl class="mt-5 grid grid-cols-2 gap-4 border-t border-zinc-200 pt-4 text-sm"><div><dt class="text-zinc-500">公開形態</dt><dd class="mt-1 font-bold text-zinc-950">Static</dd></div><div><dt class="text-zinc-500">更新状況</dt><dd class="mt-1 font-bold text-emerald-700">In progress</dd></div></dl>
-        </aside>
-      </Container>
-    </section>
-
-    <section class="border-b border-zinc-200 bg-white py-10 sm:py-12" aria-labelledby="start-title">
-      <Container><div class="grid gap-6 lg:grid-cols-[0.55fr_1.45fr] lg:gap-12"><div><p class="text-sm font-semibold text-emerald-700 uppercase">Start here</p><h2 id="start-title" class="mt-2 text-2xl font-bold text-zinc-950">目的から選ぶ</h2></div><div class="grid gap-4 md:grid-cols-3">{entryPoints.map((item) => <a class="group grid gap-4 border-t-2 border-zinc-300 pt-4 transition hover:border-emerald-700" href={item.href}><span class="text-xs font-bold text-emerald-700">{item.number} / {item.label}</span><span class="text-lg font-bold text-zinc-950 group-hover:text-emerald-700">{item.title}</span><span class="text-sm leading-6 text-zinc-600">{item.description}</span></a>)}</div></div></Container>
-    </section>
-
-    <Section eyebrow="Featured works" title="最近の制作と改善" description="公開中の成果だけでなく、サイトを支える仕組みも制作物として記録しています。">
-      <div class="grid gap-5">{featuredWorks.map((work) => <WorkCard work={work} />)}</div>
-      <a class="mt-6 inline-block text-sm font-bold text-emerald-700 underline-offset-4 hover:underline" href="/works/">Worksをすべて見る</a>
-    </Section>
-
-    <Section eyebrow="Latest log" title="最近の学習ログ" description="作業中に調べたことや、公開までに判断したことをあとから辿れる形で残します。" class="bg-white/55">
-      <div>{latestLogs.map((entry) => <LogItem entry={entry} />)}</div>
-      <a class="mt-4 inline-block text-sm font-bold text-emerald-700 underline-offset-4 hover:underline" href="/log/">Learning Logをすべて読む</a>
-    </Section>
-
-    <Section eyebrow="Popular log" title="人気のLearning Log" description="読んだ人から「参考になった」が集まっている記事です。">
-      <PopularLogs entries={allLogs} />
-      <a class="mt-4 inline-block text-sm font-bold text-emerald-700 underline-offset-4 hover:underline" href="/log/?sort=popular">高評価順ですべて読む</a>
-    </Section>
-
-    <section class="py-16 sm:py-20"><Container><div class="grid gap-8 border border-zinc-300 bg-zinc-950 p-6 text-white sm:p-8 lg:grid-cols-[1fr_auto] lg:items-center"><div class="grid max-w-2xl gap-3"><p class="text-sm font-semibold text-emerald-300 uppercase">About flypea</p><h2 class="text-2xl font-bold sm:text-3xl">作っている人と、今の学習テーマ</h2><p class="text-sm leading-7 text-zinc-300">Web制作とWebアプリ開発を、実際に公開しながら学んでいます。使用技術やSNSへのリンクはProfileにまとめました。</p></div><a class="inline-flex items-center justify-center border border-white bg-white px-5 py-3 text-sm font-bold text-zinc-950 transition hover:bg-emerald-100" href="/profile/">Profileを見る</a></div></Container></section>
+      ) : (
+        <div class="border-y border-ink"><TechnologyIndex entries={indexEntries} limit={8} /></div>
+      )}
+    </Container>
   </main>
-  <ReactionCountsClient />
 </BaseLayout>

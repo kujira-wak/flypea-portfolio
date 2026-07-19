@@ -1,0 +1,26 @@
+---
+import { contentTypes } from "../data/taxonomy";
+import type { IndexEntry } from "../lib/content-index";
+
+interface Props {
+  entries: IndexEntry[];
+}
+const { entries } = Astro.props;
+const format = new Intl.DateTimeFormat("ja-JP", { month: "2-digit", day: "2-digit" });
+---
+
+<section class="h-full p-cell" aria-labelledby="recent-index-title">
+  <div class="flex items-end justify-between gap-4">
+    <div><p class="micro-label">Recently added</p><h2 id="recent-index-title" class="sr-only">最近追加した項目</h2></div>
+    <a class="micro-label text-link" href="/index/">All index</a>
+  </div>
+  <ol class="mt-7 border-t border-line">
+    {entries.map((entry) => (
+      <li class="grid grid-cols-[3.5rem_minmax(0,1fr)_auto] items-start gap-3 border-b border-line py-4 text-sm">
+        <time class="font-mono text-xs text-muted" datetime={entry.date.toISOString()}>{format.format(entry.date)}</time>
+        <a class="font-bold leading-6 hover:text-signal" href={entry.href}>{entry.title}</a>
+        <span class="micro-label bg-signal px-1.5 py-0.5 text-ink">{contentTypes[entry.type].label}</span>
+      </li>
+    ))}
+  </ol>
+</section>

@@ -1,0 +1,45 @@
+---
+import { contentTypes, taxonomyPath } from "../data/taxonomy";
+import type { IndexEntry } from "../lib/content-index";
+import EntryTaxonomy from "./EntryTaxonomy.astro";
+
+interface Props {
+  entry: IndexEntry;
+  headingLevel?: "h2" | "h3";
+}
+
+const { entry, headingLevel = "h2" } = Astro.props;
+const Heading = headingLevel;
+const date = new Intl.DateTimeFormat("ja-JP", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+}).format(entry.date);
+---
+
+<article
+  class="index-row grid gap-4 py-5 md:grid-cols-[7rem_8rem_minmax(0,1fr)] md:items-start"
+  data-index-item
+  data-index-type={entry.type}
+  data-index-topics={JSON.stringify(entry.topics)}
+  data-index-technologies={JSON.stringify(entry.technologies)}
+  data-index-status={entry.status}
+  data-index-date={entry.date.toISOString()}
+  data-index-title={entry.title}
+  data-entry-id={entry.reactionId}
+  data-reaction-count="0"
+  data-reacted="false"
+>
+  <time class="font-mono text-xs text-muted" datetime={entry.date.toISOString()}>{date}</time>
+  <a class="micro-label w-fit text-signal" href={taxonomyPath.type(entry.type)}>{contentTypes[entry.type].label}</a>
+  <div class="grid gap-3">
+    <Heading class="font-display text-xl font-bold leading-tight tracking-tight md:text-2xl">
+      <a class="hover:text-signal" href={entry.href}>{entry.title}</a>
+    </Heading>
+    <p class="max-w-3xl text-sm leading-7 text-muted">{entry.description}</p>
+    <div class="flex flex-wrap items-end justify-between gap-3">
+      <EntryTaxonomy topics={entry.topics} technologies={entry.technologies} status={entry.status} compact />
+      {entry.reactionId && <span class="micro-label text-muted" aria-label="高評価件数" hidden data-reaction-count>0</span>}
+    </div>
+  </div>
+</article>

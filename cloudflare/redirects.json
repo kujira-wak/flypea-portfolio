@@ -1,1 +1,36 @@
-[]
+[
+  {
+    "source": "https://flypea.tech/works",
+    "target": "https://flypea.tech/projects/",
+    "status": 301
+  },
+  {
+    "source": "https://flypea.tech/works/",
+    "target": "https://flypea.tech/projects/",
+    "status": 301,
+    "subpathMatching": true,
+    "preservePathSuffix": true
+  },
+  {
+    "source": "https://flypea.tech/log",
+    "target": "https://flypea.tech/notes/",
+    "status": 301
+  },
+  {
+    "source": "https://flypea.tech/log/",
+    "target": "https://flypea.tech/notes/",
+    "status": 301,
+    "subpathMatching": true,
+    "preservePathSuffix": true
+  },
+  {
+    "source": "https://flypea.tech/profile",
+    "target": "https://flypea.tech/about/",
+    "status": 301
+  },
+  {
+    "source": "https://flypea.tech/profile/",
+    "target": "https://flypea.tech/about/",
+    "status": 301
+  }
+]

@@ -1,0 +1,27 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import type { IndexEntry } from "../lib/content-index";
+import Container from "./Container.astro";
+import IndexRow from "./IndexRow.astro";
+import PageMasthead from "./PageMasthead.astro";
+import ReactionCountsClient from "./ReactionCountsClient.astro";
+
+interface Props {
+  title: string;
+  label: string;
+  description: string;
+  pathname: string;
+  entries: IndexEntry[];
+}
+const { title, label, description, pathname, entries } = Astro.props;
+---
+
+<BaseLayout title={`${label} — Index`} description={description} pathname={pathname}>
+  <main id="main-content">
+    <PageMasthead eyebrow="Cross-content index" title={title} description={description} currentLabel={label} parent={{ href: "/index/", label: "Index" }} count={entries.length} />
+    <Container class="py-section">
+      {entries.length ? <div class="index-list" data-index-list>{entries.map((entry) => <IndexRow entry={entry} />)}</div> : <section class="grid gap-6 border-y border-ink py-10 md:grid-cols-[4fr_8fr]"><p class="micro-label text-signal">Index state / 00</p><div><h2 class="section-title">書き留めたものだけを、ここに。</h2><p class="mt-5 max-w-2xl leading-8 text-muted">数を埋めるためではなく、残しておきたいものがあるときに索引へ加えています。</p><a class="micro-label text-link mt-6 inline-block" href="/index/">Browse full index →</a></div></section>}
+    </Container>
+  </main>
+  <ReactionCountsClient />
+</BaseLayout>

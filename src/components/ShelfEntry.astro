@@ -1,0 +1,24 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { shelfKinds } from "../data/taxonomy";
+import EntryTaxonomy from "./EntryTaxonomy.astro";
+
+interface Props {
+  entry: CollectionEntry<"shelf">;
+}
+
+const { entry } = Astro.props;
+---
+
+<article class="index-row grid gap-4 py-6 md:grid-cols-[7rem_minmax(0,1fr)_auto]">
+  <p class="micro-label text-signal">{shelfKinds[entry.data.kind].label}</p>
+  <div class="grid gap-3">
+    <h2 class="font-display text-xl font-bold tracking-tight md:text-2xl">
+      <a class="hover:text-signal" href={`/shelf/${entry.id}/`}>{entry.data.title}</a>
+    </h2>
+    {entry.data.creator && <p class="text-sm text-muted">{entry.data.creator}</p>}
+    <p class="text-sm leading-7 text-muted">{entry.data.description}</p>
+    <EntryTaxonomy topics={entry.data.topics} technologies={entry.data.technologies} status={entry.data.status} compact />
+  </div>
+  <a class="micro-label text-link w-fit" href={`/shelf/${entry.id}/`}>Open / →</a>
+</article>

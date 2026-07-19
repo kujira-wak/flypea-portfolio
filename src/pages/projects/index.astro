@@ -1,0 +1,18 @@
+---
+import { getCollection } from "astro:content";
+import Container from "../../components/Container.astro";
+import PageMasthead from "../../components/PageMasthead.astro";
+import ProjectIndexRow from "../../components/ProjectIndexRow.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const projects = (await getCollection("projects", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.order - a.data.order,
+);
+---
+
+<BaseLayout title="Projects" description="個人開発、Webサイト、OSS、未完成の実験を含む制作目録。" pathname="/projects/">
+  <main id="main-content">
+    <PageMasthead eyebrow="Making / experiments / oss" title="PROJECTS" description="公開したもの、育てているもの、途中の実験。作った時間を状態ごと残す制作目録。" currentLabel="Projects" count={projects.length} />
+    <Container class="py-section"><div class="index-list">{projects.map((project) => <ProjectIndexRow project={project} />)}</div></Container>
+  </main>
+</BaseLayout>

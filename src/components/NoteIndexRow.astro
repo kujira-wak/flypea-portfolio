@@ -1,0 +1,39 @@
+---
+import type { CollectionEntry } from "astro:content";
+import EntryTaxonomy from "./EntryTaxonomy.astro";
+
+interface Props {
+  note: CollectionEntry<"notes">;
+}
+
+const { note } = Astro.props;
+const date = new Intl.DateTimeFormat("ja-JP", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+}).format(note.data.publishedAt);
+---
+
+<article
+  class="index-row grid gap-4 py-6 md:grid-cols-[7rem_minmax(0,1fr)]"
+  data-note-item
+  data-entry-id={note.data.reactionId}
+  data-note-topics={JSON.stringify(note.data.topics)}
+  data-note-technologies={JSON.stringify(note.data.technologies)}
+  data-note-date={note.data.publishedAt.toISOString()}
+  data-note-title={note.data.title}
+  data-reaction-count="0"
+  data-reacted="false"
+>
+  <time class="font-mono text-xs text-muted" datetime={note.data.publishedAt.toISOString()}>{date}</time>
+  <div class="grid gap-3">
+    <h2 class="font-display text-xl font-bold leading-tight tracking-tight md:text-2xl">
+      <a class="hover:text-signal" href={`/notes/${note.id}/`}>{note.data.title}</a>
+    </h2>
+    <p class="max-w-3xl text-sm leading-7 text-muted">{note.data.description}</p>
+    <div class="flex flex-wrap items-end justify-between gap-3">
+      <EntryTaxonomy topics={note.data.topics} technologies={note.data.technologies} compact />
+      <span class="micro-label text-muted" aria-label="高評価件数" hidden data-reaction-count>0</span>
+    </div>
+  </div>
+</article>

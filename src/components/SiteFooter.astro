@@ -5,24 +5,26 @@ import Container from "./Container.astro";
 const year = new Date().getFullYear();
 ---
 
-<footer class="border-t border-zinc-200 bg-zinc-950 py-10 text-zinc-300">
-  <Container class="grid gap-8 sm:grid-cols-[1fr_auto] sm:items-end">
-    <div class="grid gap-3">
-      <a class="w-fit text-sm font-bold tracking-[0.12em] text-white" href="/">flypea.tech</a>
-      <p class="max-w-xl text-sm leading-6 text-zinc-400">
-        制作物とWeb開発の学習記録を、公開しながら育てる静的サイトです。
+<footer class="border-t border-ink bg-ink text-white">
+  <Container class="grid gap-10 py-10 md:grid-cols-[1fr_auto] md:items-end">
+    <div class="grid gap-4">
+      <p class="micro-label text-signal">Personal archive / flypea.tech</p>
+      <p class="max-w-xl text-sm leading-7 text-white/75">
+        音楽、ゲーム、デバイス、ソフトウェア、制作、OSS、Notesを同じ目録で辿る個人サイトです。
       </p>
     </div>
-    <div class="grid gap-4 text-sm sm:justify-items-end">
+    <div class="grid gap-5 text-sm md:justify-items-end">
       <nav aria-label="フッターナビゲーション">
-        <ul class="flex flex-wrap gap-x-5 gap-y-2">
-          <li><a class="transition hover:text-white" href="/works/">Works</a></li>
-          <li><a class="transition hover:text-white" href="/log/">Log</a></li>
-          <li><a class="transition hover:text-white" href="/profile/">Profile</a></li>
-          <li><a class="transition hover:text-white" href={siteConfig.githubUrl}>GitHub</a></li>
+        <ul class="flex flex-wrap gap-x-5 gap-y-2 font-mono text-xs uppercase">
+          <li><a class="hover:text-signal" href="/index/">Index</a></li>
+          <li><a class="hover:text-signal" href="/projects/">Projects</a></li>
+          <li><a class="hover:text-signal" href="/notes/">Notes</a></li>
+          <li><a class="hover:text-signal" href="/shelf/">Shelf</a></li>
+          <li><a class="hover:text-signal" href="/about/">About</a></li>
+          <li><a class="hover:text-signal" href={siteConfig.githubUrl}>GitHub</a></li>
         </ul>
       </nav>
-      <p class="text-xs text-zinc-500">&copy; {year} {siteConfig.author}</p>
+      <p class="font-mono text-xs text-white/50">&copy; {year} {siteConfig.author}</p>
     </div>
   </Container>
 </footer>

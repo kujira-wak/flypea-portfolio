@@ -1,0 +1,42 @@
+---
+import Container from "./Container.astro";
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  description: string;
+  currentLabel: string;
+  parent?: { href: string; label: string };
+  count?: number;
+}
+
+const { eyebrow, title, description, currentLabel, parent, count } = Astro.props;
+---
+
+<section class="border-b border-ink bg-canvas">
+  <Container class="grid gap-10 py-section lg:grid-cols-[4fr_8fr]">
+    <div class="grid content-between gap-8">
+      <nav aria-label="パンくずリスト">
+        <ol class="micro-label flex flex-wrap items-center gap-2 text-muted">
+          <li><a class="hover:text-signal" href="/">Home</a></li>
+          <li aria-hidden="true">/</li>
+          {
+            parent && (
+              <>
+                <li><a class="hover:text-signal" href={parent.href}>{parent.label}</a></li>
+                <li aria-hidden="true">/</li>
+              </>
+            )
+          }
+          <li class="text-ink" aria-current="page">{currentLabel}</li>
+        </ol>
+      </nav>
+      {typeof count === "number" && <p class="micro-label text-muted">Indexed / {String(count).padStart(2, "0")}</p>}
+    </div>
+    <div class="signal-top grid max-w-4xl gap-6 pt-5">
+      <p class="micro-label">{eyebrow}</p>
+      <h1 class="page-title">{title}</h1>
+      <p class="max-w-2xl text-base leading-8 text-muted sm:text-lg">{description}</p>
+    </div>
+  </Container>
+</section>

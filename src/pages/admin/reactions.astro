@@ -1,133 +1,57 @@
 ---
+import { getCollection } from "astro:content";
 import Container from "../../components/Container.astro";
-import PageHeader from "../../components/PageHeader.astro";
+import PageMasthead from "../../components/PageMasthead.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const notes = await getCollection("notes", ({ data }) => !data.draft);
+const noteMap = Object.fromEntries(
+  notes.map((note) => [note.data.reactionId, `/notes/${note.id}/`]),
+);
 ---
 
-<BaseLayout
-  title="高評価集計"
-  description="Learning Logの高評価集計画面です。"
-  pathname="/admin/reactions/"
-  robots="noindex, nofollow"
->
+<BaseLayout title="高評価集計" description="Notesの高評価集計画面です。" pathname="/admin/reactions/" robots="noindex, nofollow">
   <main id="main-content">
-    <PageHeader eyebrow="Admin" title="Learning Log 高評価集計" description="管理トークンはこのタブのsessionStorageだけに保持します。" currentLabel="高評価集計" />
-    <section class="py-14 sm:py-20">
-      <Container>
-        <form class="grid max-w-xl gap-3 border border-zinc-200 bg-white p-5" data-admin-form>
-          <label class="grid gap-2 text-sm font-bold text-zinc-950" for="admin-token">
-            管理トークン
-            <input
-              id="admin-token"
-              class="border border-zinc-300 px-3 py-2.5 font-mono text-sm"
-              type="password"
-              autocomplete="current-password"
-              required
-              data-admin-token
-            />
-          </label>
-          <button class="w-fit border border-zinc-950 bg-zinc-950 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-700" type="submit">
-            集計を表示
-          </button>
-          <p class="text-sm font-semibold text-zinc-600" aria-live="polite" data-admin-status>
-            Workerに設定したADMIN_TOKENを入力してください。
-          </p>
-        </form>
-
-        <div class="mt-8" hidden data-admin-results>
-          <dl class="grid gap-4 sm:grid-cols-3" data-admin-totals></dl>
-          <div class="mt-8 overflow-x-auto border border-zinc-200 bg-white">
-            <table class="w-full min-w-3xl border-collapse text-left text-sm">
-              <thead class="bg-zinc-950 text-white">
-                <tr>
-                  <th class="px-4 py-3">記事</th>
-                  <th class="px-4 py-3">累計</th>
-                  <th class="px-4 py-3">7日</th>
-                  <th class="px-4 py-3">30日</th>
-                  <th class="px-4 py-3">最終高評価</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-zinc-200" data-admin-rows></tbody>
-            </table>
-          </div>
-        </div>
-      </Container>
-    </section>
+    <PageMasthead eyebrow="Admin / private utility" title="REACTION STATS" description="管理トークンはこのタブのsessionStorageだけに保持します。" currentLabel="高評価集計" />
+    <Container class="py-section">
+      <form class="grid max-w-xl gap-4 border-y border-ink py-6" data-admin-form>
+        <label class="micro-label grid gap-2" for="admin-token">管理トークン<input id="admin-token" class="border border-ink bg-surface px-3 py-3 font-mono text-sm normal-case" type="password" autocomplete="current-password" required data-admin-token /></label>
+        <button class="action-link w-fit" type="submit">集計を表示</button>
+        <p class="text-sm text-muted" aria-live="polite" data-admin-status>Workerに設定したADMIN_TOKENを入力してください。</p>
+      </form>
+      <div class="mt-10" hidden data-admin-results><dl class="grid border-y border-ink sm:grid-cols-3" data-admin-totals></dl><div class="mt-8 overflow-x-auto border-y border-ink"><table class="w-full min-w-3xl border-collapse text-left text-sm"><thead class="bg-ink text-white"><tr><th class="px-4 py-3">Note</th><th class="px-4 py-3">累計</th><th class="px-4 py-3">7日</th><th class="px-4 py-3">30日</th><th class="px-4 py-3">最終高評価</th></tr></thead><tbody class="divide-y divide-line" data-admin-rows></tbody></table></div></div>
+    </Container>
   </main>
 </BaseLayout>
 
+<script id="note-map" type="application/json" set:html={JSON.stringify(noteMap)} is:inline></script>
 <script>
-  interface AdminArticle {
-    id: string;
-    count: number;
-    last7Days: number;
-    last30Days: number;
-    latestAt: number;
-  }
-
-  interface AdminResponse {
-    totals: { reactions: number; voters: number; articles: number };
-    articles: AdminArticle[];
-  }
-
+  interface AdminArticle { id: string; count: number; last7Days: number; last30Days: number; latestAt: number }
+  interface AdminResponse { totals: { reactions: number; voters: number; articles: number }; articles: AdminArticle[] }
   const form = document.querySelector<HTMLFormElement>("[data-admin-form]");
   const tokenInput = document.querySelector<HTMLInputElement>("[data-admin-token]");
   const status = document.querySelector<HTMLElement>("[data-admin-status]");
   const results = document.querySelector<HTMLElement>("[data-admin-results]");
   const totals = document.querySelector<HTMLElement>("[data-admin-totals]");
   const rows = document.querySelector<HTMLElement>("[data-admin-rows]");
+  const mapElement = document.querySelector<HTMLScriptElement>("#note-map");
+  const noteMap = JSON.parse(mapElement?.textContent ?? "{}") as Record<string, string>;
   const storageKey = "flypea:admin-token";
-
-  const escapeHtml = (value: string) =>
-    value.replace(/[&<>'"]/g, (character) => {
-      const entities: Record<string, string> = {
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        "'": "&#39;",
-        '"': "&quot;",
-      };
-      return entities[character] ?? character;
-    });
+  const escapeHtml = (value: string) => value.replace(/[&<>'"]/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[character] ?? character);
 
   if (form && tokenInput && status && results && totals && rows) {
     tokenInput.value = window.sessionStorage.getItem(storageKey) ?? "";
     form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      const token = tokenInput.value.trim();
-      if (!token) return;
-      status.textContent = "集計を読み込んでいます。";
-      results.hidden = true;
-
+      event.preventDefault(); const token = tokenInput.value.trim(); if (!token) return;
+      status.textContent = "集計を読み込んでいます。"; results.hidden = true;
       try {
-        const response = await fetch("/api/reactions/admin/stats", {
-          headers: { authorization: `Bearer ${token}` },
-          credentials: "same-origin",
-          signal: AbortSignal.timeout(5000),
-        });
+        const response = await fetch("/api/reactions/admin/stats", { headers: { authorization: `Bearer ${token}` }, credentials: "same-origin", signal: AbortSignal.timeout(5000) });
         if (!response.ok) throw new Error(response.status === 401 ? "管理トークンが一致しません。" : `取得に失敗しました（${response.status}）。`);
-        const data = (await response.json()) as AdminResponse;
-        window.sessionStorage.setItem(storageKey, token);
-
-        totals.innerHTML = [
-          ["高評価", data.totals.reactions],
-          ["高評価したブラウザ", data.totals.voters],
-          ["対象記事", data.totals.articles],
-        ]
-          .map(([label, value]) => `<div class="border border-zinc-200 bg-white p-4"><dt class="text-xs font-bold text-zinc-500">${label}</dt><dd class="mt-2 text-2xl font-black text-zinc-950">${value}</dd></div>`)
-          .join("");
-        rows.innerHTML = data.articles
-          .map((article) => {
-            const latest = article.latestAt ? new Date(article.latestAt * 1000).toLocaleString("ja-JP") : "—";
-            const id = escapeHtml(article.id);
-            return `<tr><td class="px-4 py-3 font-bold"><a class="text-emerald-700 hover:underline" href="/log/${encodeURIComponent(article.id)}/">${id}</a></td><td class="px-4 py-3">${article.count}</td><td class="px-4 py-3">${article.last7Days}</td><td class="px-4 py-3">${article.last30Days}</td><td class="px-4 py-3">${latest}</td></tr>`;
-          })
-          .join("");
-        status.textContent = `更新: ${new Date().toLocaleString("ja-JP")}`;
-        results.hidden = false;
-      } catch (error) {
-        status.textContent = error instanceof Error ? error.message : "集計を取得できませんでした。";
-      }
+        const data = (await response.json()) as AdminResponse; window.sessionStorage.setItem(storageKey, token);
+        totals.innerHTML = [["高評価", data.totals.reactions], ["高評価したブラウザ", data.totals.voters], ["対象Note", data.totals.articles]].map(([label, value]) => `<div class="border-ink p-4 sm:border-r last:border-r-0"><dt class="micro-label text-muted">${label}</dt><dd class="mt-2 font-display text-3xl font-extrabold">${value}</dd></div>`).join("");
+        rows.innerHTML = data.articles.map((article) => { const latest = article.latestAt ? new Date(article.latestAt * 1000).toLocaleString("ja-JP") : "—"; const id = escapeHtml(article.id); const href = noteMap[article.id] ?? `/notes/${encodeURIComponent(article.id)}/`; return `<tr><td class="px-4 py-3 font-bold"><a class="text-link" href="${href}">${id}</a></td><td class="px-4 py-3">${article.count}</td><td class="px-4 py-3">${article.last7Days}</td><td class="px-4 py-3">${article.last30Days}</td><td class="px-4 py-3">${latest}</td></tr>`; }).join("");
+        status.textContent = `更新: ${new Date().toLocaleString("ja-JP")}`; results.hidden = false;
+      } catch (error) { status.textContent = error instanceof Error ? error.message : "集計を取得できませんでした。"; }
     });
   }
 </script>

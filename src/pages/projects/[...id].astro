@@ -1,0 +1,42 @@
+---
+import { Image } from "astro:assets";
+import { type CollectionEntry, getCollection, render } from "astro:content";
+import Container from "../../components/Container.astro";
+import EntryTaxonomy from "../../components/EntryTaxonomy.astro";
+import PageMasthead from "../../components/PageMasthead.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("projects", ({ data }) => !data.draft);
+  return entries.map((project) => ({ params: { id: project.id }, props: { project } }));
+}
+interface Props {
+  project: CollectionEntry<"projects">;
+}
+const { project } = Astro.props;
+const { Content } = await render(project);
+---
+
+<BaseLayout title={project.data.title} description={project.data.description} pathname={`/projects/${project.id}/`}>
+  <main id="main-content">
+    <PageMasthead eyebrow="Project record" title={project.data.title} description={project.data.description} currentLabel={project.data.title} parent={{ href: "/projects/", label: "Projects" }} />
+    <article class="py-section">
+      <Container class="grid gap-12 lg:grid-cols-[4fr_8fr]">
+        <aside class="grid content-start gap-8">
+          <dl class="grid gap-5 border-t border-ink pt-5 text-sm">
+            <div><dt class="micro-label text-muted">Status</dt><dd class="mt-2 font-bold">{project.data.status}</dd></div>
+            {project.data.role && <div><dt class="micro-label text-muted">Role</dt><dd class="mt-2 leading-7">{project.data.role}</dd></div>}
+            {project.data.period && <div><dt class="micro-label text-muted">Period</dt><dd class="mt-2">{project.data.period}</dd></div>}
+          </dl>
+          <EntryTaxonomy topics={project.data.topics} technologies={project.data.technologies} status={project.data.status} />
+          <div class="grid gap-3">{project.data.liveUrl && <a class="action-link" href={project.data.liveUrl}>Open website</a>}{project.data.repositoryUrl && <a class="action-link action-link--quiet" href={project.data.repositoryUrl}>Open repository</a>}</div>
+        </aside>
+        <div class="min-w-0">
+          {project.data.cover && <Image class="mb-10 h-auto w-full border border-ink" src={project.data.cover} alt={project.data.coverAlt ?? ""} loading="eager" />}
+          <div class="prose-content"><Content /></div>
+          <p class="mt-12 border-t border-ink pt-5"><a class="micro-label text-link" href="/projects/">← Projects index</a></p>
+        </div>
+      </Container>
+    </article>
+  </main>
+</BaseLayout>

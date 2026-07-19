@@ -1,29 +1,39 @@
-# Frontend foundation
+# Framed Signal frontend foundation
 
-このドキュメントは、flypea.techのページ構成と、コンテンツを増やすための土台をまとめます。
+flypea.techは、趣味と制作を同じ目録で辿る静的な個人アーカイブです。Projectsは重要な一部ですが、サイト全体の主役にはしません。
 
-## 方針
+## 公開ルート
 
-- `flypea.tech` を静的サイトとして公開できる状態に保つ。
-- ページ固有の実装と、サイト全体の設定・レイアウトを分ける。
-- 制作物と学習ログはMarkdownとGitで更新し、外部CMSは必要になってから検討する。
-- `npm run verify` が通る状態を維持してからcommit/pushする。
+- `/`: 現在のSignal、Featured Project、最近の項目、Topic/Shelf/Technologyへの入口
+- `/index/`: Projects、Notes、Shelfの横断目録と複合フィルター
+- `/index/{type|topic|technology|status}/{slug}/`: JavaScriptなしで使える分類別目録
+- `/projects/` と `/projects/{id}/`: 制作、OSS、Webサイト、実験
+- `/notes/` と `/notes/{id}/`: 技術と趣味を含む記録、リアクション
+- `/shelf/` と `/shelf/{id}/`: 好きなものと使用中のもの
+- `/about/`: 興味、活動、技術、外部リンク
+- `/admin/reactions/`: noindexのリアクション集計画面
 
-## 現在のページ構成
+旧 `/works/`、`/log/`、`/profile/` はAstro fallbackとCloudflare Bulk Redirectで新URLへ301転送します。
 
-- `/`: サイトの目的と主要ページへの入口。
-- `/works/`: Markdownで管理する制作物一覧。
-- `/works/{制作物名}/`: 制作物のケーススタディ本文。
-- `/log/`: Markdownで管理する学習ログ一覧。
-- `/log/{記事名}/`: 学習ログ本文。
-- `/profile/`: 自己紹介、使用技術、SNS・関連リンク。
+## データと責務
 
-全ページで共通ヘッダーとフッターを使い、ヘッダーにはWorks、Log、Profileだけを置きます。連絡先は内容が重複するため、Profileのリンクへ集約しています。
+- Projects: `src/content/projects/*.md`
+- Notes: `src/content/notes/*.md`
+- Shelf: `src/content/shelf/*.md`
+- taxonomyの編集元: `src/data/taxonomy.json`（`src/data/taxonomy.ts` が型付きで公開）
+- Current Signal: `src/data/signals.ts`
+- Aboutの編集元: `src/data/about.json`（`src/data/about.ts` が検証して公開）
+- 共通Index型: `src/lib/content-index.ts`
+- デザイントークン: `src/styles/global.css` の `@theme static`
 
-## コンテンツの編集場所
+各コンテンツは `type`、`topics`、`technologies`、`status` を分離します。技術名はプロフィール用バッジではなく、関連Projects/Notesへ移動する索引です。
 
-- 制作物: `src/content/works/*.md`
-- 学習ログ: `src/content/learningLog/*.md`
-- プロフィール: `src/data/profile.ts`
+## Progressive enhancement
 
-Markdownの書き方と公開前の確認は[コンテンツ編集ガイド](editing-content.md)を参照してください。
+ページ本文、一覧、分類リンク、ナビゲーションは静的HTMLです。ブラウザJavaScriptはIndex/NotesフィルターとNotesリアクションだけに限定します。API障害時も本文は閲覧できます。
+
+## Privacy
+
+Aboutやコンテンツには、居住地、年齢、学校、学年、住所、生年月日など本人の特定につながる情報を掲載しません。
+
+公開前は `npm run verify` を実行します。

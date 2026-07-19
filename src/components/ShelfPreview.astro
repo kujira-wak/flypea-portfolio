@@ -1,0 +1,14 @@
+---
+import type { CollectionEntry } from "astro:content";
+import ShelfEntry from "./ShelfEntry.astro";
+
+interface Props {
+  entries: CollectionEntry<"shelf">[];
+}
+const { entries } = Astro.props;
+---
+
+<section class="h-full p-cell" aria-labelledby="shelf-preview-title">
+  <div class="flex items-end justify-between gap-4"><div><p class="micro-label">Taste / tools / references</p><h2 id="shelf-preview-title" class="section-title mt-3">SHELF</h2></div><a class="micro-label text-link" href="/shelf/">Open shelf</a></div>
+  <div class="mt-8">{entries.map((entry) => <ShelfEntry entry={entry} />)}</div>
+</section>

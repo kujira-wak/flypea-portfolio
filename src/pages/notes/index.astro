@@ -1,0 +1,26 @@
+---
+import { getCollection } from "astro:content";
+import Container from "../../components/Container.astro";
+import NoteFilters from "../../components/NoteFilters.astro";
+import NoteIndexRow from "../../components/NoteIndexRow.astro";
+import PageMasthead from "../../components/PageMasthead.astro";
+import ReactionCountsClient from "../../components/ReactionCountsClient.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const notes = (await getCollection("notes", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf(),
+);
+const topicIds = [...new Set(notes.flatMap(({ data }) => data.topics))].sort();
+const technologyIds = [...new Set(notes.flatMap(({ data }) => data.technologies))].sort();
+---
+
+<BaseLayout title="Notes" description="開発、音楽、ゲーム、デバイス、ソフトウェア、UIについての短い記録。" pathname="/notes/">
+  <main id="main-content">
+    <PageMasthead eyebrow="Observations / records" title="NOTES" description="手を動かした日、気になった画面、忘れたくない感覚。長さを決めずに残す記録。" currentLabel="Notes" count={notes.length} />
+    <Container class="py-section">
+      <NoteFilters topicIds={topicIds} technologyIds={technologyIds} total={notes.length} />
+      <div class="index-list mt-10" data-note-list>{notes.map((note) => <NoteIndexRow note={note} />)}</div>
+    </Container>
+  </main>
+  <ReactionCountsClient />
+</BaseLayout>

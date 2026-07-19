@@ -1,22 +1,63 @@
 # コンテンツ編集ガイド
 
-このサイトは、管理画面を持つCMSではなく、Astro標準の Content Collections と Markdown を使います。
-追加サービスやデータベースが不要なので軽く、変更内容をGitで確認・復元できます。
+このサイトはAstro Content CollectionsとMarkdownを使用します。Frontmatterは `src/content.config.ts` で型検証されます。
 
-## 制作物を追加・編集する
+## 新規ファイルを自動作成する
 
-`src/content/works/` にある `.md` ファイルを編集します。1制作物につき1ファイルです。
+Project、Note、Shelfの新規作成は対話式スクリプトを使えます。タイトルなどを順番に入力すると、現在のschemaとtaxonomyに沿ったFrontmatterを持つMarkdownが作られます。
+
+Mac:
+
+```sh
+./scripts/new-content.sh
+```
+
+Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\new-content.ps1
+```
+
+OS共通のnpmコマンドも利用できます。
+
+```sh
+npm run content:new
+```
+
+生成直後は必ず `draft: true` です。本文を書き、公開準備ができてから `draft: false` に変更してください。既存slugへの上書きは拒否されます。
+
+引数でまとめて指定することもできます。
+
+```sh
+npm run content:new -- --type note --slug example-note --title "記事タイトル" --description "短い説明" --topics ui,web --technologies astro,typescript
+```
+
+Projectでは役割、期間、公開URL、Repository URL、Shelfでは作者・メーカー、外部URLも続けて入力できます。URLは生成時に形式を検証します。
+
+## 共通taxonomy
+
+`topics`、`technologies`、`status`、Shelfの`kind`は [`src/data/taxonomy.json`](../src/data/taxonomy.json) だけで管理します。新しい分類は対象オブジェクトへID、表示名、説明を1件追加します。
+
+- HomeのTopic Directoryは、公開コンテンツで使われているTopicだけを自動表示します。
+- Technology Indexは、公開中のProjects、Notes、Shelfから件数を集計し、使われているTechnologyだけを自動表示します。
+- Shelfは `src/content/shelf/` の公開項目を自動表示し、追加・削除に追従します。
+- TopicやTechnologyを削除するときは、先にMarkdownからそのIDの参照を外します。参照が残っていればビルドがエラーになり、消し忘れを検出できます。
+
+## Project
+
+`src/content/projects/{slug}.md` を作成します。
 
 ```md
 ---
-title: 制作物の名前
+type: project
+title: Project title
 description: 一覧に表示する短い説明
-status: 公開中
+startedAt: 2026-07-20
+status: active
 order: 30
-featured: true
-tags:
-  - Astro
-  - TypeScript
+featured: false
+topics: [software, web]
+technologies: [astro, typescript]
 role: 設計・実装
 period: 2026年7月〜
 liveUrl: https://example.com/
@@ -24,66 +65,69 @@ repositoryUrl: https://github.com/example/project
 draft: false
 ---
 
-## 概要
-
-この下が制作物詳細ページの本文になります。
+ここから詳細本文です。
 ```
 
-- `order` が大きいものほど上に表示されます。
-- `status` は `公開中`、`整備中`、`計画中` のいずれかです。
-- `featured: true` はトップページなどで注目作品として扱うための項目です。
-- `role`、`period`、`liveUrl`、`repositoryUrl` は省略できます。
-- 同じフォルダに画像を置き、`cover: ./example.webp` と `coverAlt: 画像の説明` を指定するとカバー画像を表示できます。
-- `draft: true` にするとサイトには表示されません。
-- Markdown本文は `/works/ファイル名/` の詳細ページに表示されます。
+`order` が大きいほど上に表示されます。画像を指定するときは `cover` と内容を説明する `coverAlt` を必ず一緒に指定します。
 
-## 学習ログを書く
+## Note
 
-`src/content/learningLog/` に `.md` ファイルを作ります。ファイル名がURLになるため、半角英数字とハイフンを推奨します。
+`src/content/notes/{slug}.md` を作成します。
 
 ```md
 ---
-title: 記事タイトル
-description: 一覧と検索結果に表示する概要
-publishedAt: 2026-07-11
-tags:
-  - Astro
+type: note
+title: Note title
+description: 一覧とメタ情報に使う概要
+publishedAt: 2026-07-20
+reactionId: permanent-note-id
+status: completed
+topics: [ui]
+technologies: [tailwind-css]
 draft: false
 ---
 
-ここから本文です。一般的なMarkdown記法で書けます。
+ここから本文です。
 ```
 
-保存すると、トップページの「最近の学習ログ」、`/log/` の一覧、`/log/ファイル名/` の記事ページへ自動反映されます。
+`reactionId` はD1の票数と結びつく不変IDです。URL slugを変更しても変更せず、他のNoteと重複させないでください。Note URLを変更する場合は旧URLをリダイレクト台帳へ追加します。
 
-`/log/` のタグ絞り込み候補は、各記事の `tags` から自動生成されます。
-記事詳細の「参考になった」リアクションは、現在は閲覧者それぞれのブラウザ内に保存され、共有件数は集計しません。
+## Shelf
 
-## その他の文章を直す
+実際の項目だけを `src/content/shelf/{slug}.md` に追加します。現在の空状態を埋めるために架空の内容を作らないでください。
 
+```md
+---
+type: shelf
+title: Shelf item
+description: 好きな理由や用途
+kind: music
+addedAt: 2026-07-20
+status: active
+topics: [music]
+technologies: []
+creator: Creator name
+externalUrl: https://example.com/
+draft: false
+---
+```
+
+`kind` の選択肢も `taxonomy.json` の `shelfKinds` から読み込むため、分類を追加・削除した場合は生成スクリプトへ自動反映されます。
+
+## その他
+
+- Current Signal: `src/data/signals.ts`
+- AboutのInterest DirectoryとExternal Links: `src/data/about.json`
 - サイト名、URL、共通説明: `src/config/site.ts`
-- プロフィール: `src/data/profile.ts`
-- トップページの見出しやSkills: `src/pages/index.astro`
 
-## 本文を書き換える場所
+Aboutの項目追加・削除は `about.json` の `interests` または `links` の行を編集するだけです。External LinkのURL形式はビルド時に確認されます。
 
-| 書き換えたい内容 | ファイル |
-| --- | --- |
-| 制作物の詳細本文 | `src/content/works/*.md` |
-| Learning Logの本文 | `src/content/learningLog/*.md` |
-| Profileの文章、リンク、Skills | `src/data/profile.ts` |
-| トップページ固有の見出しや導線 | `src/pages/index.astro` |
-| サイト名、URL、共通説明 | `src/config/site.ts` |
+個人情報（居住地、年齢、学校、学年、住所、生年月日）は追加しません。
 
-制作物とLearning Logは、`---`で囲まれたFrontmatterより下が本文です。
-通常のMarkdown記法で見出し、段落、リスト、リンク、コードなどを書けます。
-
-## 公開前の確認
+## 公開前
 
 ```sh
 npm run verify
 ```
 
-記事slugを変更するとURLも変わります。変更前のURLは`cloudflare/redirects.json`へ追加し、`npm run redirects:build`でリダイレクトCSVを更新してください。詳しくは`docs/cloudflare-reactions.md`を参照してください。
-
-Frontmatterの必須項目や日付・URLの形式が間違っている場合も、ビルド前に検出されます。
+URL変更時はAstro redirectと `cloudflare/redirects.json` を同じ変更で更新し、`npm run redirects:build` を実行します。

@@ -1,0 +1,73 @@
+---
+import { type TechnologyId, type TopicId, technologies, topics } from "../data/taxonomy";
+
+interface Props {
+  topicIds: TopicId[];
+  technologyIds: TechnologyId[];
+  total: number;
+}
+
+const { topicIds, technologyIds, total } = Astro.props;
+---
+
+<section class="grid gap-5 border-y border-ink py-5" aria-labelledby="note-filter-title" data-note-filters>
+  <div class="flex flex-wrap items-end justify-between gap-4">
+    <div><p class="micro-label text-signal">Filter / sort</p><h2 id="note-filter-title" class="mt-1 font-display text-xl font-bold">Notesを絞り込む</h2></div>
+    <p class="micro-label text-muted" aria-live="polite"><span data-note-count>{total}</span> notes</p>
+  </div>
+  <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <label class="micro-label grid gap-2">Topic<select class="border border-ink bg-surface px-3 py-2.5 font-body text-sm normal-case" data-note-topic><option value="">All</option>{topicIds.map((id) => <option value={id}>{topics[id].label}</option>)}</select></label>
+    <label class="micro-label grid gap-2">Technology<select class="border border-ink bg-surface px-3 py-2.5 font-body text-sm normal-case" data-note-technology><option value="">All</option>{technologyIds.map((id) => <option value={id}>{technologies[id].label}</option>)}</select></label>
+    <label class="micro-label grid gap-2">Sort<select class="border border-ink bg-surface px-3 py-2.5 font-body text-sm normal-case" data-note-sort><option value="newest">Newest</option><option value="oldest">Oldest</option><option value="title">Title</option><option value="popular">Popular</option></select></label>
+    <button class="micro-label self-end border border-ink bg-surface px-3 py-3 text-left hover:bg-signal disabled:opacity-50" type="button" aria-pressed="false" disabled data-note-liked>Liked only</button>
+  </div>
+  <p class="empty-state" hidden data-note-empty>条件に一致するNoteはありません。</p>
+</section>
+
+<script>
+  const controls = document.querySelector<HTMLElement>("[data-note-filters]");
+  const list = document.querySelector<HTMLElement>("[data-note-list]");
+  if (controls && list) {
+    const items = Array.from(list.querySelectorAll<HTMLElement>("[data-note-item]"));
+    const topic = controls.querySelector<HTMLSelectElement>("[data-note-topic]");
+    const technology = controls.querySelector<HTMLSelectElement>("[data-note-technology]");
+    const sort = controls.querySelector<HTMLSelectElement>("[data-note-sort]");
+    const liked = controls.querySelector<HTMLButtonElement>("[data-note-liked]");
+    const count = controls.querySelector<HTMLElement>("[data-note-count]");
+    const empty = controls.querySelector<HTMLElement>("[data-note-empty]");
+    const params = new URLSearchParams(window.location.search);
+    const setSelect = (select: HTMLSelectElement | null, key: string) => { const value = params.get(key) ?? ""; if (select && Array.from(select.options).some((option) => option.value === value)) select.value = value; };
+    setSelect(topic, "topic"); setSelect(technology, "technology"); setSelect(sort, "sort");
+    let likedOnly = params.get("liked") === "1";
+    let reactionsReady = false;
+
+    const apply = () => {
+      const sorted = [...items].sort((a, b) => {
+        if (sort?.value === "popular") { const diff = Number(b.dataset.reactionCount ?? 0) - Number(a.dataset.reactionCount ?? 0); if (diff) return diff; }
+        if (sort?.value === "title") return (a.dataset.noteTitle ?? "").localeCompare(b.dataset.noteTitle ?? "", "ja");
+        const diff = new Date(b.dataset.noteDate ?? 0).valueOf() - new Date(a.dataset.noteDate ?? 0).valueOf();
+        return sort?.value === "oldest" ? -diff : diff;
+      });
+      let visible = 0;
+      for (const item of sorted) {
+        const itemTopics = JSON.parse(item.dataset.noteTopics ?? "[]") as string[];
+        const itemTechnologies = JSON.parse(item.dataset.noteTechnologies ?? "[]") as string[];
+        const matches = (!topic?.value || itemTopics.includes(topic.value)) && (!technology?.value || itemTechnologies.includes(technology.value)) && (!likedOnly || !reactionsReady || item.dataset.reacted === "true");
+        item.hidden = !matches;
+        if (matches) visible += 1;
+        list.append(item);
+      }
+      if (count) count.textContent = String(visible);
+      if (empty) empty.hidden = visible !== 0;
+      liked?.setAttribute("aria-pressed", String(likedOnly));
+      liked?.classList.toggle("bg-signal", likedOnly);
+      const next = new URLSearchParams();
+      if (topic?.value) next.set("topic", topic.value); if (technology?.value) next.set("technology", technology.value); if (sort && sort.value !== "newest") next.set("sort", sort.value); if (likedOnly) next.set("liked", "1");
+      window.history.replaceState({}, "", `${window.location.pathname}${next.size ? `?${next}` : ""}`);
+    };
+    for (const select of [topic, technology, sort]) select?.addEventListener("change", apply);
+    liked?.addEventListener("click", () => { likedOnly = !likedOnly; apply(); });
+    window.addEventListener("flypea:reactions-loaded", (event) => { reactionsReady = (event as CustomEvent<{ ok: boolean }>).detail.ok; if (liked) liked.disabled = !reactionsReady; if (!reactionsReady) likedOnly = false; apply(); });
+    apply();
+  }
+</script>

@@ -1,0 +1,41 @@
+---
+import { Image } from "astro:assets";
+import { type CollectionEntry, getCollection, render } from "astro:content";
+import Container from "../../components/Container.astro";
+import EntryTaxonomy from "../../components/EntryTaxonomy.astro";
+import NoteReaction from "../../components/NoteReaction.astro";
+import PageMasthead from "../../components/PageMasthead.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("notes", ({ data }) => !data.draft);
+  return entries.map((note) => ({ params: { id: note.id }, props: { note } }));
+}
+interface Props {
+  note: CollectionEntry<"notes">;
+}
+const { note } = Astro.props;
+const { Content } = await render(note);
+const date = new Intl.DateTimeFormat("ja-JP", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+}).format(note.data.publishedAt);
+---
+
+<BaseLayout title={note.data.title} description={note.data.description} pathname={`/notes/${note.id}/`} ogType="article" publishedAt={note.data.publishedAt} updatedAt={note.data.updatedAt}>
+  <main id="main-content">
+    <PageMasthead eyebrow="Note / article" title={note.data.title} description={note.data.description} currentLabel={note.data.title} parent={{ href: "/notes/", label: "Notes" }} />
+    <article class="py-section">
+      <Container class="grid gap-12 lg:grid-cols-[4fr_8fr]">
+        <aside class="grid content-start gap-6"><time class="font-mono text-sm text-muted" datetime={note.data.publishedAt.toISOString()}>{date}</time><EntryTaxonomy topics={note.data.topics} technologies={note.data.technologies} status={note.data.status} /></aside>
+        <div class="min-w-0">
+          {note.data.cover && <Image class="mb-10 h-auto w-full border border-ink" src={note.data.cover} alt={note.data.coverAlt ?? ""} loading="eager" />}
+          <div class="prose-content"><Content /></div>
+          <NoteReaction reactionId={note.data.reactionId} />
+          <p class="mt-12 border-t border-ink pt-5"><a class="micro-label text-link" href="/notes/">← Notes index</a></p>
+        </div>
+      </Container>
+    </article>
+  </main>
+</BaseLayout>

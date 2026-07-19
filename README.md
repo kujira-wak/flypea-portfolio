@@ -1,43 +1,32 @@
 # flypea.tech
 
-Portfolio and web development learning lab for `flypea.tech`.
+音楽、ゲーム、デバイス、ソフトウェア、制作、OSS、Notesを横断する個人アーカイブです。デザインシステムは「Framed Signal」。
 
 ## Stack
 
-- Astro 7
-- TypeScript
-- Tailwind CSS v4
-- Biome
-- GitHub Actions
-
-構成をやさしい日本語で読む: [docs/frontend-foundation.md](docs/frontend-foundation.md)
-
-制作物・学習ログの更新方法: [docs/editing-content.md](docs/editing-content.md)
+- Astro 7 / TypeScript / Tailwind CSS v4
+- Astro Content Collections / Markdown
+- Cloudflare Worker + D1（Notesリアクション）
+- GitHub Actions / Lolipop SFTP deployment
 
 ## Commands
 
 ```sh
 npm install
 npm run dev
+npm run content:new
 npm run verify
 ```
 
-Cloudflare Worker + D1の高評価機能とURL変更時のリダイレクト運用は、[docs/cloudflare-reactions.md](docs/cloudflare-reactions.md)を参照してください。
+ローカルURLは `http://127.0.0.1:4321`。Astro CLIを直接起動する場合は `npx astro dev --background` を使用します。
 
-## Development URL
+## Documentation
 
-```text
-http://127.0.0.1:4321
-```
+- [フロントエンド構成](docs/frontend-foundation.md)
+- [コンテンツ編集](docs/editing-content.md)
+- [Cloudflare Worker / D1 / redirects](docs/cloudflare-reactions.md)
+- [デプロイ](docs/deployment.md)
+- [セットアップ](docs/setup.md)
+- [自前配信フォントのライセンス](licenses/fonts/NOTICE.md)
 
-## Deployment
-
-Astro builds this site as static files into `dist/`.
-The contents of `dist/` can be uploaded to Lolipop via SFTP/FTP.
-
-GitHub Actions deployment is prepared in `.github/workflows/deploy.yml`.
-See [docs/deployment.md](docs/deployment.md) before enabling automatic deployment.
-
-## Notes
-
-See [docs/setup.md](docs/setup.md) for setup and GitHub publishing steps.
+静的ビルドは `dist/` に生成され、GitHub ActionsからロリポップへSFTP配信します。`/api/reactions/*`だけをCloudflare Workerへルーティングします。

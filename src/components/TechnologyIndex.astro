@@ -1,0 +1,26 @@
+---
+import { type TechnologyId, taxonomyPath, technologies } from "../data/taxonomy";
+import type { IndexEntry } from "../lib/content-index";
+
+interface Props {
+  entries: IndexEntry[];
+  limit?: number;
+}
+const { entries, limit } = Astro.props;
+const rows = (Object.keys(technologies) as TechnologyId[])
+  .map((id) => ({ id, count: entries.filter((entry) => entry.technologies.includes(id)).length }))
+  .filter(({ count }) => count > 0)
+  .sort(
+    (a, b) => b.count - a.count || technologies[a.id].label.localeCompare(technologies[b.id].label),
+  )
+  .slice(0, limit);
+---
+
+<section class="h-full p-cell" aria-labelledby="technology-index-title">
+  <div class="flex items-end justify-between gap-4"><div><p class="micro-label text-signal">Connected technologies</p><h2 id="technology-index-title" class="section-title mt-3">TECHNOLOGY<br />INDEX</h2></div><a class="micro-label text-link" href="/index/?type=project">Browse</a></div>
+  <ol class="mt-8 border-t border-ink">
+    {rows.map(({ id, count }) => (
+      <li class="border-b border-line"><a class="flex items-center justify-between gap-4 py-4 font-display text-lg font-bold hover:text-signal" href={taxonomyPath.technology(id)}><span>{technologies[id].label}</span><span class="micro-label text-muted">{String(count).padStart(2, "0")}</span></a></li>
+    ))}
+  </ol>
+</section>

@@ -1,0 +1,76 @@
+---
+import { contentTypes, statuses, technologies, topics } from "../data/taxonomy";
+
+interface Props {
+  total: number;
+}
+
+const { total } = Astro.props;
+---
+
+<section class="grid gap-5 border-y border-ink py-5" aria-labelledby="index-filter-title" data-index-filters>
+  <div class="flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <p class="micro-label text-signal">Filter / sort</p>
+      <h2 id="index-filter-title" class="mt-1 font-display text-xl font-bold">目録を絞り込む</h2>
+    </div>
+    <p class="micro-label text-muted" aria-live="polite"><span data-index-count>{total}</span> entries</p>
+  </div>
+  <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+    <label class="micro-label grid gap-2">Type<select class="border border-ink bg-surface px-3 py-2.5 font-body text-sm normal-case" data-index-filter="type"><option value="">All</option>{Object.entries(contentTypes).map(([id, item]) => <option value={id}>{item.label}</option>)}</select></label>
+    <label class="micro-label grid gap-2">Topic<select class="border border-ink bg-surface px-3 py-2.5 font-body text-sm normal-case" data-index-filter="topic"><option value="">All</option>{Object.entries(topics).map(([id, item]) => <option value={id}>{item.label}</option>)}</select></label>
+    <label class="micro-label grid gap-2">Technology<select class="border border-ink bg-surface px-3 py-2.5 font-body text-sm normal-case" data-index-filter="technology"><option value="">All</option>{Object.entries(technologies).map(([id, item]) => <option value={id}>{item.label}</option>)}</select></label>
+    <label class="micro-label grid gap-2">Status<select class="border border-ink bg-surface px-3 py-2.5 font-body text-sm normal-case" data-index-filter="status"><option value="">All</option>{Object.entries(statuses).map(([id, item]) => <option value={id}>{item.label}</option>)}</select></label>
+    <label class="micro-label grid gap-2">Sort<select class="border border-ink bg-surface px-3 py-2.5 font-body text-sm normal-case" data-index-sort><option value="newest">Newest</option><option value="oldest">Oldest</option><option value="title">Title</option></select></label>
+  </div>
+  <button class="micro-label w-fit border-b border-ink pb-1 hover:border-signal" type="button" data-index-reset>Reset filters</button>
+  <p class="empty-state" hidden data-index-empty>条件に一致する項目はありません。</p>
+</section>
+
+<script>
+  const controls = document.querySelector<HTMLElement>("[data-index-filters]");
+  const list = document.querySelector<HTMLElement>("[data-index-list]");
+  if (controls && list) {
+    const items = Array.from(list.querySelectorAll<HTMLElement>("[data-index-item]"));
+    const selects = Array.from(controls.querySelectorAll<HTMLSelectElement>("[data-index-filter]"));
+    const sort = controls.querySelector<HTMLSelectElement>("[data-index-sort]");
+    const reset = controls.querySelector<HTMLButtonElement>("[data-index-reset]");
+    const count = controls.querySelector<HTMLElement>("[data-index-count]");
+    const empty = controls.querySelector<HTMLElement>("[data-index-empty]");
+    const params = new URLSearchParams(window.location.search);
+
+    for (const select of selects) {
+      const key = select.dataset.indexFilter ?? "";
+      const requested = params.get(key) ?? "";
+      if (Array.from(select.options).some((option) => option.value === requested)) select.value = requested;
+    }
+    if (sort && ["newest", "oldest", "title"].includes(params.get("sort") ?? "")) sort.value = params.get("sort") ?? "newest";
+
+    const apply = () => {
+      const active = Object.fromEntries(selects.map((select) => [select.dataset.indexFilter ?? "", select.value]));
+      const sorted = [...items].sort((a, b) => {
+        if (sort?.value === "title") return (a.dataset.indexTitle ?? "").localeCompare(b.dataset.indexTitle ?? "", "ja");
+        const difference = new Date(b.dataset.indexDate ?? 0).valueOf() - new Date(a.dataset.indexDate ?? 0).valueOf();
+        return sort?.value === "oldest" ? -difference : difference;
+      });
+      let visible = 0;
+      for (const item of sorted) {
+        const itemTopics = JSON.parse(item.dataset.indexTopics ?? "[]") as string[];
+        const itemTechnologies = JSON.parse(item.dataset.indexTechnologies ?? "[]") as string[];
+        const matches = (!active.type || item.dataset.indexType === active.type) && (!active.topic || itemTopics.includes(active.topic)) && (!active.technology || itemTechnologies.includes(active.technology)) && (!active.status || item.dataset.indexStatus === active.status);
+        item.hidden = !matches;
+        if (matches) visible += 1;
+        list.append(item);
+      }
+      if (count) count.textContent = String(visible);
+      if (empty) empty.hidden = visible !== 0;
+      const next = new URLSearchParams();
+      for (const [key, value] of Object.entries(active)) if (value) next.set(key, value);
+      if (sort && sort.value !== "newest") next.set("sort", sort.value);
+      window.history.replaceState({}, "", `${window.location.pathname}${next.size ? `?${next}` : ""}`);
+    };
+    for (const select of [...selects, ...(sort ? [sort] : [])]) select.addEventListener("change", apply);
+    reset?.addEventListener("click", () => { for (const select of selects) select.value = ""; if (sort) sort.value = "newest"; apply(); });
+    apply();
+  }
+</script>

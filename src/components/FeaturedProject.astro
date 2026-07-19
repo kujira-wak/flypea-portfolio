@@ -1,0 +1,23 @@
+---
+import type { CollectionEntry } from "astro:content";
+import EntryTaxonomy from "./EntryTaxonomy.astro";
+
+interface Props {
+  project?: CollectionEntry<"projects">;
+}
+const { project } = Astro.props;
+---
+
+<section class="signal-top h-full p-cell" aria-labelledby="featured-project-title">
+  <p class="micro-label">Featured / 01</p>
+  {project ? (
+    <div class="mt-10 grid gap-5">
+      <h2 id="featured-project-title" class="section-title"><a class="decoration-signal decoration-4 underline-offset-4 hover:underline" href={`/projects/${project.id}/`}>{project.data.title}</a></h2>
+      <p class="max-w-xl text-sm leading-7 text-muted">{project.data.description}</p>
+      <EntryTaxonomy topics={project.data.topics} technologies={project.data.technologies} status={project.data.status} />
+      <a class="micro-label text-link w-fit" href={`/projects/${project.id}/`}>Project detail →</a>
+    </div>
+  ) : (
+    <p id="featured-project-title" class="empty-state mt-8">制作の記録はProjectsから辿れます。</p>
+  )}
+</section>

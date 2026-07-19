@@ -1,0 +1,18 @@
+---
+import { currentSignals } from "../data/signals";
+
+const activeCount = currentSignals.filter(({ value }) => Boolean(value)).length;
+---
+
+<figure class="relative min-h-[20rem] overflow-hidden border border-signal bg-surface md:min-h-[34rem]" aria-labelledby="signal-field-caption">
+  <div class="absolute left-[13%] top-[8%] aspect-square w-[72%] rounded-full border-2 border-signal" aria-hidden="true"></div>
+  <div class="absolute -bottom-[20%] right-[-4%] aspect-square w-[36%] rounded-full border-2 border-signal" aria-hidden="true"></div>
+  <span class="absolute left-[28%] top-[35%] size-3 bg-signal md:size-5" aria-hidden="true"></span>
+  <span class="absolute right-[31%] top-[22%] size-3 bg-signal md:size-5" aria-hidden="true"></span>
+  <span class="absolute bottom-[26%] right-[39%] size-3 bg-signal md:size-5" aria-hidden="true"></span>
+  <span class="absolute right-[12%] top-[53%] size-2 bg-micro" aria-hidden="true"></span>
+  <figcaption id="signal-field-caption" class="absolute inset-x-0 bottom-0 grid gap-2 border-t border-ink bg-signal p-cell text-ink md:grid-cols-[1fr_auto] md:items-end">
+    <strong class="font-display text-3xl font-extrabold leading-[0.92] tracking-tight md:text-5xl">CURRENT<br />SIGNAL</strong>
+    <span class="micro-label max-w-56 md:text-right">Listening / Playing / Building<br />{String(activeCount).padStart(2, "0")} active entries</span>
+  </figcaption>
+</figure>

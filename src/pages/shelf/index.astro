@@ -1,0 +1,20 @@
+---
+import { getCollection } from "astro:content";
+import Container from "../../components/Container.astro";
+import PageMasthead from "../../components/PageMasthead.astro";
+import ShelfEntry from "../../components/ShelfEntry.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const entries = (await getCollection("shelf", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.addedAt.valueOf() - a.data.addedAt.valueOf(),
+);
+---
+
+<BaseLayout title="Shelf" description="Music、Games、Devices、Software、Websitesなど、好きなものと使用中のもの。" pathname="/shelf/">
+  <main id="main-content">
+    <PageMasthead eyebrow="Taste / tools / references" title="SHELF" description="手元に残るもの、繰り返し戻るもの。音、遊び、道具、ソフトウェア、Webの棚。" currentLabel="Shelf" count={entries.length || undefined} />
+    <Container class="py-section">
+      {entries.length ? <div class="index-list">{entries.map((entry) => <ShelfEntry entry={entry} />)}</div> : <section class="grid gap-6 border-y border-ink py-section md:grid-cols-[4fr_8fr]"><p class="micro-label text-signal">Objects / taste / use</p><div><h2 class="section-title">手元に残るものを、静かに並べる。</h2><p class="mt-5 max-w-2xl leading-8 text-muted">よく聴く音、長く遊ぶゲーム、毎日触れる道具。名前だけでなく、残しておきたい理由と一緒に置く棚です。</p></div></section>}
+    </Container>
+  </main>
+</BaseLayout>

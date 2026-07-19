@@ -1,0 +1,48 @@
+{
+  "topics": {
+    "music": { "label": "Music", "description": "聴いている音楽と、その周辺の記録。" },
+    "games": { "label": "Games", "description": "遊んだゲーム、気になった設計や体験。" },
+    "devices": { "label": "Devices", "description": "使っている機器と道具の記録。" },
+    "software": { "label": "Software", "description": "日常的に使うソフトウェアと個人開発。" },
+    "browser": { "label": "Browser", "description": "ブラウザ、Web標準、閲覧環境。" },
+    "ui": { "label": "UI", "description": "画面設計、文字、操作感について。" },
+    "oss": { "label": "OSS", "description": "オープンソースへの参加と観察。" },
+    "web": { "label": "Web", "description": "WebサイトとWebアプリケーション。" },
+    "deployment": { "label": "Deployment", "description": "公開、配信、運用の仕組み。" },
+    "learning": { "label": "Learning", "description": "試しながら理解したこと。" }
+  },
+  "technologies": {
+    "astro": { "label": "Astro", "description": "静的な個人サイトとコンテンツ配信。" },
+    "typescript": { "label": "TypeScript", "description": "型のあるWeb実装。" },
+    "tailwind-css": { "label": "Tailwind CSS", "description": "CSS-firstのデザインシステム。" },
+    "flutter": { "label": "Flutter", "description": "クロスプラットフォームアプリ。" },
+    "dart": { "label": "Dart", "description": "Flutterで使うプログラミング言語。" },
+    "swift": { "label": "Swift", "description": "Appleプラットフォーム向け開発。" },
+    "cloudflare": { "label": "Cloudflare", "description": "DNS、Worker、D1、配信。" },
+    "github-actions": { "label": "GitHub Actions", "description": "検証と自動デプロイ。" },
+    "biome": { "label": "Biome", "description": "Lintとフォーマット。" },
+    "lolipop": { "label": "Lolipop", "description": "静的ファイルのホスティング。" },
+    "next-js": { "label": "Next.js", "description": "アプリケーション開発の候補。" },
+    "postgresql": { "label": "PostgreSQL", "description": "リレーショナルデータベース。" }
+  },
+  "statuses": {
+    "planned": { "label": "Planned", "description": "構想・準備段階。" },
+    "active": { "label": "Active", "description": "現在進行中。" },
+    "maintained": { "label": "Maintained", "description": "公開後も保守中。" },
+    "paused": { "label": "Paused", "description": "一時停止中。" },
+    "completed": { "label": "Completed", "description": "一区切りついた記録。" },
+    "archived": { "label": "Archived", "description": "参照用に保存。" }
+  },
+  "contentTypes": {
+    "project": { "label": "Project", "description": "個人開発、OSS、Webサイト、実験。" },
+    "note": { "label": "Note", "description": "技術、趣味、UI、短い記録。" },
+    "shelf": { "label": "Shelf", "description": "好きなものと使用中のもの。" }
+  },
+  "shelfKinds": {
+    "music": { "label": "Music", "description": "音楽、アルバム、アーティスト。" },
+    "game": { "label": "Game", "description": "ゲームと遊んだ記録。" },
+    "device": { "label": "Device", "description": "手元で使う機器と道具。" },
+    "software": { "label": "Software", "description": "日常的に使うソフトウェア。" },
+    "website": { "label": "Website", "description": "何度も戻るWebサイト。" }
+  }
+}

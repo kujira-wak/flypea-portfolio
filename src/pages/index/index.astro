@@ -1,0 +1,22 @@
+---
+import Container from "../../components/Container.astro";
+import IndexFilters from "../../components/IndexFilters.astro";
+import IndexRow from "../../components/IndexRow.astro";
+import PageMasthead from "../../components/PageMasthead.astro";
+import ReactionCountsClient from "../../components/ReactionCountsClient.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getAllIndexEntries } from "../../lib/content-index";
+
+const entries = await getAllIndexEntries();
+---
+
+<BaseLayout title="Index" description="Projects、Notes、Shelfを種類、トピック、技術、状態から横断する目録。" pathname="/index/">
+  <main id="main-content">
+    <PageMasthead eyebrow="Personal archive / 001" title="INDEX" description="好きなものと作ったものが、分類の境界を越えてつながる個人目録。" currentLabel="Index" count={entries.length} />
+    <Container class="py-section">
+      <IndexFilters total={entries.length} />
+      <div class="index-list mt-10" data-index-list>{entries.map((entry) => <IndexRow entry={entry} />)}</div>
+    </Container>
+  </main>
+  <ReactionCountsClient />
+</BaseLayout>

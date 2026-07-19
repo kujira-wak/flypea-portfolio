@@ -1,0 +1,13 @@
+---
+import DirectoryPage from "../../../components/DirectoryPage.astro";
+import { TECHNOLOGY_IDS, type TechnologyId, technologies } from "../../../data/taxonomy";
+import { getAllIndexEntries } from "../../../lib/content-index";
+
+export function getStaticPaths() {
+  return TECHNOLOGY_IDS.map((value) => ({ params: { value } }));
+}
+const value = Astro.params.value as TechnologyId;
+const item = technologies[value];
+const entries = (await getAllIndexEntries()).filter((entry) => entry.technologies.includes(value));
+---
+<DirectoryPage title={item.label.toUpperCase()} label={item.label} description={item.description} pathname={`/index/technology/${value}/`} entries={entries} />

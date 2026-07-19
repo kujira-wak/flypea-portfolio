@@ -1,0 +1,35 @@
+---
+import Container from "../components/Container.astro";
+import PageMasthead from "../components/PageMasthead.astro";
+import TechnologyIndex from "../components/TechnologyIndex.astro";
+import { aboutContent } from "../data/about";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getAllIndexEntries } from "../lib/content-index";
+
+const entries = await getAllIndexEntries();
+---
+
+<BaseLayout title={aboutContent.meta.title} description={aboutContent.meta.description} pathname={aboutContent.meta.pathname}>
+  <main id="main-content">
+    <PageMasthead eyebrow={aboutContent.intro.label} title="ABOUT" description={aboutContent.intro.description} currentLabel="About" />
+    <Container>
+      <section class="grid border-b border-ink lg:grid-cols-[5fr_7fr]" aria-labelledby="profile-name">
+        <figure class="signal-top border-ink p-cell lg:border-r">
+          <img class="aspect-square w-full border border-ink object-cover" src="/images/profile.webp" alt="緑と橙の面に黒い表情を描いたflypeaのプロフィール画像" width="768" height="768" />
+          <figcaption class="micro-label mt-3 flex justify-between gap-4"><span>Portrait / 001</span><span>Lime + micro orange</span></figcaption>
+        </figure>
+        <div class="grid content-between gap-12 p-cell">
+          <p class="micro-label text-signal">Profile / personal field</p>
+          <div><h2 id="profile-name" class="display-title text-signal">FLYPEA.</h2><p class="mt-8 max-w-xl text-lg leading-9">好きなものを眺め、触り、必要なら自分で作る。このサイトは、その間にできた記録を散らさず置いておくための場所です。</p></div>
+          <dl class="grid gap-4 border-t border-line pt-5 sm:grid-cols-2"><div><dt class="micro-label text-muted">Focus</dt><dd class="mt-2 font-bold">Interests / Making / Notes</dd></div><div><dt class="micro-label text-muted">Working with</dt><dd class="mt-2 font-bold">Web / Apps / OSS</dd></div></dl>
+        </div>
+      </section>
+      <section class="grid border-b border-ink py-section lg:grid-cols-[4fr_8fr]" aria-labelledby="interest-title">
+        <div><p class="micro-label text-signal">Areas of interest</p><h2 id="interest-title" class="section-title mt-3">INTEREST<br />DIRECTORY</h2></div>
+        <ol class="mt-8 border-t border-ink lg:mt-0">{aboutContent.interests.map((interest, index) => <li class="flex items-center justify-between border-b border-line py-4 font-display text-2xl font-bold"><span>{interest}</span><span class="micro-label text-muted">{String(index + 1).padStart(2, "0")}</span></li>)}</ol>
+      </section>
+      <div class="grid border-b border-ink lg:grid-cols-2"><div class="border-ink lg:border-r"><TechnologyIndex entries={entries} /></div><section class="p-cell" aria-labelledby="external-links-title"><p class="micro-label text-signal">Elsewhere</p><h2 id="external-links-title" class="section-title mt-3">EXTERNAL<br />LINKS</h2><ul class="mt-8 border-t border-ink">{aboutContent.links.map((link) => <li class="border-b border-line"><a class="grid gap-1 py-4 hover:text-signal" href={link.href}><strong class="font-display text-xl">{link.label}</strong><span class="text-sm text-muted">{link.description}</span></a></li>)}</ul></section></div>
+      <section class="grid gap-5 py-section lg:grid-cols-[4fr_8fr]" aria-labelledby="about-space-title"><p class="micro-label text-signal">About this space</p><div><h2 id="about-space-title" class="section-title">興味の先にあるもの。</h2><p class="mt-5 max-w-2xl leading-8 text-muted">音楽やゲームから見つけた感覚がUIにつながり、道具への興味がソフトウェアや制作につながる。分野を分けすぎず、その流れごと残していきます。</p></div></section>
+    </Container>
+  </main>
+</BaseLayout>

@@ -1,0 +1,27 @@
+{
+  "meta": {
+    "title": "About",
+    "description": "flypea.techを作っている人の興味、活動、使用技術、外部リンク。",
+    "pathname": "/about/"
+  },
+  "intro": {
+    "name": "flypea",
+    "label": "Personal index / flypea",
+    "description": "気になった音、遊んだゲーム、手元の道具、よく使うソフトウェア。そこから生まれた制作と記録を、ひとつの索引に残しています。"
+  },
+  "interests": ["Music", "Games", "Devices", "Software", "Browser", "UI", "OSS"],
+  "links": [
+    {
+      "label": "GitHub",
+      "href": "https://github.com/kujira-wak",
+      "description": "コードとOSS活動"
+    },
+    { "label": "X", "href": "https://x.com/kujira_wak", "description": "短い近況とメモ" },
+    {
+      "label": "Repository",
+      "href": "https://github.com/kujira-wak/flypea-portfolio",
+      "description": "このサイトのソース"
+    },
+    { "label": "Website", "href": "https://flypea.tech", "description": "flypea.tech" }
+  ]
+}

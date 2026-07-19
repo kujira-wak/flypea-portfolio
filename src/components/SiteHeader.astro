@@ -3,40 +3,34 @@ import Container from "./Container.astro";
 
 const currentPath = Astro.url.pathname;
 const navItems = [
-  { href: "/works/", label: "Works" },
-  { href: "/log/", label: "Log" },
-  { href: "/profile/", label: "Profile" },
+  { href: "/index/", label: "Index" },
+  { href: "/projects/", label: "Projects" },
+  { href: "/notes/", label: "Notes" },
+  { href: "/shelf/", label: "Shelf" },
+  { href: "/about/", label: "About" },
 ];
 
 const isCurrent = (href: string) => currentPath === href || currentPath.startsWith(href);
 ---
 
-<header class="sticky top-0 z-40 border-b border-zinc-200 bg-[#f7f5ef]/95 backdrop-blur">
-  <Container class="flex min-h-16 flex-wrap items-center justify-between gap-x-6 gap-y-2 py-3">
-    <a class="flex items-center gap-3 text-zinc-950" href="/" aria-label="flypea.tech ホーム">
-      <span class="h-9 w-9 overflow-hidden" aria-hidden="true">
-        <img
-          class="h-full w-full object-cover"
-          src="/images/profile.webp?v=2"
-          alt=""
-          width="36"
-          height="36"
-        />
-      </span>
-      <span class="text-sm font-bold tracking-[0.12em]">flypea.tech</span>
+<header class="border-b border-ink bg-canvas">
+  <Container class="grid min-h-16 gap-3 py-3 md:grid-cols-[1fr_auto_1fr] md:items-center">
+    <a class="flex w-fit items-center gap-3" href="/" aria-label="flypea.tech ホーム">
+      <img class="h-7 w-7 border border-ink object-cover" src="/images/profile.webp" alt="" width="28" height="28" />
+      <span class="micro-label text-ink">flypea.tech</span>
     </a>
 
-    <nav aria-label="メインナビゲーション">
-      <ul class="flex items-center gap-1 text-sm font-semibold text-zinc-700">
+    <p class="micro-label hidden text-center md:block">Personal index / issue 001</p>
+
+    <nav class="min-w-0 overflow-x-auto md:justify-self-end" aria-label="メインナビゲーション">
+      <ul class="flex w-max items-center gap-1 text-ink">
         {
           navItems.map((item) => (
             <li>
               <a
                 class:list={[
-                  "block border-b-2 px-3 py-2 transition hover:text-emerald-700",
-                  isCurrent(item.href)
-                    ? "border-emerald-700 text-zinc-950"
-                    : "border-transparent",
+                  "micro-label block border-b-2 px-2 py-2 transition-colors hover:border-signal hover:text-signal",
+                  isCurrent(item.href) ? "border-signal" : "border-transparent",
                 ]}
                 href={item.href}
                 aria-current={isCurrent(item.href) ? "page" : undefined}

@@ -1,0 +1,18 @@
+---
+import SignalField from "./SignalField.astro";
+---
+
+<section class="grid border-b border-ink lg:grid-cols-[5fr_7fr]" aria-labelledby="home-title">
+  <div class="grid min-h-[34rem] content-between gap-12 border-ink p-cell lg:border-r">
+    <p class="micro-label">A precise catalog of personal interests</p>
+    <div>
+      <h1 id="home-title" class="display-title">MY<br /><span class="text-signal">INDEX.</span></h1>
+      <p class="mt-8 max-w-lg text-lead leading-9">好きなものを主役に、制作と技術も同じ目録で辿る。音楽、ゲーム、道具、ソフトウェア、記録を静かなフレームに残す個人アーカイブです。</p>
+    </div>
+    <div class="grid gap-4 border-t border-line pt-5 sm:grid-cols-2">
+      <div><p class="micro-label">Browse by</p><a class="mt-2 inline-block font-bold hover:text-signal" href="/index/">Topic / Technology / Type →</a></div>
+      <div><p class="micro-label">Identity</p><p class="mt-2 font-bold">Lime signal <span class="ml-1 inline-block size-2 bg-micro" aria-hidden="true"></span></p></div>
+    </div>
+  </div>
+  <div class="p-cell"><p class="micro-label mb-2">Personal field / indexed</p><SignalField /></div>
+</section>

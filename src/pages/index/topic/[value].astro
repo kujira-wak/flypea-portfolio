@@ -1,0 +1,13 @@
+---
+import DirectoryPage from "../../../components/DirectoryPage.astro";
+import { TOPIC_IDS, type TopicId, topics } from "../../../data/taxonomy";
+import { getAllIndexEntries } from "../../../lib/content-index";
+
+export function getStaticPaths() {
+  return TOPIC_IDS.map((value) => ({ params: { value } }));
+}
+const value = Astro.params.value as TopicId;
+const item = topics[value];
+const entries = (await getAllIndexEntries()).filter((entry) => entry.topics.includes(value));
+---
+<DirectoryPage title={item.label.toUpperCase()} label={item.label} description={item.description} pathname={`/index/topic/${value}/`} entries={entries} />

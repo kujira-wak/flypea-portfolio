@@ -4,10 +4,9 @@
 
 ## 実装済みの機能
 
-- 記事ごとの「参考になった」の同期と件数表示
-- Learning Logの高評価順、タグとの組み合わせ
-- 自分が高評価した記事だけを表示
-- トップページの「人気のLearning Log」
+- NoteごとのSignalリアクションの同期と件数表示
+- Notesの高評価順、topic/technologyとの組み合わせ
+- 自分が高評価したNoteだけを表示
 - `/admin/reactions/` の簡易集計（累計、7日、30日、最終日時）
 - 旧localStorageリアクションのD1への自動移行
 - 1ブラウザ・1記事につき1票、取り消し可能
@@ -57,8 +56,8 @@ npx astro dev --background
 ```json
 [
   {
-    "source": "https://flypea.tech/log/old-slug/",
-    "target": "https://flypea.tech/log/new-slug/",
+    "source": "https://flypea.tech/notes/old-slug/",
+    "target": "https://flypea.tech/notes/new-slug/",
     "status": 301,
     "preserveQuery": true
   }
@@ -72,7 +71,7 @@ npm run redirects:build
 npm run verify
 ```
 
-Cloudflare Dashboardの「Rules > Redirect Rules > Bulk Redirects」でリストを作り、`cloudflare/redirects.csv`をインポートして、そのリストを有効にするBulk Redirect Ruleを1つ作成します。現在は変更済みURLがないため台帳は空です。URL変更と同じPRで台帳を更新すると、リンク切れを防げます。
+Cloudflare Dashboardの「Rules > Redirect Rules > Bulk Redirects」でリストを作り、`cloudflare/redirects.csv`をインポートして、そのリストを有効にするBulk Redirect Ruleを1つ作成します。台帳には旧Works/Log/Profileから新URLへの移行ルールも含まれます。URL変更と同じPRで台帳を更新すると、リンク切れを防げます。
 
 ## 日常の確認
 
