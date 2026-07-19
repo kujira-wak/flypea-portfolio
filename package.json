@@ -12,7 +12,14 @@
     "check": "ASTRO_TELEMETRY_DISABLED=1 astro check",
     "lint": "biome check .",
     "format": "biome format --write .",
-    "verify": "npm run check && npm run lint && npm run build",
+    "redirects:build": "node scripts/cloudflare-redirects.mjs",
+    "redirects:check": "node scripts/cloudflare-redirects.mjs --check",
+    "worker:typecheck": "tsc --project worker/tsconfig.json",
+    "worker:check": "npm run worker:typecheck && WRANGLER_LOG_PATH=.wrangler/wrangler.log WRANGLER_SEND_METRICS=false wrangler deploy --dry-run --config worker/wrangler.jsonc --outdir .wrangler/deploy",
+    "worker:dev": "WRANGLER_LOG_PATH=.wrangler/wrangler.log WRANGLER_SEND_METRICS=false wrangler dev --config worker/wrangler.jsonc --var SITE_ORIGIN:http://localhost:4321",
+    "worker:migrate:local": "WRANGLER_LOG_PATH=.wrangler/wrangler.log WRANGLER_SEND_METRICS=false wrangler d1 migrations apply flypea-portfolio --local --config worker/wrangler.jsonc",
+    "worker:migrate:remote": "WRANGLER_LOG_PATH=.wrangler/wrangler.log WRANGLER_SEND_METRICS=false wrangler d1 migrations apply flypea-portfolio --remote --config worker/wrangler.jsonc",
+    "verify": "npm run check && npm run lint && npm run redirects:check && npm run worker:check && npm run build",
     "astro": "astro"
   },
   "dependencies": {
@@ -23,6 +30,8 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
     "@biomejs/biome": "^2.5.2",
-    "typescript": "^6.0.3"
+    "@cloudflare/workers-types": "^5.20260719.1",
+    "typescript": "^6.0.3",
+    "wrangler": "^4.112.0"
   }
 }

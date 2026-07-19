@@ -8,12 +8,14 @@ interface Props {
   title?: string;
   description?: string;
   pathname?: string;
+  robots?: string;
 }
 
 const {
   title = siteConfig.title,
   description = siteConfig.description,
   pathname = "/",
+  robots,
 } = Astro.props;
 const pageTitle = title === siteConfig.title ? title : `${title} | ${siteConfig.name}`;
 const canonicalUrl = new URL(pathname, siteConfig.url);
@@ -27,6 +29,7 @@ const canonicalUrl = new URL(pathname, siteConfig.url);
     <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
+    {robots && <meta name="robots" content={robots} />}
     <meta name="generator" content={Astro.generator} />
     <link rel="canonical" href={canonicalUrl} />
     <meta property="og:site_name" content={siteConfig.name} />

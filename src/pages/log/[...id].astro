@@ -1,6 +1,7 @@
 ---
 import { type CollectionEntry, getCollection, render } from "astro:content";
 import Container from "../../components/Container.astro";
+import LogReaction from "../../components/LogReaction.astro";
 import PageHeader from "../../components/PageHeader.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 
@@ -52,6 +53,7 @@ const date = new Intl.DateTimeFormat("ja-JP", {
           <div class="prose-content">
             <Content />
           </div>
+          <LogReaction entryId={entry.id} />
           <div class="mt-10 border-t border-zinc-200 pt-6">
             <a class="text-sm font-bold text-emerald-700 underline-offset-4 hover:underline" href="/log/">
               Learning Log一覧へ戻る

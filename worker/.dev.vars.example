@@ -1,0 +1,2 @@
+COOKIE_SECRET="replace-with-a-long-random-string"
+ADMIN_TOKEN="replace-with-a-different-long-random-string"

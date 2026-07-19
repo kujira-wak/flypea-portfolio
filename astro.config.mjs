@@ -7,5 +7,10 @@ export default defineConfig({
   site: "https://flypea.tech",
   vite: {
     plugins: [tailwindcss()],
+    server: {
+      proxy: {
+        "/api/reactions": "http://localhost:8787",
+      },
+    },
   },
 });

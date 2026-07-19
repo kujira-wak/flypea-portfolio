@@ -1,0 +1,37 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "flypea-reactions",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-07-19",
+  "routes": [
+    {
+      "pattern": "flypea.tech/api/reactions/*",
+      "zone_name": "flypea.tech"
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "flypea-portfolio",
+      "database_id": "337a3829-5a82-4564-8d5a-a1725ed2eb4b",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "ratelimits": [
+    {
+      "name": "REACTION_RATE_LIMITER",
+      "namespace_id": "1001",
+      "simple": {
+        "limit": 20,
+        "period": 60
+      }
+    }
+  ],
+  "vars": {
+    "REACTION_COOKIE_NAME": "flypea_reaction",
+    "SITE_ORIGIN": "https://flypea.tech"
+  },
+  "observability": {
+    "enabled": true
+  }
+}

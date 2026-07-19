@@ -1,0 +1,47 @@
+<script>
+  interface ReactionState {
+    count: number;
+    reacted: boolean;
+  }
+
+  interface ReactionsResponse {
+    reactions?: Record<string, ReactionState>;
+  }
+
+  const roots = Array.from(document.querySelectorAll<HTMLElement>("[data-entry-id]"));
+  const ids = [...new Set(roots.map((root) => root.dataset.entryId).filter(Boolean))] as string[];
+
+  const applyReaction = (id: string, reaction: ReactionState) => {
+    for (const root of document.querySelectorAll<HTMLElement>(
+      `[data-entry-id="${CSS.escape(id)}"]`,
+    )) {
+      root.dataset.reactionCount = String(reaction.count);
+      root.dataset.reacted = String(reaction.reacted);
+      for (const count of root.querySelectorAll<HTMLElement>("[data-reaction-count]")) {
+        count.textContent = `👍 ${reaction.count}`;
+        count.setAttribute("aria-label", `高評価 ${reaction.count}件`);
+        count.hidden = false;
+      }
+    }
+  };
+
+  const notify = (ok: boolean) => {
+    window.dispatchEvent(new CustomEvent("flypea:reactions-loaded", { detail: { ok } }));
+  };
+
+  if (ids.length > 0) {
+    fetch(`/api/reactions/batch?ids=${encodeURIComponent(ids.join(","))}`, {
+      credentials: "same-origin",
+      signal: AbortSignal.timeout(5000),
+    })
+      .then(async (response) => {
+        if (!response.ok) throw new Error(`Reaction API: ${response.status}`);
+        return (await response.json()) as ReactionsResponse;
+      })
+      .then((data) => {
+        for (const id of ids) applyReaction(id, data.reactions?.[id] ?? { count: 0, reacted: false });
+        notify(true);
+      })
+      .catch(() => notify(false));
+  }
+</script>

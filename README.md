@@ -22,6 +22,8 @@ npm run dev
 npm run verify
 ```
 
+Cloudflare Worker + D1の高評価機能とURL変更時のリダイレクト運用は、[docs/cloudflare-reactions.md](docs/cloudflare-reactions.md)を参照してください。
+
 ## Development URL
 
 ```text

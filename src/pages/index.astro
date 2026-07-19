@@ -2,15 +2,18 @@
 import { getCollection } from "astro:content";
 import Container from "../components/Container.astro";
 import LogItem from "../components/LogItem.astro";
+import PopularLogs from "../components/PopularLogs.astro";
+import ReactionCountsClient from "../components/ReactionCountsClient.astro";
 import Section from "../components/Section.astro";
 import WorkCard from "../components/WorkCard.astro";
 import { siteConfig } from "../config/site";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
-const latestLogs = (await getCollection("learningLog", ({ data }) => !data.draft))
-  .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf())
-  .slice(0, 2);
-const featuredWorks = (await getCollection("works", ({ data }) => !data.draft))
+const allLogs = (await getCollection("learningLog", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf(),
+);
+const latestLogs = allLogs.slice(0, 2);
+const featuredWorks = (await getCollection("works", ({ data }) => !data.draft && data.featured))
   .sort((a, b) => b.data.order - a.data.order)
   .slice(0, 2);
 
@@ -76,6 +79,12 @@ const entryPoints = [
       <a class="mt-4 inline-block text-sm font-bold text-emerald-700 underline-offset-4 hover:underline" href="/log/">Learning Logをすべて読む</a>
     </Section>
 
+    <Section eyebrow="Popular log" title="人気のLearning Log" description="読んだ人から「参考になった」が集まっている記事です。">
+      <PopularLogs entries={allLogs} />
+      <a class="mt-4 inline-block text-sm font-bold text-emerald-700 underline-offset-4 hover:underline" href="/log/?sort=popular">高評価順ですべて読む</a>
+    </Section>
+
     <section class="py-16 sm:py-20"><Container><div class="grid gap-8 border border-zinc-300 bg-zinc-950 p-6 text-white sm:p-8 lg:grid-cols-[1fr_auto] lg:items-center"><div class="grid max-w-2xl gap-3"><p class="text-sm font-semibold text-emerald-300 uppercase">About flypea</p><h2 class="text-2xl font-bold sm:text-3xl">作っている人と、今の学習テーマ</h2><p class="text-sm leading-7 text-zinc-300">Web制作とWebアプリ開発を、実際に公開しながら学んでいます。使用技術やSNSへのリンクはProfileにまとめました。</p></div><a class="inline-flex items-center justify-center border border-white bg-white px-5 py-3 text-sm font-bold text-zinc-950 transition hover:bg-emerald-100" href="/profile/">Profileを見る</a></div></Container></section>
   </main>
+  <ReactionCountsClient />
 </BaseLayout>

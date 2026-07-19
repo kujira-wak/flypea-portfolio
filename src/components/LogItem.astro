@@ -13,7 +13,16 @@ const date = new Intl.DateTimeFormat("ja-JP", {
 }).format(entry.data.publishedAt);
 ---
 
-<article class="grid gap-3 border-t border-zinc-200 py-6 first:border-t-0 first:pt-0">
+<article
+  class="grid gap-3 border-t border-zinc-200 py-6 first:border-t-0 first:pt-0"
+  data-log-item
+  data-entry-id={entry.id}
+  data-log-tags={JSON.stringify(entry.data.tags)}
+  data-published-at={entry.data.publishedAt.toISOString()}
+  data-title={entry.data.title}
+  data-reaction-count="0"
+  data-reacted="false"
+>
   <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-semibold text-zinc-500">
     <time datetime={entry.data.publishedAt.toISOString()}>{date}</time>
     <ul class="flex flex-wrap gap-2" aria-label="タグ">
@@ -24,7 +33,12 @@ const date = new Intl.DateTimeFormat("ja-JP", {
     <a class="transition hover:text-emerald-700" href={`/log/${entry.id}/`}>{entry.data.title}</a>
   </h3>
   <p class="text-sm leading-7 text-zinc-700">{entry.data.description}</p>
-  <a class="w-fit text-sm font-bold text-emerald-700 underline-offset-4 hover:underline" href={`/log/${entry.id}/`}>
-    続きを読む
-  </a>
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <a class="w-fit text-sm font-bold text-emerald-700 underline-offset-4 hover:underline" href={`/log/${entry.id}/`}>
+      続きを読む
+    </a>
+    <span class="text-xs font-bold text-zinc-500" aria-label="高評価件数" hidden data-reaction-count>
+      👍 0
+    </span>
+  </div>
 </article>

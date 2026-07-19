@@ -1,18 +1,39 @@
 ---
 import { getCollection } from "astro:content";
 import Container from "../../components/Container.astro";
+import LogControls from "../../components/LogControls.astro";
 import LogItem from "../../components/LogItem.astro";
 import PageHeader from "../../components/PageHeader.astro";
+import ReactionCountsClient from "../../components/ReactionCountsClient.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 
 const entries = (await getCollection("learningLog", ({ data }) => !data.draft)).sort(
   (a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf(),
+);
+const tags = [...new Set(entries.flatMap((entry) => entry.data.tags))].sort((a, b) =>
+  a.localeCompare(b, "ja"),
 );
 ---
 
 <BaseLayout title="Learning Log" description="flypea.techの制作とWeb開発学習の記録です。" pathname="/log/">
   <main id="main-content">
     <PageHeader eyebrow="Learning Log" title="作りながら学んだこと" description="実装や公開で調べたこと、つまずいた点、次に生かしたい判断を短い記事として残します。" currentLabel="Log" />
-    <section class="py-14 sm:py-20" aria-labelledby="log-list-title"><Container><div class="grid gap-8 lg:grid-cols-[0.45fr_1.55fr] lg:gap-12"><div><h2 id="log-list-title" class="text-2xl font-bold text-zinc-950">記事一覧</h2><p class="mt-3 text-sm leading-7 text-zinc-600">新しい記録から順に表示しています。</p></div><div>{entries.map((entry) => <LogItem entry={entry} />)}</div></div></Container></section>
+    <section class="py-14 sm:py-20" aria-labelledby="log-list-title">
+      <Container>
+        <div class="grid gap-8 lg:grid-cols-[0.45fr_1.55fr] lg:gap-12">
+          <div>
+            <h2 id="log-list-title" class="text-2xl font-bold text-zinc-950">記事一覧</h2>
+            <p class="mt-3 text-sm leading-7 text-zinc-600">
+              タグと並び順を切り替えて、読みたい記録を探せます。
+            </p>
+          </div>
+          <div>
+            <LogControls tags={tags} total={entries.length} />
+            <div data-log-list>{entries.map((entry) => <LogItem entry={entry} />)}</div>
+          </div>
+        </div>
+      </Container>
+    </section>
   </main>
+  <ReactionCountsClient />
 </BaseLayout>
