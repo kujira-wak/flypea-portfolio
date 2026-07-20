@@ -2,7 +2,23 @@
 
 このサイトはAstro Content CollectionsとMarkdownを使用します。Frontmatterは `src/content.config.ts` で型検証されます。
 
-## 新規ファイルを自動作成する
+## コンテンツ管理CLI
+
+日常的な作成・編集・削除・taxonomy管理には統合CLIを使えます。引数なしではメニューを開き、CIなどの非対話環境ではサブコマンドを指定します。
+
+```sh
+npm run content
+npm run content -- list project
+npm run content -- edit note domain-and-deploy
+npm run content -- delete note example-note --force
+npm run content -- taxonomy list technology
+npm run content -- taxonomy rename technology old-id new-id
+npm run content:audit
+```
+
+Mac/Linuxでは `./scripts/content.sh`、Windows PowerShellでは `powershell -ExecutionPolicy Bypass -File .\scripts\content.ps1` も同じCLIです。削除は対話時にslugの再入力が必要で、非対話では `--force` が必須です。taxonomyを削除する際、使用中なら `--replace-with <ID>` で移行先を明示してください。`contentTypes` はCLIでは変更できません。
+
+`npm run content:audit -- --strict` はWARNINGも失敗扱いにし、`--fix` は重複taxonomyの除去・並び替えなど安全な修正だけを行います。`--json` は機械処理用のJSONだけを出力します。
 
 Project、Note、Shelfの新規作成は対話式スクリプトを使えます。タイトルなどを順番に入力すると、現在のschemaとtaxonomyに沿ったFrontmatterを持つMarkdownが作られます。
 
@@ -90,7 +106,7 @@ draft: false
 ここから本文です。
 ```
 
-`reactionId` はD1の票数と結びつく不変IDです。URL slugを変更しても変更せず、他のNoteと重複させないでください。Note URLを変更する場合は旧URLをリダイレクト台帳へ追加します。
+`reactionId` はD1の票数と結びつく不変IDです。URL slugを変更しても変更せず、他のNoteと重複させないでください。Note URLを変更する場合は、旧URLをリダイレクト台帳へ追加します。
 
 ## Shelf
 
@@ -130,4 +146,4 @@ Aboutの項目追加・削除は `about.json` の `interests` または `links` 
 npm run verify
 ```
 
-URL変更時はAstro redirectと `cloudflare/redirects.json` を同じ変更で更新し、`npm run redirects:build` を実行します。
+URL変更時は[リダイレクトの手順](cloudflare-reactions.md#url変更とリダイレクト)に従い、必要な設定と `cloudflare/redirects.json` を同じ変更で更新します。`npm run verify` はリダイレクトCSVの同期も確認します。

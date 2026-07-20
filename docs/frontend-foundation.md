@@ -1,4 +1,4 @@
-# Framed Signal frontend foundation
+# フロントエンド構成
 
 flypea.techは、趣味と制作を同じ目録で辿る静的な個人アーカイブです。Projectsは重要な一部ですが、サイト全体の主役にはしません。
 

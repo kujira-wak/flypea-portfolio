@@ -3,6 +3,8 @@ import taxonomy from "./taxonomy.json";
 type TaxonomyEntry = {
   label: string;
   description: string;
+  keywords?: string[];
+  allowUnused?: boolean;
 };
 
 const keys = <T extends Record<string, TaxonomyEntry>>(record: T) =>

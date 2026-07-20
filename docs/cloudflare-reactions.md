@@ -13,7 +13,7 @@
 
 ブラウザ識別子は署名付きのHttpOnly Cookieに保存し、D1にはそのSHA-256ハッシュだけを記録します。IPアドレスや個人情報は保存しません。
 
-## Cloudflareへ初回設定する
+## 初回設定
 
 以下はCloudflareにログイン済みの端末で実行します。
 
@@ -22,7 +22,7 @@ npx wrangler login
 npx wrangler d1 create flypea-portfolio
 ```
 
-表示された`database_id`を`worker/wrangler.jsonc`の仮IDと置き換えます。その後、D1とWorkerのSecretを設定します。
+表示された`database_id`を `worker/wrangler.jsonc` の `database_id` と置き換えます。その後、D1のマイグレーションを適用し、WorkerのSecretを設定します。
 
 ```sh
 npm run worker:migrate:remote
@@ -31,16 +31,16 @@ npx wrangler secret put ADMIN_TOKEN --config worker/wrangler.jsonc
 npx wrangler deploy --config worker/wrangler.jsonc
 ```
 
-`COOKIE_SECRET`と`ADMIN_TOKEN`には、それぞれ別の長いランダム文字列を設定します。値はGitへ保存しません。Worker Routeは設定ファイルに定義済みで、`flypea.tech/api/reactions/*`だけに適用されます。
+`COOKIE_SECRET` と `ADMIN_TOKEN` には、それぞれ別の長いランダム文字列を設定します。値はGitへ保存しません。Worker Routeは `worker/wrangler.jsonc` に定義されており、`flypea.tech/api/reactions/*` だけに適用されます。
 
 書き込み元は`SITE_ORIGIN`（本番は`https://flypea.tech`）と一致するOriginだけに制限しています。
 
-ローカルでAPIも確認する場合は`worker/.dev.vars.example`を`worker/.dev.vars`へコピーして値を変更し、WorkerとAstroを別々のターミナルで起動します。Astroの`/api/reactions`はローカルWorkerへプロキシされます。
+ローカルでAPIも確認する場合は `worker/.dev.vars.example` を `worker/.dev.vars` へコピーし、値を設定します。WorkerとAstroは別々のターミナルで起動します。Astroの `/api/reactions` はローカルWorkerへプロキシされます。
 
 ```sh
 npm run worker:migrate:local
 npm run worker:dev
-npx astro dev --background
+astro dev --background
 ```
 
 ## 管理画面
@@ -49,9 +49,9 @@ npx astro dev --background
 
 さらにアクセス元を限定したい場合は、Cloudflare Accessを`/admin/reactions/*`だけに追加できます。集計API自体はAccessの有無にかかわらずBearer Tokenで保護されています。
 
-## URL変更対策
+## URL変更とリダイレクト
 
-記事slugやページURLを変更する前に、`cloudflare/redirects.json`へ旧URLと新URLを追加します。
+記事のslugやページURLを変更する場合は、同じ変更で `cloudflare/redirects.json` に旧URLと新URLを追加します。Astroのルート自体を移動する場合は、`astro.config.mjs` の `redirects` も更新します。
 
 ```json
 [

@@ -1,4 +1,4 @@
-# Lolipop deployment
+# ロリポップへのデプロイ
 
 このプロジェクトはAstroで静的ファイルを生成し、GitHub ActionsからロリポップへSFTPでアップロードします。
 

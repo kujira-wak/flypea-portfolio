@@ -13,7 +13,9 @@
     "lint": "biome check .",
     "format": "biome format --write .",
     "content:new": "node scripts/new-content.mjs",
-    "content:test": "node --test tests/content-generator.test.mjs",
+    "content": "node scripts/content-manager.mjs",
+    "content:audit": "node scripts/audit-content.mjs",
+    "content:test": "node --test tests/content-generator.test.mjs tests/content-manager.test.mjs tests/content-audit.test.mjs",
     "redirects:build": "node scripts/cloudflare-redirects.mjs",
     "redirects:check": "node scripts/cloudflare-redirects.mjs --check",
     "site:check": "node scripts/validate-built-site.mjs",
@@ -23,7 +25,7 @@
     "worker:dev": "WRANGLER_LOG_PATH=.wrangler/wrangler.log WRANGLER_SEND_METRICS=false wrangler dev --config worker/wrangler.jsonc --var SITE_ORIGIN:http://localhost:4321",
     "worker:migrate:local": "WRANGLER_LOG_PATH=.wrangler/wrangler.log WRANGLER_SEND_METRICS=false wrangler d1 migrations apply flypea-portfolio --local --config worker/wrangler.jsonc",
     "worker:migrate:remote": "WRANGLER_LOG_PATH=.wrangler/wrangler.log WRANGLER_SEND_METRICS=false wrangler d1 migrations apply flypea-portfolio --remote --config worker/wrangler.jsonc",
-    "verify": "npm run check && npm run lint && npm run redirects:check && npm run content:test && npm run worker:check && npm run worker:test && npm run build && npm run site:check",
+    "verify": "npm run check && npm run lint && npm run content:audit && npm run redirects:check && npm run content:test && npm run worker:check && npm run worker:test && npm run build && npm run site:check",
     "astro": "astro"
   },
   "dependencies": {
