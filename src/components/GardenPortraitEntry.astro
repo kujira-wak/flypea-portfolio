@@ -1,0 +1,111 @@
+<figure class="signal-top border-ink p-cell lg:border-r" data-garden-portrait>
+  <a
+    class="portrait-entry relative block"
+    aria-disabled="true"
+    data-garden-portrait-entry
+    data-entry-path="/garden-000/"
+  >
+    <img
+      class="aspect-square w-full border border-ink object-cover"
+      src="/images/profile.webp"
+      alt="緑と橙の面に黒い表情を描いたflypeaのプロフィール画像"
+      width="768"
+      height="768"
+    />
+    <span
+      class="entry-mark micro-label absolute inset-x-3 bottom-3 border border-ink bg-micro px-3 py-2 text-center text-ink"
+      hidden
+      data-garden-entry-mark
+    >
+      Enter / Garden 000 →
+    </span>
+  </a>
+  <figcaption class="micro-label mt-3 flex justify-between gap-4">
+    <span data-portrait-source>Portrait / 001</span>
+    <span aria-live="polite" data-portrait-state>Lime + micro orange</span>
+  </figcaption>
+</figure>
+
+<script>
+  import { isGardenDiscoveryHash } from "../lib/garden-discovery.mjs";
+
+  const entry = document.querySelector<HTMLAnchorElement>("[data-garden-portrait-entry]");
+  const mark = document.querySelector<HTMLElement>("[data-garden-entry-mark]");
+  const source = document.querySelector<HTMLElement>("[data-portrait-source]");
+  const state = document.querySelector<HTMLElement>("[data-portrait-state]");
+  let hasGardenSession = false;
+  let gardenSessionChecked = false;
+
+  const revealGardenEntry = () => {
+    if (!entry || !mark || !source || !state) return;
+    if (!isGardenDiscoveryHash(window.location.hash) && !hasGardenSession) {
+      entry.removeAttribute("href");
+      entry.setAttribute("aria-disabled", "true");
+      entry.removeAttribute("aria-label");
+      delete entry.dataset.unlocked;
+      mark.hidden = true;
+      source.textContent = "Portrait / 001";
+      state.textContent = "Lime + micro orange";
+      return;
+    }
+    entry.href = entry.dataset.entryPath ?? "/garden-000/";
+    entry.removeAttribute("aria-disabled");
+    entry.setAttribute("aria-label", "GARDEN / 000へ入る");
+    entry.dataset.unlocked = "true";
+    mark.hidden = false;
+    source.textContent = "Source / Portrait 001";
+    state.textContent = "Garden / 000 unlocked";
+  };
+
+  const checkGardenSession = async () => {
+    if (gardenSessionChecked || isGardenDiscoveryHash(window.location.hash)) return;
+    gardenSessionChecked = true;
+    try {
+      const response = await fetch("/api/garden/session", {
+        method: "POST",
+        credentials: "same-origin",
+        cache: "no-store",
+        signal: AbortSignal.timeout(5000),
+      });
+      hasGardenSession = response.ok;
+      revealGardenEntry();
+    } catch {
+      // Discovery is optional UI. A network failure must not affect the public About page.
+    }
+  };
+
+  const refreshGardenEntry = () => {
+    revealGardenEntry();
+    void checkGardenSession();
+  };
+
+  refreshGardenEntry();
+  window.addEventListener("pageshow", (event) => {
+    if (event.persisted) gardenSessionChecked = false;
+    refreshGardenEntry();
+  });
+  window.addEventListener("hashchange", refreshGardenEntry);
+</script>
+
+<style>
+  .portrait-entry[data-unlocked="true"] img {
+    transition:
+      filter var(--motion-normal) var(--ease-signal),
+      transform var(--motion-normal) var(--ease-signal);
+  }
+
+  .portrait-entry[data-unlocked="true"]:hover img {
+    filter: saturate(1.15);
+    transform: scale(0.995);
+  }
+
+  .entry-mark {
+    box-shadow: 4px 4px 0 var(--color-ink);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .portrait-entry[data-unlocked="true"] img {
+      transition: none;
+    }
+  }
+</style>

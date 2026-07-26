@@ -1,5 +1,6 @@
 ---
 import Container from "../components/Container.astro";
+import GardenPortraitEntry from "../components/GardenPortraitEntry.astro";
 import PageMasthead from "../components/PageMasthead.astro";
 import TechnologyIndex from "../components/TechnologyIndex.astro";
 import { aboutContent } from "../data/about";
@@ -14,10 +15,7 @@ const entries = await getAllIndexEntries();
     <PageMasthead eyebrow={aboutContent.intro.label} title="ABOUT" description={aboutContent.intro.description} currentLabel="About" />
     <Container>
       <section class="grid border-b border-ink lg:grid-cols-[5fr_7fr]" aria-labelledby="profile-name">
-        <figure class="signal-top border-ink p-cell lg:border-r">
-          <img class="aspect-square w-full border border-ink object-cover" src="/images/profile.webp" alt="緑と橙の面に黒い表情を描いたflypeaのプロフィール画像" width="768" height="768" />
-          <figcaption class="micro-label mt-3 flex justify-between gap-4"><span>Portrait / 001</span><span>Lime + micro orange</span></figcaption>
-        </figure>
+        <GardenPortraitEntry />
         <div class="grid content-between gap-12 p-cell">
           <p class="micro-label text-signal">Profile / personal field</p>
           <div><h2 id="profile-name" class="display-title text-signal">FLYPEA.</h2><p class="mt-8 max-w-xl text-lg leading-9">好きなものを眺め、触り、必要なら自分で作る。このサイトは、その間にできた記録を散らさず置いておくための場所です。</p></div>

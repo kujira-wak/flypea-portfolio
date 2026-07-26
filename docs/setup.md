@@ -18,6 +18,14 @@ npm install
 
 ## 開発
 
+初めて作業する場合は、状態確認、コンテンツ管理、プレビュー、検証をまとめた運用CLIを使います。
+
+```sh
+npm run manage
+```
+
+直接起動する場合:
+
 ```sh
 astro dev --background
 ```

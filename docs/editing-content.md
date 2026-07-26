@@ -2,6 +2,16 @@
 
 このサイトはAstro Content CollectionsとMarkdownを使用します。Frontmatterは `src/content.config.ts` で型検証されます。
 
+初めて作業する場合は、サイト運用CLIの対話メニューを推奨します。
+
+```sh
+npm run manage
+npm run manage -- content
+```
+
+状態確認、プレビュー、公開前確認を含む全体の使い方は
+[サイト運用CLIガイド](cli-guide.md)を参照してください。
+
 ## コンテンツ管理CLI
 
 日常的な作成・編集・削除・taxonomy管理には統合CLIを使えます。引数なしではメニューを開き、CIなどの非対話環境ではサブコマンドを指定します。

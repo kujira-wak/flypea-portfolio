@@ -10,9 +10,43 @@ const activeCount = currentSignals.filter(({ value }) => Boolean(value)).length;
   <span class="absolute left-[28%] top-[35%] size-3 bg-signal md:size-5" aria-hidden="true"></span>
   <span class="absolute right-[31%] top-[22%] size-3 bg-signal md:size-5" aria-hidden="true"></span>
   <span class="absolute bottom-[26%] right-[39%] size-3 bg-signal md:size-5" aria-hidden="true"></span>
-  <span class="absolute right-[12%] top-[53%] size-2 bg-micro" aria-hidden="true"></span>
+  <button
+    class="group absolute right-[calc(12%_-_1.125rem)] top-[calc(53%_-_1.125rem)] grid size-11 cursor-pointer place-items-center border-0 bg-transparent p-0"
+    type="button"
+    aria-label="橙色の小さな信号"
+    aria-describedby="signal-field-status"
+    data-garden-signal
+  >
+    <span
+      class="size-2 bg-micro transition-transform group-hover:scale-150 group-focus-visible:scale-150"
+      aria-hidden="true"
+    ></span>
+  </button>
   <figcaption id="signal-field-caption" class="absolute inset-x-0 bottom-0 grid gap-2 border-t border-ink bg-signal p-cell text-ink md:grid-cols-[1fr_auto] md:items-end">
     <strong class="font-display text-3xl font-extrabold leading-[0.92] tracking-tight md:text-5xl">CURRENT<br />SIGNAL</strong>
-    <span class="micro-label max-w-56 md:text-right">Listening / Playing / Building<br />{String(activeCount).padStart(2, "0")} active entries</span>
+    <span id="signal-field-status" class="micro-label max-w-64 md:text-right" aria-live="polite" data-garden-signal-status>Listening / Playing / Building<br />{String(activeCount).padStart(2, "0")} active entries</span>
   </figcaption>
 </figure>
+
+<script>
+  import { GARDEN_DISCOVERY_URL, GARDEN_SIGNAL_THRESHOLD } from "../lib/garden-discovery.mjs";
+
+  const signal = document.querySelector<HTMLButtonElement>("[data-garden-signal]");
+  const status = document.querySelector<HTMLElement>("[data-garden-signal-status]");
+  let activations = 0;
+
+  if (signal && status) {
+    signal.addEventListener("click", () => {
+      activations += 1;
+      if (activations < GARDEN_SIGNAL_THRESHOLD) {
+        status.textContent = `Signal ${String(activations).padStart(2, "0")} / ${String(GARDEN_SIGNAL_THRESHOLD).padStart(2, "0")}`;
+        return;
+      }
+
+      signal.disabled = true;
+      signal.dataset.discovered = "true";
+      status.textContent = "Source / Portrait 001";
+      window.location.assign(GARDEN_DISCOVERY_URL);
+    });
+  }
+</script>
