@@ -1,5 +1,9 @@
 /// <reference types="@cloudflare/workers-types" />
 
+import { type GardenEnv, handleGardenRequest } from "./garden.ts";
+
+export { GardenCoordinator } from "./garden.ts";
+
 interface RateLimitResult {
   success: boolean;
 }
@@ -8,7 +12,7 @@ interface RateLimitBinding {
   limit(options: { key: string }): Promise<RateLimitResult>;
 }
 
-interface Env {
+interface Env extends GardenEnv {
   DB: D1Database;
   REACTION_RATE_LIMITER?: RateLimitBinding;
   REACTION_COOKIE_NAME?: string;
@@ -172,6 +176,10 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
     const apiRoot = "/api/reactions";
+
+    if (url.pathname === "/api/garden" || url.pathname.startsWith("/api/garden/")) {
+      return handleGardenRequest(request, env);
+    }
 
     try {
       if (request.method === "OPTIONS") return new Response(null, { status: 204 });

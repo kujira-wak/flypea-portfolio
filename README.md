@@ -12,24 +12,26 @@
 ## はじめに
 
 ```sh
-npm install
+npm ci
 npm run verify
-astro dev --background
+npm run manage
 ```
 
-ローカルURLは `http://127.0.0.1:4321` です。開発サーバーはバックグラウンドで起動し、状態確認・停止には次を使います。
+`npm run manage` は、状態確認、コンテンツ更新、プレビュー、検証、マニュアル案内をまとめた初心者向け運用CLIです。直接操作する場合は次を使います。
 
 ```sh
-astro dev status
-astro dev logs
-astro dev stop
+npm run manage -- status
+npm run manage -- content
+npm run manage -- preview start
+npm run manage -- release
 ```
 
-コンテンツを追加する場合は `npm run content:new`、一括管理する場合は `npm run content` を使います。詳細は[コンテンツ編集ガイド](docs/editing-content.md)を参照してください。
+通常のローカルURLは `http://127.0.0.1:4321` です。使用中の場合はCLIが実際のURLを表示します。詳細は[サイト運用CLIガイド](docs/cli-guide.md)を参照してください。
 
 ## Documentation
 
 - [保守・運用マニュアル](docs/operations-manual.md) — 初めて触る人向けの更新、公開、定期保守、障害対応、引き継ぎ
+- [サイト運用CLIガイド](docs/cli-guide.md) — 状態確認、コンテンツ管理、プレビュー、公開前確認
 - [基盤変更・サービス移行マニュアル](docs/platform-change-manual.md) — ホスティング、ドメイン、Cloudflare、D1、CI/CDの変更手順
 - [基盤変更計画テンプレート](docs/platform-change-plan-template.md) — 切替条件、Data移行、rollbackを事前に定義する雛形
 - [公開チェックリスト](docs/release-checklist.md) — 公開前後の確認票

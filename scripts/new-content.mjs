@@ -9,6 +9,7 @@ const root = fileURLToPath(new URL("../", import.meta.url));
 const taxonomy = JSON.parse(await readFile(`${root}src/data/taxonomy.json`, "utf8"));
 const { values } = parseArgs({
   options: {
+    help: { type: "boolean", short: "h" },
     type: { type: "string", short: "t" },
     slug: { type: "string", short: "s" },
     title: { type: "string" },
@@ -97,102 +98,140 @@ const yamlArray = (key, values) =>
   values.length ? `${key}:\n${values.map((value) => `  - ${value}`).join("\n")}` : `${key}: []`;
 const optionalLine = (key, value) => (value ? `${key}: ${yamlString(value)}\n` : "");
 
-try {
-  const type = await askChoice("種類", ids(taxonomy.contentTypes), values.type, "note");
-  const slug = await askRequired("slug（半角英数字とハイフン）", values.slug);
-  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
-    throw new Error("slugは半角小文字・数字・ハイフンだけで入力してください。");
-  }
-  const title = await askRequired("タイトル", values.title);
-  const description = await askRequired("短い説明", values.description);
-  const topics = await askMany("Topics", ids(taxonomy.topics), values.topics);
-  const technologies = await askMany(
-    "Technologies",
-    ids(taxonomy.technologies),
-    values.technologies,
-  );
-  const defaultStatus = type === "note" ? "completed" : "active";
-  const status = await askChoice("Status", ids(taxonomy.statuses), values.status, defaultStatus);
-  const common = [
-    `type: ${type}`,
-    `title: ${yamlString(title)}`,
-    `description: ${yamlString(description)}`,
-  ];
+const helpText = `新規コンテンツ作成
 
-  if (type === "project") {
-    const orderText = String(
-      values.order ?? (interactive ? await terminal.question("表示順（整数） (0): ") : ""),
-    ).trim();
-    const order = Number(orderText || 0);
-    if (!Number.isInteger(order)) throw new Error("表示順は整数で入力してください。");
-    const role = await askOptional("役割", values.role);
-    const period = await askOptional("期間", values.period);
-    const liveUrl = await askOptional("公開URL", values.liveUrl);
-    const repositoryUrl = await askOptional("Repository URL", values.repositoryUrl);
-    validateOptionalUrl("公開URL", liveUrl);
-    validateOptionalUrl("Repository URL", repositoryUrl);
-    common.push(
-      `startedAt: ${today}`,
-      `status: ${status}`,
-      `order: ${order}`,
-      "featured: false",
-      yamlArray("topics", topics),
-      yamlArray("technologies", technologies),
-      optionalLine("role", role).trimEnd(),
-      optionalLine("period", period).trimEnd(),
-      optionalLine("liveUrl", liveUrl).trimEnd(),
-      optionalLine("repositoryUrl", repositoryUrl).trimEnd(),
-      `draft: ${values.publish ? "false" : "true"}`,
-    );
-  } else if (type === "note") {
-    common.push(
-      `publishedAt: ${today}`,
-      `reactionId: ${slug}`,
-      `status: ${status}`,
-      "featured: false",
-      yamlArray("topics", topics),
-      yamlArray("technologies", technologies),
-      `draft: ${values.publish ? "false" : "true"}`,
-    );
-  } else {
-    const kind = await askChoice("Shelf kind", ids(taxonomy.shelfKinds), values.kind, "software");
-    const creator = await askOptional("作者・メーカー", values.creator);
-    const externalUrl = await askOptional("外部URL", values.externalUrl);
-    validateOptionalUrl("外部URL", externalUrl);
-    common.push(
-      `kind: ${kind}`,
-      `addedAt: ${today}`,
-      `status: ${status}`,
-      "featured: false",
-      yamlArray("topics", topics),
-      yamlArray("technologies", technologies),
-      optionalLine("creator", creator).trimEnd(),
-      optionalLine("externalUrl", externalUrl).trimEnd(),
-      `draft: ${values.publish ? "false" : "true"}`,
-    );
-  }
+対話式（推奨）:
+  npm run content:new
+  npm run manage -- content new
 
-  const collection = type === "project" ? "projects" : type === "note" ? "notes" : "shelf";
-  const outputDir = resolve(values.outputDir ?? `${root}src/content/${collection}`);
-  const outputPath = resolve(outputDir, `${slug}.md`);
-  if (dirname(outputPath) !== outputDir) throw new Error("出力先を解決できませんでした。");
-  try {
-    await access(outputPath, constants.F_OK);
-    throw new Error(`すでに存在します: ${outputPath}`);
-  } catch (error) {
-    if (!(error && typeof error === "object" && "code" in error && error.code === "ENOENT")) {
-      throw error;
-    }
-  }
+指定して作成:
+  npm run content:new -- --type note --slug example-note \\
+    --title "記事タイトル" --description "短い説明" \\
+    --topics ui,web --technologies astro,typescript
 
-  const frontmatter = common.filter(Boolean).join("\n");
-  await mkdir(outputDir, { recursive: true });
-  await writeFile(
-    outputPath,
-    `---\n${frontmatter}\n---\n\n<!-- ここから本文を書いてください。公開時はdraftをfalseにします。 -->\n`,
-    "utf8",
-  );
-  console.log(`Created draft: ${outputPath}`);
-} finally {
+種類:
+  project  制作物
+  note     記事・記録
+  shelf    好きなもの・使用中のもの
+
+安全:
+  通常は draft: true の下書きを作ります。
+  本文と表示を確認後、npm run content -- publish <種類> <slug> を使います。
+`;
+
+if (values.help) {
+  console.log(helpText);
   terminal.close();
-}
+} else
+  try {
+    const type = await askChoice("種類", ids(taxonomy.contentTypes), values.type, "note");
+    const slug = await askRequired("slug（半角英数字とハイフン）", values.slug);
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
+      throw new Error("slugは半角小文字・数字・ハイフンだけで入力してください。");
+    }
+    const title = await askRequired("タイトル", values.title);
+    const description = await askRequired("短い説明", values.description);
+    const topics = await askMany("Topics", ids(taxonomy.topics), values.topics);
+    const technologies = await askMany(
+      "Technologies",
+      ids(taxonomy.technologies),
+      values.technologies,
+    );
+    const defaultStatus = type === "note" ? "completed" : "active";
+    const status = await askChoice("Status", ids(taxonomy.statuses), values.status, defaultStatus);
+    const common = [
+      `type: ${type}`,
+      `title: ${yamlString(title)}`,
+      `description: ${yamlString(description)}`,
+    ];
+
+    if (type === "project") {
+      const orderText = String(
+        values.order ?? (interactive ? await terminal.question("表示順（整数） (0): ") : ""),
+      ).trim();
+      const order = Number(orderText || 0);
+      if (!Number.isInteger(order)) throw new Error("表示順は整数で入力してください。");
+      const role = await askOptional("役割", values.role);
+      const period = await askOptional("期間", values.period);
+      const liveUrl = await askOptional("公開URL", values.liveUrl);
+      const repositoryUrl = await askOptional("Repository URL", values.repositoryUrl);
+      validateOptionalUrl("公開URL", liveUrl);
+      validateOptionalUrl("Repository URL", repositoryUrl);
+      common.push(
+        `startedAt: ${today}`,
+        `status: ${status}`,
+        `order: ${order}`,
+        "featured: false",
+        yamlArray("topics", topics),
+        yamlArray("technologies", technologies),
+        optionalLine("role", role).trimEnd(),
+        optionalLine("period", period).trimEnd(),
+        optionalLine("liveUrl", liveUrl).trimEnd(),
+        optionalLine("repositoryUrl", repositoryUrl).trimEnd(),
+        `draft: ${values.publish ? "false" : "true"}`,
+      );
+    } else if (type === "note") {
+      common.push(
+        `publishedAt: ${today}`,
+        `reactionId: ${slug}`,
+        `status: ${status}`,
+        "featured: false",
+        yamlArray("topics", topics),
+        yamlArray("technologies", technologies),
+        `draft: ${values.publish ? "false" : "true"}`,
+      );
+    } else {
+      const kind = await askChoice("Shelf kind", ids(taxonomy.shelfKinds), values.kind, "software");
+      const creator = await askOptional("作者・メーカー", values.creator);
+      const externalUrl = await askOptional("外部URL", values.externalUrl);
+      validateOptionalUrl("外部URL", externalUrl);
+      common.push(
+        `kind: ${kind}`,
+        `addedAt: ${today}`,
+        `status: ${status}`,
+        "featured: false",
+        yamlArray("topics", topics),
+        yamlArray("technologies", technologies),
+        optionalLine("creator", creator).trimEnd(),
+        optionalLine("externalUrl", externalUrl).trimEnd(),
+        `draft: ${values.publish ? "false" : "true"}`,
+      );
+    }
+
+    const collection = type === "project" ? "projects" : type === "note" ? "notes" : "shelf";
+    const outputDir = resolve(values.outputDir ?? `${root}src/content/${collection}`);
+    const outputPath = resolve(outputDir, `${slug}.md`);
+    if (dirname(outputPath) !== outputDir) throw new Error("出力先を解決できませんでした。");
+    try {
+      await access(outputPath, constants.F_OK);
+      throw new Error(`すでに存在します: ${outputPath}`);
+    } catch (error) {
+      if (!(error && typeof error === "object" && "code" in error && error.code === "ENOENT")) {
+        throw error;
+      }
+    }
+
+    const frontmatter = common.filter(Boolean).join("\n");
+    await mkdir(outputDir, { recursive: true });
+    await writeFile(
+      outputPath,
+      `---\n${frontmatter}\n---\n\n<!-- ここから本文を書いてください。公開時はdraftをfalseにします。 -->\n`,
+      "utf8",
+    );
+    console.log(
+      `${values.publish ? "公開対象" : "下書き"}を作成しました: ${outputPath}
+
+次の手順:
+  1. 本文を書く
+  2. npm run content -- inspect ${type} ${slug}
+  3. npm run manage -- preview start
+  4. npm run content -- audit
+  5. ${
+    values.publish
+      ? "npm run manage -- release"
+      : `確認後、npm run content -- publish ${type} ${slug}`
+  }`,
+    );
+  } finally {
+    terminal.close();
+  }

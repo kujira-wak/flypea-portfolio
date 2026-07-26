@@ -3,10 +3,30 @@
   "name": "flypea-reactions",
   "main": "src/index.ts",
   "compatibility_date": "2026-07-19",
+  "workers_dev": false,
+  "preview_urls": false,
   "routes": [
     {
       "pattern": "flypea.tech/api/reactions/*",
       "zone_name": "flypea.tech"
+    },
+    {
+      "pattern": "flypea.tech/api/garden/*",
+      "zone_name": "flypea.tech"
+    }
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "GARDEN_COORDINATOR",
+        "class_name": "GardenCoordinator"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "garden-coordinator-v1",
+      "new_sqlite_classes": ["GardenCoordinator"]
     }
   ],
   "d1_databases": [
@@ -25,10 +45,19 @@
         "limit": 20,
         "period": 60
       }
+    },
+    {
+      "name": "GARDEN_RATE_LIMITER",
+      "namespace_id": "1002",
+      "simple": {
+        "limit": 20,
+        "period": 60
+      }
     }
   ],
   "vars": {
     "REACTION_COOKIE_NAME": "flypea_reaction",
+    "GARDEN_COOKIE_NAME": "flypea_garden",
     "SITE_ORIGIN": "https://flypea.tech"
   },
   "observability": {

@@ -1,0 +1,2485 @@
+---
+---
+
+<section class="garden" data-garden-root data-connection="loading" aria-labelledby="garden-title">
+  <header class="garden__masthead">
+    <div>
+      <p class="garden-kicker">SECRET CULTIVATION FIELD</p>
+      <h1 id="garden-title">GARDEN <span>/ 000</span></h1>
+    </div>
+    <div class="garden__connection" role="status" aria-live="polite">
+      <span class="garden__connection-dot" aria-hidden="true"></span>
+      <span data-connection-label>SERVERへ接続中</span>
+    </div>
+  </header>
+
+  <div class="garden__loading" data-loading-view>
+    <div class="garden__loader" aria-hidden="true"></div>
+    <p>庭の現在地を照合しています。</p>
+  </div>
+
+  <section class="garden-auth" data-auth-view hidden aria-labelledby="garden-auth-title">
+    <div class="garden-auth__portrait" aria-hidden="true">
+      <div class="garden-auth__crop">
+        <img src="/images/profile.webp" alt="" width="768" height="768" />
+      </div>
+      <p>PORTRAIT / GROWTH SUBJECT 000</p>
+    </div>
+    <div class="garden-auth__body">
+      <p class="garden-kicker">FIRST CONTACT</p>
+      <h2 id="garden-auth-title">この標本に、<br />呼び名をつける。</h2>
+      <p class="garden-auth__lead">
+        1 cmから始まり、終わりなく育ちます。記録はサーバーにだけ残り、このブラウザには庭を示すCookieだけが置かれます。
+      </p>
+
+      <div class="garden-auth__tabs" role="tablist" aria-label="庭への入り方">
+        <button type="button" role="tab" aria-selected="true" aria-controls="garden-register" id="garden-register-tab" data-auth-tab="register">
+          新しい庭
+        </button>
+        <button type="button" role="tab" aria-selected="false" aria-controls="garden-recover" id="garden-recover-tab" data-auth-tab="recover">
+          復旧コード
+        </button>
+      </div>
+
+      <form id="garden-register" class="garden-auth__form" data-register-form aria-labelledby="garden-register-tab">
+        <label for="garden-nickname">公開ニックネーム</label>
+        <div class="garden-field-row">
+          <input id="garden-nickname" name="nickname" required minlength="1" maxlength="24" autocomplete="nickname" placeholder="1〜24文字" />
+          <button class="garden-action garden-action--lime" type="submit">育成を始める</button>
+        </div>
+        <p>ランキングと標本カードに表示されます。あとから変更できます。</p>
+      </form>
+
+      <form id="garden-recover" class="garden-auth__form" data-recover-form aria-labelledby="garden-recover-tab" hidden>
+        <label for="garden-recovery-code">復旧コード</label>
+        <div class="garden-field-row">
+          <input id="garden-recovery-code" name="recoveryCode" required autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX" />
+          <button class="garden-action garden-action--lime" type="submit">庭を移す</button>
+        </div>
+        <p>復旧に成功すると、以前のブラウザからは入れなくなります。</p>
+      </form>
+      <p class="garden-form-status" data-auth-status aria-live="polite"></p>
+    </div>
+  </section>
+
+  <div class="garden__game" data-game-view hidden>
+    <section class="garden-stats" aria-label="庭の記録">
+      <div class="garden-stat garden-stat--primary">
+        <span>CERTIFIED LENGTH</span>
+        <strong data-growth-length>—</strong>
+        <small data-growth-ticks>— ticks</small>
+      </div>
+      <div class="garden-stat">
+        <span>CARE BALANCE</span>
+        <strong data-care-balance>—</strong>
+        <small>設備だけに使う残高</small>
+      </div>
+      <div class="garden-stat">
+        <span>PASSIVE / SEC</span>
+        <strong data-passive-rate>—</strong>
+        <small>留守中は最大24時間</small>
+      </div>
+      <div class="garden-stat">
+        <span>CURRENT RANK</span>
+        <strong data-current-rank>—</strong>
+        <small data-player-title>—</small>
+      </div>
+    </section>
+
+    <div class="garden__workspace">
+      <section class="garden-stage-panel" aria-labelledby="specimen-title">
+        <header class="garden-panel-head">
+          <div>
+            <p class="garden-kicker">LIVE SPECIMEN</p>
+            <h2 id="specimen-title" data-nickname>—</h2>
+          </div>
+          <p><span>REV.</span> <strong data-revision>000000</strong></p>
+        </header>
+
+        <div class="garden-stage" data-stage data-scene="plot">
+          <div class="garden-stage__grid" aria-hidden="true"></div>
+          <div class="garden-stage__measure" aria-hidden="true">
+            <span>20</span><i></i><i></i><i></i><i></i><span>00</span>
+          </div>
+          <div class="garden-stage__scenery" aria-hidden="true">
+            <i></i><i></i><i></i><i></i><i></i>
+          </div>
+          <button class="garden-specimen" type="button" data-care-button aria-describedby="care-instruction">
+            <span class="garden-specimen__pulse" aria-hidden="true"></span>
+            <span class="garden-specimen__crop">
+              <img src="/images/profile.webp" alt="" width="768" height="768" draggable="false" />
+            </span>
+            <span class="garden-specimen__label">CARE</span>
+          </button>
+          <div class="garden-stage__readout">
+            <span>NOW / <b data-stage-scene>PLOT / 01</b></span>
+            <strong data-stage-length>—</strong>
+          </div>
+        </div>
+
+        <div class="garden-care">
+          <div>
+            <p id="care-instruction">標本をクリック、タップ、Enter / Space、または長押し。</p>
+            <p data-care-gain>1操作 = +1 mm GROWTH / CARE</p>
+          </div>
+          <div class="garden-care__meter" aria-label="送信待ちのCARE操作">
+            <span data-care-pip="5"></span>
+            <span data-care-pip="10"></span>
+            <span data-care-pip="15"></span>
+            <span data-care-pip="20"></span>
+            <span data-care-pip="25"></span>
+            <small>MAX 25 / SEC</small>
+          </div>
+        </div>
+        <p class="garden-stage-status" data-game-status aria-live="polite">
+          サーバーの認定値を表示しています。
+        </p>
+      </section>
+
+      <aside class="garden-console" aria-label="育成設備と記録">
+        <section class="garden-console__section" aria-labelledby="equipment-title">
+          <div class="garden-console__title">
+            <div><p class="garden-kicker">EQUIPMENT</p><h2 id="equipment-title">設備</h2></div>
+            <span>FIXED ADDITION</span>
+          </div>
+          <article class="garden-upgrade">
+            <div class="garden-upgrade__number">01</div>
+            <div>
+              <h3>GARDEN GLOVES <span data-gloves-level>LV. 0</span></h3>
+              <p>1操作ごとの成長を +1 mm</p>
+            </div>
+            <button type="button" data-buy="gloves">
+              <span>強化</span><strong data-gloves-cost>— CARE</strong>
+            </button>
+          </article>
+          <article class="garden-upgrade">
+            <div class="garden-upgrade__number">02</div>
+            <div>
+              <h3>RAIN BARREL <span data-rain-level>LV. 0</span></h3>
+              <p>自動成長を +1 mm / 秒</p>
+            </div>
+            <button type="button" data-buy="rainBarrel">
+              <span>強化</span><strong data-rain-cost>— CARE</strong>
+            </button>
+          </article>
+        </section>
+
+        <section class="garden-console__section garden-archive-lock" aria-labelledby="archive-title" data-archive-lock>
+          <div class="garden-console__title">
+            <div><p class="garden-kicker">ARCHIVE PLATE</p><h2 id="archive-title">標本カード</h2></div>
+            <span data-card-lock-label>LOCKED</span>
+          </div>
+          <p data-card-description>
+            全長6 mで解放。解放後は、最新の認定記録からいつでも何度でも作れます。
+          </p>
+          <div class="garden-progress" aria-hidden="true"><span data-card-progress></span></div>
+          <div class="garden-archive-lock__footer">
+            <small><span data-card-current>0 mm</span> / 6 m</small>
+            <button class="garden-action" type="button" data-open-card disabled>カードを作る</button>
+          </div>
+        </section>
+
+        <section class="garden-console__section" aria-labelledby="ranking-title">
+          <div class="garden-console__title">
+            <div><p class="garden-kicker">CERTIFIED ORDER</p><h2 id="ranking-title">ランキング</h2></div>
+            <button class="garden-text-button" type="button" data-refresh-leaderboard>更新</button>
+          </div>
+          <ol class="garden-ranking" data-leaderboard>
+            <li class="garden-ranking__empty">読み込み中です。</li>
+          </ol>
+          <p class="garden-ranking__self" data-leaderboard-self></p>
+        </section>
+
+        <details class="garden-console__section garden-settings">
+          <summary>SESSION / SETTINGS <span>+</span></summary>
+          <form data-rename-form>
+            <label for="garden-rename">公開ニックネームを変更</label>
+            <div class="garden-field-row">
+              <input id="garden-rename" name="nickname" required minlength="1" maxlength="24" />
+              <button type="submit">変更</button>
+            </div>
+          </form>
+          <div class="garden-settings__actions">
+            <button type="button" data-rotate-code>復旧コードを再発行</button>
+            <button type="button" data-delete-garden>庭を削除</button>
+          </div>
+          <p data-settings-status aria-live="polite"></p>
+        </details>
+      </aside>
+    </div>
+  </div>
+
+  <div class="garden-outage" data-outage hidden role="alert">
+    <div>
+      <strong>SERVER PAUSED</strong>
+      <span>通信できないため、ケアと購入を停止しています。未送信操作は保存されません。</span>
+    </div>
+    <button type="button" data-reconnect>再接続</button>
+  </div>
+
+  <dialog class="garden-dialog recovery-dialog" data-recovery-dialog aria-labelledby="recovery-dialog-title">
+    <div class="garden-dialog__head">
+      <div><p class="garden-kicker">ONE-TIME DISPLAY</p><h2 id="recovery-dialog-title">復旧コード</h2></div>
+      <button type="button" data-close-recovery aria-label="閉じる">×</button>
+    </div>
+    <div class="recovery-dialog__body">
+      <p>
+        このコードは今だけ表示されます。Cookieを失ったとき、別の端末へ庭を移すために必要です。
+      </p>
+      <output data-recovery-code>—</output>
+      <button class="garden-action garden-action--lime" type="button" data-copy-code>コードをコピー</button>
+      <p data-copy-status aria-live="polite"></p>
+    </div>
+  </dialog>
+
+  <dialog class="garden-dialog archive-dialog" data-card-dialog aria-labelledby="card-dialog-title">
+    <div class="garden-dialog__head archive-dialog__head">
+      <div>
+        <p class="garden-kicker">1200 × 1500 / SRGB PNG</p>
+        <h2 id="card-dialog-title">ARCHIVE PLATE</h2>
+      </div>
+      <button type="button" data-close-card aria-label="標本カード作成画面を閉じる">×</button>
+    </div>
+
+    <div class="archive-dialog__body">
+      <section class="archive-preview" aria-label="標本カードのプレビュー">
+        <canvas width="1200" height="1500" data-card-canvas aria-describedby="card-description card-mirror-title"></canvas>
+        <p id="card-description">
+          このPNGは編集可能な記念画像です。正式な順位はサーバー上のランキングで確認してください。
+        </p>
+      </section>
+
+      <aside class="archive-controls" aria-label="カードの装飾と記録">
+        <div class="archive-controls__status" data-card-loading role="status" aria-live="polite">
+          最新の認定記録を取得しています。
+        </div>
+
+        <fieldset>
+          <legend>COLOR</legend>
+          <label><input type="radio" name="card-theme" value="canvas" checked /> CANVAS / 生成り</label>
+          <label><input type="radio" name="card-theme" value="ink" /> INK / 黒</label>
+        </fieldset>
+        <fieldset>
+          <legend>LAYOUT</legend>
+          <label><input type="radio" name="card-layout" value="index" checked /> INDEX / 標本を上に</label>
+          <label><input type="radio" name="card-layout" value="split" /> SPLIT / 左右分割</label>
+        </fieldset>
+        <label class="archive-scene" for="card-scene">
+          <span>SCENE / 到達済みの景色</span>
+          <select id="card-scene" data-card-scene>
+            <option value="plot">PLOT / 01</option>
+            <option value="table">TABLE / 10 CM</option>
+            <option value="room">ROOM / 1 M</option>
+            <option value="street">STREET / 6 M</option>
+            <option value="skyline">SKYLINE / 10 M</option>
+            <option value="clouds">CLOUDS / 100 M</option>
+            <option value="horizon">HORIZON / 1 KM</option>
+            <option value="orbit">ORBIT / 10 KM</option>
+          </select>
+        </label>
+
+        <section class="archive-mirror" aria-labelledby="card-mirror-title">
+          <h3 id="card-mirror-title">カード記録内容</h3>
+          <dl>
+            <div><dt>ニックネーム</dt><dd data-card-mirror="nickname">—</dd></div>
+            <div><dt>称号</dt><dd data-card-mirror="title">—</dd></div>
+            <div><dt>認定全長</dt><dd data-card-mirror="length">—</dd></div>
+            <div><dt>現在順位</dt><dd data-card-mirror="rank">—</dd></div>
+            <div><dt>育成日数</dt><dd data-card-mirror="age">—</dd></div>
+            <div><dt>毎秒成長</dt><dd data-card-mirror="rate">—</dd></div>
+            <div><dt>Garden Gloves</dt><dd data-card-mirror="gloves">—</dd></div>
+            <div><dt>Rain Barrel</dt><dd data-card-mirror="rain">—</dd></div>
+            <div><dt>景色</dt><dd data-card-mirror="scene">—</dd></div>
+            <div><dt>配色</dt><dd data-card-mirror="theme">—</dd></div>
+            <div><dt>レイアウト</dt><dd data-card-mirror="layout">—</dd></div>
+            <div><dt>Nearest Scale</dt><dd data-card-mirror="scale">—</dd></div>
+            <div><dt>Odd Index</dt><dd data-card-mirror="odd">—</dd></div>
+            <div><dt>Revision</dt><dd data-card-mirror="revision">—</dd></div>
+            <div><dt>生成日時（UTC）</dt><dd data-card-mirror="generated">—</dd></div>
+          </dl>
+        </section>
+
+        <div class="archive-actions">
+          <button class="garden-action garden-action--lime" type="button" data-download-card>PNGを保存</button>
+          <button class="garden-action" type="button" data-copy-card hidden>画像をコピー</button>
+          <button class="garden-action" type="button" data-share-card hidden>共有画像を準備</button>
+        </div>
+        <p class="archive-actions__status" data-card-status aria-live="polite"></p>
+      </aside>
+    </div>
+  </dialog>
+</section>
+
+<script>
+  import {
+    formatOddComparison,
+    formatScaleComparison,
+    renderArchivePlate,
+    SCENE_LABELS,
+  } from "../lib/garden-card";
+  import { GardenApiError, gardenApi } from "../lib/garden-api";
+  import { formatLength, formatTicks } from "../lib/garden-format";
+  import type {
+    CardSnapshot,
+    GardenCardLayout,
+    GardenPurchase,
+    GardenScene,
+    GardenState,
+    GardenTheme,
+    LeaderboardData,
+  } from "../lib/garden-types";
+  import { CARD_UNLOCK_TICKS } from "../lib/garden-types";
+
+  const root = document.querySelector<HTMLElement>("[data-garden-root]");
+  if (!root) throw new Error("Garden root was not found");
+
+  const find = <ElementType extends Element>(selector: string) => {
+    const element = root.querySelector<ElementType>(selector);
+    if (!element) throw new Error(`Garden element was not found: ${selector}`);
+    return element;
+  };
+
+  const loadingView = find<HTMLElement>("[data-loading-view]");
+  const authView = find<HTMLElement>("[data-auth-view]");
+  const gameView = find<HTMLElement>("[data-game-view]");
+  const connectionLabel = find<HTMLElement>("[data-connection-label]");
+  const authStatus = find<HTMLElement>("[data-auth-status]");
+  const gameStatus = find<HTMLElement>("[data-game-status]");
+  const settingsStatus = find<HTMLElement>("[data-settings-status]");
+  const outage = find<HTMLElement>("[data-outage]");
+  const careButton = find<HTMLButtonElement>("[data-care-button]");
+  const cardButton = find<HTMLButtonElement>("[data-open-card]");
+  const registerForm = find<HTMLFormElement>("[data-register-form]");
+  const recoverForm = find<HTMLFormElement>("[data-recover-form]");
+  const renameForm = find<HTMLFormElement>("[data-rename-form]");
+  const recoveryDialog = find<HTMLDialogElement>("[data-recovery-dialog]");
+  const cardDialog = find<HTMLDialogElement>("[data-card-dialog]");
+  const canvas = find<HTMLCanvasElement>("[data-card-canvas]");
+  const cardScene = find<HTMLSelectElement>("[data-card-scene]");
+  const cardLoading = find<HTMLElement>("[data-card-loading]");
+  const cardStatus = find<HTMLElement>("[data-card-status]");
+  const downloadButton = find<HTMLButtonElement>("[data-download-card]");
+  const copyButton = find<HTMLButtonElement>("[data-copy-card]");
+  const shareButton = find<HTMLButtonElement>("[data-share-card]");
+
+  let state: GardenState | null = null;
+  let cardSnapshot: CardSnapshot | null = null;
+  let pendingCare = 0;
+  let careTimer = 0;
+  let actionInFlight = false;
+  let reconnecting = false;
+  let connectionReady = false;
+  let sessionSyncInFlight = false;
+  let longPressTimer = 0;
+  let longPressInterval = 0;
+  let sessionPoll = 0;
+  let leaderboardPoll = 0;
+  let knownRank: number | null = null;
+  let cardRenderVersion = 0;
+  let copySupported = false;
+  let shareSupported = false;
+  let sharePreparing = false;
+  let sharePreparationVersion = 0;
+  let preparedShareFile: { file: File; preparedAt: number } | null = null;
+  let preparedShareExpiryTimer = 0;
+  let leaderboardRefreshTimer = 0;
+  const MAX_CARE_PER_SECOND = 25;
+  const CARE_BATCH_MS = 100;
+  const SHARE_FILE_TTL_MS = 30_000;
+
+  const profileImage = new Image();
+  profileImage.src = "/images/profile.webp";
+  const profileReady = new Promise<void>((resolve) => {
+    if (profileImage.complete) resolve();
+    else {
+      profileImage.addEventListener("load", () => resolve(), { once: true });
+      profileImage.addEventListener("error", () => resolve(), { once: true });
+    }
+  });
+
+  const setView = (view: "loading" | "auth" | "game") => {
+    loadingView.hidden = view !== "loading";
+    authView.hidden = view !== "auth";
+    gameView.hidden = view !== "game";
+  };
+
+  const setConnection = (mode: "loading" | "online" | "offline") => {
+    root.dataset.connection = mode;
+    connectionLabel.textContent =
+      mode === "online" ? "SERVER CERTIFIED" : mode === "offline" ? "SERVER PAUSED" : "SERVERへ接続中";
+    connectionReady = mode === "online";
+    outage.hidden = mode !== "offline";
+    if (mode === "offline") {
+      window.clearTimeout(careTimer);
+      window.clearTimeout(leaderboardRefreshTimer);
+      careTimer = 0;
+      leaderboardRefreshTimer = 0;
+      pendingCare = 0;
+      updateCarePips();
+    }
+    renderActionAvailability();
+  };
+
+  const errorMessage = (error: unknown) => {
+    if (!(error instanceof GardenApiError)) return "サーバーへ接続できませんでした。";
+    const messages: Record<string, string> = {
+      invalid_nickname: "ニックネームを確認してください。",
+      nickname_taken: "そのニックネームは現在使えません。",
+      invalid_recovery_code: "復旧コードが一致しません。",
+      recovery_code_used: "この復旧コードはすでに使用されています。",
+      rate_limited: "操作が続いています。少し待ってからお試しください。",
+      insufficient_care: "CAREが足りません。",
+      card_locked: "標本カードは全長6 mで解放されます。",
+      unauthorized: "この庭のセッションを確認できません。",
+      invalid_origin: "このページからは操作できません。",
+    };
+    return messages[error.code] ?? "操作を完了できませんでした。少し待ってからお試しください。";
+  };
+
+  const isConnectionFailure = (error: unknown) =>
+    !(error instanceof GardenApiError) || error.status >= 500;
+
+  const showAuth = (message = "") => {
+    state = null;
+    knownRank = null;
+    setView("auth");
+    setConnection("online");
+    authStatus.textContent = message;
+    const nickname = registerForm.elements.namedItem("nickname");
+    if (nickname instanceof HTMLInputElement) nickname.focus();
+  };
+
+  const setText = (selector: string, value: string) => {
+    find<HTMLElement>(selector).textContent = value;
+  };
+
+  const passiveTicks = (current: GardenState) => current.passiveTicksPerSecond;
+  const careGainTicks = (current: GardenState) => current.careTicksPerAction;
+
+  const renderActionAvailability = () => {
+    const blocked = !state || !connectionReady || sessionSyncInFlight;
+    careButton.disabled = blocked || pendingCare >= MAX_CARE_PER_SECOND;
+    for (const button of root.querySelectorAll<HTMLButtonElement>("[data-buy]")) {
+      const item = button.dataset.buy as GardenPurchase;
+      const cost =
+        item === "gloves" ? state?.nextGlovesCost ?? Number.POSITIVE_INFINITY : state?.nextRainBarrelCost ?? Number.POSITIVE_INFINITY;
+      button.disabled =
+        blocked || actionInFlight || !state || state.careTicks < cost || pendingCare > 0;
+    }
+    cardButton.disabled = !state?.cardUnlocked || !connectionReady;
+  };
+
+  const renderState = (nextState: GardenState, announcement?: string) => {
+    if (state && nextState.revision < state.revision) {
+      if (!connectionReady) setConnection("online");
+      return;
+    }
+    const wasUnlocked = state?.cardUnlocked ?? false;
+    state = nextState;
+    setView("game");
+    setConnection("online");
+
+    setText("[data-growth-length]", formatLength(nextState.growthTicks));
+    setText("[data-growth-ticks]", `${formatTicks(nextState.growthTicks)} ticks`);
+    setText("[data-care-balance]", `${formatTicks(nextState.careTicks)} t`);
+    setText("[data-passive-rate]", `${formatLength(passiveTicks(nextState))} / s`);
+    if (nextState.rank) knownRank = nextState.rank;
+    setText("[data-current-rank]", knownRank ? `#${knownRank}` : "—");
+    setText("[data-player-title]", nextState.title);
+    setText("[data-nickname]", nextState.nickname);
+    setText("[data-revision]", String(nextState.revision).padStart(6, "0"));
+    setText("[data-stage-length]", formatLength(nextState.growthTicks));
+    setText("[data-care-gain]", `1操作 = +${formatLength(careGainTicks(nextState))} GROWTH / CARE`);
+    setText("[data-gloves-level]", `LV. ${nextState.glovesLevel}`);
+    setText("[data-rain-level]", `LV. ${nextState.rainBarrelLevel}`);
+    setText(
+      "[data-gloves-cost]",
+      nextState.nextGlovesCost === null
+        ? "強化上限"
+        : `${formatTicks(nextState.nextGlovesCost)} CARE`,
+    );
+    setText(
+      "[data-rain-cost]",
+      nextState.nextRainBarrelCost === null
+        ? "強化上限"
+        : `${formatTicks(nextState.nextRainBarrelCost)} CARE`,
+    );
+
+    const newestScene = nextState.unlockedScenes.at(-1) ?? "plot";
+    const stage = find<HTMLElement>("[data-stage]");
+    stage.dataset.scene = newestScene;
+    stage.style.setProperty(
+      "--specimen-scale",
+      String(Math.min(1.38, 0.78 + Math.log10(Math.max(10, nextState.growthTicks / 8)) * 0.11)),
+    );
+    setText("[data-stage-scene]", SCENE_LABELS[newestScene]);
+
+    const progress = Math.min(100, (nextState.growthTicks / CARD_UNLOCK_TICKS) * 100);
+    find<HTMLElement>("[data-card-progress]").style.width = `${progress}%`;
+    setText("[data-card-current]", formatLength(nextState.growthTicks));
+    setText("[data-card-lock-label]", nextState.cardUnlocked ? "UNLOCKED" : "LOCKED");
+    setText(
+      "[data-card-description]",
+      nextState.cardUnlocked
+        ? "最新のサーバー認定記録から、好きな景色と配色で何度でも作れます。"
+        : "全長6 mで解放。解放後は、最新の認定記録からいつでも何度でも作れます。",
+    );
+    find<HTMLElement>("[data-archive-lock]").classList.toggle(
+      "is-unlocked",
+      nextState.cardUnlocked,
+    );
+    cardButton.textContent = nextState.cardUnlocked ? "カードを作る" : "6 mで解放";
+
+    const nickname = renameForm.elements.namedItem("nickname");
+    if (nickname instanceof HTMLInputElement && document.activeElement !== nickname) {
+      nickname.value = nextState.nickname;
+    }
+    if (announcement) gameStatus.textContent = announcement;
+    else if (!wasUnlocked && nextState.cardUnlocked) {
+      gameStatus.textContent = "全長6 mに到達。ARCHIVE PLATEが解放されました。";
+    }
+    renderActionAvailability();
+  };
+
+  const updateCarePips = () => {
+    for (const pip of root.querySelectorAll<HTMLElement>("[data-care-pip]")) {
+      pip.classList.toggle("is-active", Number(pip.dataset.carePip) <= pendingCare);
+    }
+    renderActionAvailability();
+  };
+
+  const makeCommandId = () =>
+    typeof crypto.randomUUID === "function"
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
+  const handleOperationError = (error: unknown, target = gameStatus) => {
+    target.textContent = errorMessage(error);
+    if (isConnectionFailure(error)) setConnection("offline");
+    else renderActionAvailability();
+  };
+
+  const scheduleLeaderboardRefresh = () => {
+    if (leaderboardRefreshTimer || !connectionReady) return;
+    leaderboardRefreshTimer = window.setTimeout(() => {
+      leaderboardRefreshTimer = 0;
+      void loadLeaderboard();
+    }, 1_500);
+  };
+
+  const flushCare = async () => {
+    window.clearTimeout(careTimer);
+    careTimer = 0;
+    if (!state || !connectionReady || pendingCare === 0) return;
+    if (actionInFlight) {
+      careTimer = window.setTimeout(() => void flushCare(), CARE_BATCH_MS);
+      return;
+    }
+    const count = Math.min(MAX_CARE_PER_SECOND, pendingCare);
+    pendingCare = 0;
+    updateCarePips();
+    actionInFlight = true;
+    renderActionAvailability();
+    gameStatus.textContent = `${count}回のCAREを認定しています。`;
+    try {
+      const response = await gardenApi.actions(makeCommandId(), [{ type: "care", count }]);
+      const accepted = response.result.acceptedCare;
+      const announcement =
+        accepted === count
+          ? `${accepted}回のCAREが認定されました。`
+          : accepted > 0
+            ? `${accepted}回のCAREが認定され、${count - accepted}回は操作上限のため受理されませんでした。`
+            : "このCAREは操作上限のため受理されませんでした。";
+      renderState(response.state, announcement);
+      scheduleLeaderboardRefresh();
+    } catch (error) {
+      handleOperationError(error);
+    } finally {
+      actionInFlight = false;
+      if (pendingCare > 0 && !careTimer) {
+        careTimer = window.setTimeout(() => void flushCare(), CARE_BATCH_MS);
+      }
+      renderActionAvailability();
+    }
+  };
+
+  const queueCare = () => {
+    if (!state || !connectionReady || pendingCare >= MAX_CARE_PER_SECOND) return;
+    pendingCare += 1;
+    updateCarePips();
+    gameStatus.textContent = `CARE ${pendingCare} / ${MAX_CARE_PER_SECOND} を送信待ち。`;
+    careButton.classList.remove("is-pulsing");
+    requestAnimationFrame(() => careButton.classList.add("is-pulsing"));
+    if (!careTimer) careTimer = window.setTimeout(() => void flushCare(), CARE_BATCH_MS);
+  };
+
+  const buyUpgrade = async (upgrade: GardenPurchase) => {
+    if (!state || !connectionReady || actionInFlight) return;
+    if (pendingCare > 0) await flushCare();
+    if (actionInFlight || !connectionReady) return;
+    actionInFlight = true;
+    renderActionAvailability();
+    gameStatus.textContent = "設備をサーバーで確認しています。";
+    try {
+      const response = await gardenApi.actions(makeCommandId(), [{ type: "buy", upgrade }]);
+      renderState(
+        response.state,
+        upgrade === "gloves"
+          ? "GARDEN GLOVESを強化しました。"
+          : "RAIN BARRELを強化しました。",
+      );
+    } catch (error) {
+      handleOperationError(error);
+    } finally {
+      actionInFlight = false;
+      renderActionAvailability();
+    }
+  };
+
+  const renderLeaderboard = (leaderboard: LeaderboardData) => {
+    knownRank = leaderboard.me?.rank ?? null;
+    setText("[data-current-rank]", knownRank ? `#${knownRank}` : "—");
+    const list = find<HTMLOListElement>("[data-leaderboard]");
+    list.replaceChildren();
+    if (leaderboard.entries.length === 0) {
+      const item = document.createElement("li");
+      item.className = "garden-ranking__empty";
+      item.textContent = "まだ認定記録がありません。";
+      list.append(item);
+    }
+    for (const entry of leaderboard.entries) {
+      const item = document.createElement("li");
+      if (entry.isMe) item.classList.add("is-me");
+      const rank = document.createElement("span");
+      rank.textContent = String(entry.rank).padStart(2, "0");
+      const identity = document.createElement("span");
+      const nickname = document.createElement("strong");
+      nickname.textContent = entry.nickname;
+      const title = document.createElement("small");
+      title.textContent = entry.title;
+      identity.append(nickname, title);
+      const length = document.createElement("b");
+      length.textContent = formatLength(entry.growthTicks, true);
+      item.append(rank, identity, length);
+      list.append(item);
+    }
+    const self = find<HTMLElement>("[data-leaderboard-self]");
+    if (leaderboard.me && !leaderboard.entries.some((entry) => entry.isMe)) {
+      self.textContent = `あなたの順位: #${leaderboard.me.rank} / ${formatLength(leaderboard.me.growthTicks)}`;
+    } else {
+      self.textContent = "";
+    }
+  };
+
+  const loadLeaderboard = async () => {
+    if (!state || !connectionReady) return;
+    try {
+      renderLeaderboard(await gardenApi.leaderboard());
+    } catch {
+      const list = find<HTMLOListElement>("[data-leaderboard]");
+      if (list.children.length === 0) {
+        list.innerHTML = '<li class="garden-ranking__empty">ランキングを取得できませんでした。</li>';
+      }
+    }
+  };
+
+  const reconnect = async () => {
+    if (reconnecting) return;
+    reconnecting = true;
+    window.clearTimeout(careTimer);
+    careTimer = 0;
+    pendingCare = 0;
+    updateCarePips();
+    setConnection("loading");
+    try {
+      const nextState = await gardenApi.session();
+      renderState(nextState, "サーバーへ再接続し、留守中の成長を精算しました。");
+      void loadLeaderboard();
+    } catch (error) {
+      if (error instanceof GardenApiError && (error.status === 401 || error.status === 404)) {
+        showAuth();
+      } else {
+        setConnection("offline");
+        gameStatus.textContent = errorMessage(error);
+      }
+    } finally {
+      reconnecting = false;
+    }
+  };
+
+  const showRecoveryCode = (code: string) => {
+    find<HTMLOutputElement>("[data-recovery-code]").value = code;
+    find<HTMLElement>("[data-copy-status]").textContent = "";
+    recoveryDialog.showModal();
+  };
+
+  const selectedCardOptions = () => ({
+    theme: (
+      root.querySelector<HTMLInputElement>('input[name="card-theme"]:checked')?.value ?? "canvas"
+    ) as GardenTheme,
+    layout: (
+      root.querySelector<HTMLInputElement>('input[name="card-layout"]:checked')?.value ?? "index"
+    ) as GardenCardLayout,
+    scene: cardScene.value as GardenScene,
+  });
+
+  const renderCardMirror = (snapshot: CardSnapshot) => {
+    const values: Record<string, string> = {
+      nickname: snapshot.nickname,
+      title: snapshot.title,
+      length: formatLength(snapshot.growthTicks),
+      rank: snapshot.rank ? `#${snapshot.rank}` : "—",
+      age: `${snapshot.gardenAgeDays}日`,
+      rate: `${formatLength(snapshot.autoTicksPerSecond)} / 秒`,
+      gloves: `LV. ${snapshot.glovesLevel}`,
+      rain: `LV. ${snapshot.rainBarrelLevel}`,
+      scene: SCENE_LABELS[selectedCardOptions().scene],
+      theme: selectedCardOptions().theme === "canvas" ? "CANVAS / 生成り" : "INK / 黒",
+      layout:
+        selectedCardOptions().layout === "index"
+          ? "INDEX / 標本を上に"
+          : "SPLIT / 左右分割",
+      scale: formatScaleComparison(snapshot),
+      odd: formatOddComparison(snapshot),
+      revision: String(snapshot.revision),
+      generated: new Date(snapshot.generatedAt).toISOString(),
+    };
+    for (const element of root.querySelectorAll<HTMLElement>("[data-card-mirror]")) {
+      element.textContent = values[element.dataset.cardMirror ?? ""] ?? "—";
+    }
+  };
+
+  const drawCard = async () => {
+    if (!cardSnapshot) return;
+    const renderVersion = ++cardRenderVersion;
+    await Promise.all([profileReady, document.fonts.ready]);
+    const workingCanvas = document.createElement("canvas");
+    await renderArchivePlate(
+      workingCanvas,
+      cardSnapshot,
+      selectedCardOptions(),
+      profileImage,
+    );
+    if (renderVersion !== cardRenderVersion) return;
+    canvas.width = workingCanvas.width;
+    canvas.height = workingCanvas.height;
+    const context = canvas.getContext("2d", { alpha: false, colorSpace: "srgb" });
+    if (!context) throw new Error("Canvas 2D is not available");
+    context.drawImage(workingCanvas, 0, 0);
+    renderCardMirror(cardSnapshot);
+  };
+
+  const applyCardSnapshot = async (snapshot: CardSnapshot) => {
+    cardSnapshot = snapshot;
+    const unlocked = new Set(snapshot.unlockedScenes);
+    for (const option of Array.from(cardScene.options)) {
+      option.disabled = !unlocked.has(option.value as GardenScene);
+      option.hidden = option.disabled;
+    }
+    if (!unlocked.has(cardScene.value as GardenScene)) {
+      cardScene.value = snapshot.unlockedScenes.at(-1) ?? "plot";
+    }
+    await drawCard();
+  };
+
+  const discardPreparedShareFile = (statusMessage?: string) => {
+    sharePreparationVersion += 1;
+    sharePreparing = false;
+    preparedShareFile = null;
+    window.clearTimeout(preparedShareExpiryTimer);
+    preparedShareExpiryTimer = 0;
+    shareButton.textContent = "共有画像を準備";
+    shareButton.disabled = !shareSupported || !cardSnapshot;
+    if (statusMessage !== undefined) cardStatus.textContent = statusMessage;
+  };
+
+  const refreshCardSnapshot = async () => {
+    cardLoading.hidden = false;
+    downloadButton.disabled = true;
+    copyButton.disabled = true;
+    shareButton.disabled = true;
+    cardStatus.textContent = "";
+    try {
+      await applyCardSnapshot(await gardenApi.cardSnapshot());
+      cardLoading.hidden = true;
+      downloadButton.disabled = false;
+      copyButton.disabled = !copySupported;
+      shareButton.disabled = !shareSupported || sharePreparing;
+    } catch (error) {
+      cardLoading.textContent = errorMessage(error);
+      if (isConnectionFailure(error)) setConnection("offline");
+      throw error;
+    }
+  };
+
+  const canvasBlob = () =>
+    new Promise<Blob>((resolve, reject) => {
+      canvas.toBlob((blob) => {
+        if (blob) resolve(blob);
+        else reject(new Error("PNG encoding failed"));
+      }, "image/png");
+    });
+
+  const buildFreshCardFile = async () => {
+    await refreshCardSnapshot();
+    const blob = await canvasBlob();
+    const date = cardSnapshot?.generatedAt.slice(0, 10) ?? new Date().toISOString().slice(0, 10);
+    return new File([blob], `garden-000-archive-plate-${date}.png`, { type: "image/png" });
+  };
+
+  const prepareShareFile = async () => {
+    if (!shareSupported || sharePreparing) return;
+    discardPreparedShareFile();
+    const preparationVersion = ++sharePreparationVersion;
+    sharePreparing = true;
+    shareButton.disabled = true;
+    shareButton.textContent = "共有画像を準備中…";
+    cardStatus.textContent = "最新の認定記録で共有画像を準備しています。";
+    try {
+      const file = await buildFreshCardFile();
+      if (preparationVersion !== sharePreparationVersion) return;
+      if (!navigator.canShare?.({ files: [file] })) {
+        throw new Error("File sharing unavailable");
+      }
+      preparedShareFile = { file, preparedAt: Date.now() };
+      shareButton.textContent = "準備完了：共有する";
+      cardStatus.textContent = "共有画像を準備しました。30秒以内に、もう一度共有ボタンを押してください。";
+      preparedShareExpiryTimer = window.setTimeout(() => {
+        discardPreparedShareFile("共有画像の有効期限が切れました。もう一度準備してください。");
+      }, SHARE_FILE_TTL_MS);
+    } catch (error) {
+      if (preparationVersion !== sharePreparationVersion) return;
+      preparedShareFile = null;
+      shareButton.textContent = "共有画像を準備";
+      cardStatus.textContent = isConnectionFailure(error)
+        ? errorMessage(error)
+        : "共有画像を準備できませんでした。PNGを保存してお使いください。";
+    } finally {
+      if (preparationVersion === sharePreparationVersion) {
+        sharePreparing = false;
+        shareButton.disabled = !shareSupported || !cardSnapshot;
+      }
+    }
+  };
+
+  const openCard = async () => {
+    if (!state?.cardUnlocked || !connectionReady) return;
+    discardPreparedShareFile();
+    cardScene.value = state.unlockedScenes.at(-1) ?? "plot";
+    cardDialog.showModal();
+    try {
+      await refreshCardSnapshot();
+    } catch {
+      // The dialog keeps the server error visible and can be closed without losing game state.
+    }
+  };
+
+  registerForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const data = new FormData(registerForm);
+    const nickname = String(data.get("nickname") ?? "").trim();
+    authStatus.textContent = "庭を登録しています。";
+    for (const button of registerForm.querySelectorAll<HTMLButtonElement>("button")) button.disabled = true;
+    try {
+      const result = await gardenApi.register(nickname);
+      renderState(result.state, "GARDEN / 000を開始しました。");
+      showRecoveryCode(result.recoveryCode);
+      void loadLeaderboard();
+    } catch (error) {
+      authStatus.textContent = errorMessage(error);
+      if (isConnectionFailure(error)) setConnection("offline");
+    } finally {
+      for (const button of registerForm.querySelectorAll<HTMLButtonElement>("button")) button.disabled = false;
+    }
+  });
+
+  recoverForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const data = new FormData(recoverForm);
+    const recoveryCode = String(data.get("recoveryCode") ?? "").trim();
+    authStatus.textContent = "庭を移しています。";
+    for (const button of recoverForm.querySelectorAll<HTMLButtonElement>("button")) button.disabled = true;
+    try {
+      const result = await gardenApi.recover(recoveryCode);
+      renderState(result.state, "このブラウザへ庭を移しました。");
+      showRecoveryCode(result.recoveryCode);
+      void loadLeaderboard();
+    } catch (error) {
+      authStatus.textContent = errorMessage(error);
+      if (isConnectionFailure(error)) setConnection("offline");
+    } finally {
+      for (const button of recoverForm.querySelectorAll<HTMLButtonElement>("button")) button.disabled = false;
+    }
+  });
+
+  for (const tab of root.querySelectorAll<HTMLButtonElement>("[data-auth-tab]")) {
+    tab.addEventListener("click", () => {
+      const isRegister = tab.dataset.authTab === "register";
+      registerForm.hidden = !isRegister;
+      recoverForm.hidden = isRegister;
+      for (const candidate of root.querySelectorAll<HTMLButtonElement>("[data-auth-tab]")) {
+        candidate.setAttribute("aria-selected", String(candidate === tab));
+      }
+      const input = (isRegister ? registerForm : recoverForm).querySelector<HTMLInputElement>("input");
+      input?.focus();
+    });
+  }
+
+  careButton.addEventListener("click", queueCare);
+  careButton.addEventListener("animationend", () => careButton.classList.remove("is-pulsing"));
+  careButton.addEventListener("pointerdown", (event) => {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    longPressTimer = window.setTimeout(() => {
+      queueCare();
+      longPressInterval = window.setInterval(queueCare, 40);
+    }, 450);
+  });
+  const stopLongPress = () => {
+    window.clearTimeout(longPressTimer);
+    window.clearInterval(longPressInterval);
+    longPressTimer = 0;
+    longPressInterval = 0;
+  };
+  careButton.addEventListener("pointerup", stopLongPress);
+  careButton.addEventListener("pointercancel", stopLongPress);
+  careButton.addEventListener("pointerleave", stopLongPress);
+
+  for (const button of root.querySelectorAll<HTMLButtonElement>("[data-buy]")) {
+    button.addEventListener("click", () => void buyUpgrade(button.dataset.buy as GardenPurchase));
+  }
+
+  find<HTMLButtonElement>("[data-refresh-leaderboard]").addEventListener("click", () => {
+    void loadLeaderboard();
+  });
+  find<HTMLButtonElement>("[data-reconnect]").addEventListener("click", () => void reconnect());
+  cardButton.addEventListener("click", () => void openCard());
+
+  renameForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (actionInFlight || !connectionReady) return;
+    const nickname = String(new FormData(renameForm).get("nickname") ?? "").trim();
+    actionInFlight = true;
+    renderActionAvailability();
+    settingsStatus.textContent = "変更を認定しています。";
+    try {
+      renderState(await gardenApi.rename(nickname), "ニックネームを変更しました。");
+      settingsStatus.textContent = "ニックネームを変更しました。";
+      void loadLeaderboard();
+    } catch (error) {
+      handleOperationError(error, settingsStatus);
+    } finally {
+      actionInFlight = false;
+      renderActionAvailability();
+    }
+  });
+
+  find<HTMLButtonElement>("[data-rotate-code]").addEventListener("click", async () => {
+    if (actionInFlight || !connectionReady) return;
+    actionInFlight = true;
+    renderActionAvailability();
+    settingsStatus.textContent = "新しい復旧コードを発行しています。";
+    try {
+      const code = await gardenApi.rotateRecoveryCode();
+      settingsStatus.textContent = "以前の復旧コードを無効にしました。";
+      showRecoveryCode(code);
+    } catch (error) {
+      handleOperationError(error, settingsStatus);
+    } finally {
+      actionInFlight = false;
+      renderActionAvailability();
+    }
+  });
+
+  find<HTMLButtonElement>("[data-delete-garden]").addEventListener("click", async () => {
+    if (actionInFlight || !connectionReady) return;
+    const confirmed = window.confirm(
+      "庭の記録とランキング掲載を完全に削除します。この操作は取り消せません。削除しますか？",
+    );
+    if (!confirmed) return;
+    actionInFlight = true;
+    renderActionAvailability();
+    settingsStatus.textContent = "庭を削除しています。";
+    try {
+      await gardenApi.remove();
+      showAuth("庭を削除しました。");
+    } catch (error) {
+      handleOperationError(error, settingsStatus);
+    } finally {
+      actionInFlight = false;
+      renderActionAvailability();
+    }
+  });
+
+  find<HTMLButtonElement>("[data-close-recovery]").addEventListener("click", () => {
+    recoveryDialog.close();
+  });
+  recoveryDialog.addEventListener("close", () => {
+    find<HTMLOutputElement>("[data-recovery-code]").value = "";
+    find<HTMLElement>("[data-copy-status]").textContent = "";
+  });
+  find<HTMLButtonElement>("[data-copy-code]").addEventListener("click", async () => {
+    const code = find<HTMLOutputElement>("[data-recovery-code]").value;
+    const status = find<HTMLElement>("[data-copy-status]");
+    try {
+      await navigator.clipboard.writeText(code);
+      status.textContent = "コピーしました。安全な場所へ保管してください。";
+    } catch {
+      status.textContent = "コピーできませんでした。コードを選択して保存してください。";
+    }
+  });
+
+  find<HTMLButtonElement>("[data-close-card]").addEventListener("click", () => cardDialog.close());
+  cardDialog.addEventListener("close", () => discardPreparedShareFile());
+  const handleCardDecorationChange = () => {
+    discardPreparedShareFile("装飾が変わったため、共有画像の準備を破棄しました。");
+    void drawCard();
+  };
+  for (const input of root.querySelectorAll<HTMLInputElement>(
+    'input[name="card-theme"], input[name="card-layout"]',
+  )) {
+    input.addEventListener("change", handleCardDecorationChange);
+  }
+  cardScene.addEventListener("change", handleCardDecorationChange);
+
+  downloadButton.addEventListener("click", async () => {
+    discardPreparedShareFile();
+    cardStatus.textContent = "最新の認定記録でPNGを作成しています。";
+    try {
+      const file = await buildFreshCardFile();
+      const url = URL.createObjectURL(file);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = file.name;
+      anchor.click();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1_000);
+      cardStatus.textContent = "PNGを保存しました。";
+    } catch (error) {
+      cardStatus.textContent = errorMessage(error);
+    }
+  });
+
+  if (
+    typeof ClipboardItem === "function" &&
+    typeof navigator.clipboard?.write === "function"
+  ) {
+    copySupported = true;
+    copyButton.hidden = false;
+    copyButton.disabled = !cardSnapshot;
+  }
+  copyButton.addEventListener("click", async () => {
+    if (!copySupported) return;
+    discardPreparedShareFile();
+    copyButton.disabled = true;
+    cardStatus.textContent = "最新の認定記録でコピー用画像を作成しています。";
+    try {
+      const file = await buildFreshCardFile();
+      await navigator.clipboard.write([new ClipboardItem({ [file.type]: file })]);
+      cardStatus.textContent = "PNG画像をクリップボードへコピーしました。";
+    } catch (error) {
+      cardStatus.textContent = isConnectionFailure(error)
+        ? errorMessage(error)
+        : "画像をコピーできませんでした。PNG保存をお使いください。";
+    } finally {
+      copyButton.disabled = !copySupported || !cardSnapshot;
+    }
+  });
+
+  if (
+    typeof navigator.share === "function" &&
+    typeof navigator.canShare === "function" &&
+    typeof File === "function"
+  ) {
+    const probe = new File(["garden"], "garden.png", { type: "image/png" });
+    shareSupported = navigator.canShare({ files: [probe] });
+    shareButton.hidden = !shareSupported;
+    shareButton.disabled = !shareSupported || !cardSnapshot;
+  }
+  shareButton.addEventListener("click", () => {
+    const prepared = preparedShareFile;
+    if (!prepared || Date.now() - prepared.preparedAt >= SHARE_FILE_TTL_MS) {
+      if (prepared) {
+        discardPreparedShareFile("共有画像の有効期限が切れたため、最新の画像を準備します。");
+      }
+      void prepareShareFile();
+      return;
+    }
+    if (!navigator.canShare?.({ files: [prepared.file] })) {
+      discardPreparedShareFile("この端末では画像ファイルを共有できません。PNGを保存してください。");
+      return;
+    }
+
+    shareButton.disabled = true;
+    let sharePromise: Promise<void>;
+    try {
+      sharePromise = navigator.share({ files: [prepared.file] });
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        cardStatus.textContent = "共有をキャンセルしました。";
+      } else {
+        cardStatus.textContent = "画像を共有できませんでした。PNGを保存してお使いください。";
+      }
+      shareButton.disabled = false;
+      return;
+    }
+
+    void sharePromise
+      .then(() => discardPreparedShareFile("画像を共有しました。"))
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === "AbortError") {
+          cardStatus.textContent = "共有をキャンセルしました。30秒以内ならもう一度共有できます。";
+          shareButton.disabled = false;
+        } else {
+          discardPreparedShareFile(
+            "画像を共有できませんでした。PNGを保存してお使いください。",
+          );
+        }
+      });
+  });
+
+  window.addEventListener("online", () => void reconnect());
+  window.addEventListener("offline", () => setConnection("offline"));
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible" && state && !actionInFlight) void reconnect();
+  });
+
+  const startPolling = () => {
+    window.clearInterval(sessionPoll);
+    window.clearInterval(leaderboardPoll);
+    window.clearTimeout(leaderboardRefreshTimer);
+    leaderboardRefreshTimer = 0;
+    sessionPoll = window.setInterval(() => {
+      if (
+        state &&
+        connectionReady &&
+        !actionInFlight &&
+        pendingCare === 0 &&
+        document.visibilityState === "visible"
+      ) {
+        sessionSyncInFlight = true;
+        renderActionAvailability();
+        void gardenApi
+          .session()
+          .then((nextState) => renderState(nextState))
+          .catch((error) => {
+            if (error instanceof GardenApiError && (error.status === 401 || error.status === 404)) {
+              showAuth("セッションが移動または失効しました。復旧コードをご利用ください。");
+            } else if (isConnectionFailure(error)) {
+              setConnection("offline");
+            }
+          })
+          .finally(() => {
+            sessionSyncInFlight = false;
+            renderActionAvailability();
+          });
+      }
+    }, 15_000);
+    leaderboardPoll = window.setInterval(() => {
+      if (document.visibilityState === "visible") void loadLeaderboard();
+    }, 45_000);
+  };
+
+  const boot = async () => {
+    setView("loading");
+    setConnection("loading");
+    try {
+      const nextState = await gardenApi.session();
+      renderState(nextState, "留守中の成長を精算しました。");
+      void loadLeaderboard();
+    } catch (error) {
+      if (error instanceof GardenApiError && (error.status === 401 || error.status === 404)) {
+        showAuth();
+      } else {
+        setView("auth");
+        setConnection("offline");
+        authStatus.textContent = errorMessage(error);
+      }
+    } finally {
+      startPolling();
+    }
+  };
+
+  void boot();
+</script>
+
+<style>
+  .garden {
+    --garden-bg: #171713;
+    --garden-surface: #22231e;
+    --garden-paper: #f4f0e3;
+    --garden-muted: #a9aca2;
+    --garden-line: #55574f;
+    --garden-lime: #6dde3b;
+    --garden-orange: #cc6b35;
+    min-height: 100vh;
+    background:
+      linear-gradient(90deg, transparent 49.9%, rgb(255 255 255 / 0.025) 50%, transparent 50.1%),
+      var(--garden-bg);
+    color: var(--garden-paper);
+  }
+
+  button,
+  input,
+  select {
+    border-radius: 0;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+    opacity: 0.38;
+  }
+
+  .garden-kicker {
+    margin: 0;
+    color: var(--garden-muted);
+    font-family: var(--font-mono);
+    font-size: 0.64rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    line-height: 1.5;
+  }
+
+  .garden__masthead {
+    display: flex;
+    min-height: 7.5rem;
+    align-items: end;
+    justify-content: space-between;
+    gap: 2rem;
+    border-bottom: 1px solid var(--garden-line);
+    padding: 1.5rem clamp(1rem, 3vw, 3rem) 1.25rem 7rem;
+  }
+
+  .garden__masthead h1 {
+    margin: 0.2rem 0 0;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 4.4rem);
+    font-weight: 850;
+    letter-spacing: -0.055em;
+    line-height: 0.9;
+  }
+
+  .garden__masthead h1 span {
+    color: var(--garden-orange);
+  }
+
+  .garden__connection {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+  }
+
+  .garden__connection-dot {
+    width: 0.6rem;
+    height: 0.6rem;
+    background: var(--garden-muted);
+  }
+
+  [data-connection="online"] .garden__connection-dot {
+    background: var(--garden-lime);
+    box-shadow: 0 0 1rem rgb(109 222 59 / 0.6);
+  }
+
+  [data-connection="offline"] .garden__connection-dot {
+    background: var(--garden-orange);
+  }
+
+  .garden__loading {
+    display: grid;
+    min-height: calc(100vh - 7.5rem);
+    place-content: center;
+    justify-items: center;
+    gap: 1.5rem;
+    color: var(--garden-muted);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+  }
+
+  .garden__loading[hidden],
+  .garden-auth[hidden],
+  .garden__game[hidden],
+  .garden-outage[hidden] {
+    display: none;
+  }
+
+  .garden__loader {
+    width: 3rem;
+    height: 3rem;
+    border: 1px solid var(--garden-line);
+    background: var(--garden-orange);
+    animation: garden-loader 1.4s steps(4) infinite;
+  }
+
+  @keyframes garden-loader {
+    50% {
+      transform: rotate(90deg) scale(0.65);
+      background: var(--garden-lime);
+    }
+  }
+
+  .garden-auth {
+    display: grid;
+    min-height: calc(100vh - 7.5rem);
+    grid-template-columns: minmax(18rem, 5fr) minmax(25rem, 7fr);
+  }
+
+  .garden-auth__portrait {
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 1rem;
+    overflow: hidden;
+    border-right: 1px solid var(--garden-line);
+    background: var(--garden-surface);
+  }
+
+  .garden-auth__crop,
+  .garden-specimen__crop {
+    position: relative;
+    overflow: hidden;
+    background: var(--garden-orange);
+  }
+
+  .garden-auth__crop {
+    width: min(26rem, 70%);
+    aspect-ratio: 1;
+    border: 1.25rem solid var(--garden-lime);
+  }
+
+  .garden-auth__crop img,
+  .garden-specimen__crop img {
+    position: absolute;
+    width: 144%;
+    max-width: none;
+    height: 144%;
+    inset: -22%;
+    object-fit: cover;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .garden-auth__portrait > p {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+  }
+
+  .garden-auth__body {
+    display: grid;
+    align-content: center;
+    padding: clamp(2rem, 7vw, 7rem);
+  }
+
+  .garden-auth__body h2 {
+    margin: 1rem 0 1.5rem;
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 6vw, 6rem);
+    font-weight: 820;
+    letter-spacing: -0.055em;
+    line-height: 0.94;
+  }
+
+  .garden-auth__lead {
+    max-width: 42rem;
+    margin: 0;
+    color: var(--garden-muted);
+    line-height: 1.9;
+  }
+
+  .garden-auth__tabs {
+    display: flex;
+    margin-top: 3rem;
+    border-bottom: 1px solid var(--garden-line);
+  }
+
+  .garden-auth__tabs button {
+    border: 1px solid var(--garden-line);
+    border-bottom: 0;
+    background: transparent;
+    color: var(--garden-muted);
+    padding: 0.8rem 1.2rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+  }
+
+  .garden-auth__tabs button[aria-selected="true"] {
+    background: var(--garden-paper);
+    color: var(--garden-bg);
+  }
+
+  .garden-auth__form {
+    padding-top: 1.5rem;
+  }
+
+  .garden-auth__form[hidden] {
+    display: none;
+  }
+
+  .garden-auth__form label,
+  .garden-settings label {
+    display: block;
+    margin-bottom: 0.55rem;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+  }
+
+  .garden-field-row {
+    display: flex;
+  }
+
+  .garden-field-row input {
+    min-width: 0;
+    flex: 1;
+    border: 1px solid var(--garden-paper);
+    background: transparent;
+    color: var(--garden-paper);
+    padding: 0.85rem 1rem;
+  }
+
+  .garden-auth__form > p,
+  .garden-form-status {
+    margin: 0.7rem 0 0;
+    color: var(--garden-muted);
+    font-size: 0.72rem;
+    line-height: 1.6;
+  }
+
+  .garden-action {
+    display: inline-flex;
+    min-height: 2.8rem;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--garden-paper);
+    background: transparent;
+    color: var(--garden-paper);
+    padding: 0.7rem 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+  }
+
+  .garden-action--lime {
+    border-color: var(--garden-lime);
+    background: var(--garden-lime);
+    color: var(--garden-bg);
+  }
+
+  .garden-action:hover:not(:disabled) {
+    background: var(--garden-paper);
+    color: var(--garden-bg);
+  }
+
+  .garden-action--lime:hover:not(:disabled) {
+    background: var(--garden-orange);
+  }
+
+  .garden-stats {
+    display: grid;
+    grid-template-columns: 2fr repeat(3, 1fr);
+    border-bottom: 1px solid var(--garden-line);
+  }
+
+  .garden-stat {
+    display: grid;
+    min-height: 7.5rem;
+    align-content: space-between;
+    gap: 0.35rem;
+    border-right: 1px solid var(--garden-line);
+    padding: 1.1rem clamp(1rem, 2vw, 2rem);
+  }
+
+  .garden-stat:last-child {
+    border-right: 0;
+  }
+
+  .garden-stat > span,
+  .garden-stat > small {
+    color: var(--garden-muted);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+  }
+
+  .garden-stat strong {
+    font-family: var(--font-display);
+    font-size: clamp(1.45rem, 3vw, 2.8rem);
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  .garden-stat--primary {
+    border-top: 0.35rem solid var(--garden-lime);
+  }
+
+  .garden-stat--primary strong {
+    color: var(--garden-lime);
+  }
+
+  .garden__workspace {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(22rem, 5fr);
+  }
+
+  .garden-stage-panel {
+    min-width: 0;
+    border-right: 1px solid var(--garden-line);
+  }
+
+  .garden-panel-head,
+  .garden-console__title {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .garden-panel-head {
+    min-height: 6.5rem;
+    border-bottom: 1px solid var(--garden-line);
+    padding: 1.25rem clamp(1rem, 2.5vw, 2.5rem);
+  }
+
+  .garden-panel-head h2,
+  .garden-console__title h2 {
+    margin: 0.25rem 0 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    font-weight: 780;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  .garden-panel-head > p {
+    margin: 0;
+    color: var(--garden-muted);
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+  }
+
+  .garden-panel-head > p strong {
+    color: var(--garden-paper);
+  }
+
+  .garden-stage {
+    --specimen-scale: 1;
+    position: relative;
+    isolation: isolate;
+    min-height: clamp(32rem, 62vw, 50rem);
+    overflow: hidden;
+    border-bottom: 1px solid var(--garden-line);
+    background: #e5e1d6;
+    color: #171713;
+  }
+
+  .garden-stage__grid {
+    position: absolute;
+    z-index: -3;
+    inset: 0;
+    opacity: 0.65;
+    background-image:
+      linear-gradient(rgb(23 23 19 / 0.14) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(23 23 19 / 0.14) 1px, transparent 1px);
+    background-size: 4rem 4rem;
+  }
+
+  .garden-stage__measure {
+    position: absolute;
+    top: 8%;
+    bottom: 12%;
+    left: 4%;
+    display: flex;
+    width: 3.5rem;
+    flex-direction: column;
+    justify-content: space-between;
+    border-left: 2px solid #171713;
+    padding-left: 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+  }
+
+  .garden-stage__measure i {
+    width: 1.25rem;
+    border-top: 2px solid #171713;
+    transform: translateX(-1rem);
+  }
+
+  .garden-stage__scenery {
+    position: absolute;
+    z-index: -2;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    height: 32%;
+    align-items: end;
+    justify-content: space-around;
+    opacity: 0.28;
+  }
+
+  .garden-stage__scenery i {
+    width: 17%;
+    height: 45%;
+    background: #171713;
+  }
+
+  .garden-stage__scenery i:nth-child(2) {
+    height: 78%;
+  }
+
+  .garden-stage__scenery i:nth-child(3) {
+    height: 60%;
+  }
+
+  .garden-stage__scenery i:nth-child(4) {
+    height: 96%;
+  }
+
+  .garden-stage[data-scene="plot"] .garden-stage__scenery,
+  .garden-stage[data-scene="table"] .garden-stage__scenery,
+  .garden-stage[data-scene="room"] .garden-stage__scenery {
+    height: 12%;
+  }
+
+  .garden-stage[data-scene="clouds"] {
+    background: #dfe7e4;
+  }
+
+  .garden-stage[data-scene="horizon"] {
+    background: linear-gradient(165deg, #e5e1d6 60%, var(--garden-lime) 60%);
+  }
+
+  .garden-stage[data-scene="orbit"] {
+    background:
+      radial-gradient(circle at 80% 20%, transparent 0 8rem, var(--garden-lime) 8.1rem 8.5rem, transparent 8.6rem),
+      #171713;
+    color: var(--garden-paper);
+  }
+
+  .garden-stage[data-scene="orbit"] .garden-stage__grid,
+  .garden-stage[data-scene="orbit"] .garden-stage__measure {
+    filter: invert(1);
+  }
+
+  .garden-specimen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: grid;
+    width: clamp(14rem, 34vw, 27rem);
+    aspect-ratio: 1;
+    place-items: center;
+    border: 0;
+    background: transparent;
+    color: #171713;
+    transform: translate(-50%, -50%) scale(var(--specimen-scale));
+    transition: transform 420ms var(--ease-signal);
+    touch-action: manipulation;
+    user-select: none;
+  }
+
+  .garden-specimen:focus-visible {
+    outline-color: #171713;
+  }
+
+  .garden-specimen__crop {
+    width: 76%;
+    aspect-ratio: 1;
+    border: clamp(0.7rem, 2vw, 1.5rem) solid var(--garden-lime);
+    box-shadow: 0.8rem 0.8rem 0 #171713;
+  }
+
+  .garden-specimen__label {
+    position: absolute;
+    right: 2%;
+    bottom: 2%;
+    border: 2px solid #171713;
+    background: var(--garden-paper);
+    padding: 0.45rem 0.7rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+  }
+
+  .garden-specimen__pulse {
+    position: absolute;
+    width: 74%;
+    aspect-ratio: 1;
+    border: 3px solid var(--garden-orange);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .garden-specimen.is-pulsing .garden-specimen__pulse {
+    animation: garden-care-pulse 500ms var(--ease-signal);
+  }
+
+  @keyframes garden-care-pulse {
+    0% {
+      opacity: 0.9;
+      transform: scale(0.9);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(1.35);
+    }
+  }
+
+  .garden-stage__readout {
+    position: absolute;
+    right: clamp(1rem, 3vw, 3rem);
+    bottom: clamp(1rem, 3vw, 2.5rem);
+    display: grid;
+    justify-items: end;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+  }
+
+  .garden-stage__readout span {
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+  }
+
+  .garden-stage__readout strong {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 5rem);
+    letter-spacing: -0.055em;
+    line-height: 0.9;
+  }
+
+  .garden-care {
+    display: flex;
+    min-height: 6rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border-bottom: 1px solid var(--garden-line);
+    padding: 1rem clamp(1rem, 2.5vw, 2.5rem);
+  }
+
+  .garden-care p {
+    margin: 0.2rem 0;
+    color: var(--garden-muted);
+    font-size: 0.72rem;
+  }
+
+  .garden-care p:first-child {
+    color: var(--garden-paper);
+  }
+
+  .garden-care__meter {
+    display: grid;
+    grid-template-columns: repeat(5, 0.8rem);
+    gap: 0.35rem;
+  }
+
+  .garden-care__meter span {
+    height: 1.1rem;
+    border: 1px solid var(--garden-muted);
+  }
+
+  .garden-care__meter span.is-active {
+    border-color: var(--garden-orange);
+    background: var(--garden-orange);
+  }
+
+  .garden-care__meter small {
+    grid-column: 1 / -1;
+    color: var(--garden-muted);
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+  }
+
+  .garden-stage-status {
+    min-height: 3.2rem;
+    margin: 0;
+    padding: 1rem clamp(1rem, 2.5vw, 2.5rem);
+    color: var(--garden-muted);
+    font-size: 0.7rem;
+  }
+
+  .garden-console__section {
+    border-bottom: 1px solid var(--garden-line);
+    padding: clamp(1.25rem, 2.5vw, 2.5rem);
+  }
+
+  .garden-console__title {
+    margin-bottom: 1.5rem;
+  }
+
+  .garden-console__title > span,
+  .garden-text-button {
+    color: var(--garden-muted);
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.08em;
+  }
+
+  .garden-text-button {
+    border: 0;
+    background: transparent;
+    text-decoration: underline;
+    text-underline-offset: 0.2rem;
+  }
+
+  .garden-upgrade {
+    display: grid;
+    grid-template-columns: 2.4rem minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.8rem;
+    border-top: 1px solid var(--garden-line);
+    padding: 1rem 0;
+  }
+
+  .garden-upgrade:last-child {
+    border-bottom: 1px solid var(--garden-line);
+  }
+
+  .garden-upgrade__number {
+    color: var(--garden-orange);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+
+  .garden-upgrade h3 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    letter-spacing: -0.01em;
+  }
+
+  .garden-upgrade h3 span {
+    margin-left: 0.35rem;
+    color: var(--garden-lime);
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+  }
+
+  .garden-upgrade p {
+    margin: 0.25rem 0 0;
+    color: var(--garden-muted);
+    font-size: 0.65rem;
+  }
+
+  .garden-upgrade button {
+    display: grid;
+    min-width: 6.5rem;
+    justify-items: end;
+    gap: 0.15rem;
+    border: 1px solid var(--garden-paper);
+    background: transparent;
+    color: var(--garden-paper);
+    padding: 0.55rem 0.65rem;
+  }
+
+  .garden-upgrade button:hover:not(:disabled) {
+    background: var(--garden-lime);
+    color: var(--garden-bg);
+  }
+
+  .garden-upgrade button span {
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+  }
+
+  .garden-upgrade button strong {
+    font-size: 0.68rem;
+  }
+
+  .garden-archive-lock {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .garden-archive-lock::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0.4rem;
+    height: 100%;
+    background: var(--garden-lime);
+    content: "";
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 420ms var(--ease-signal);
+  }
+
+  .garden-archive-lock.is-unlocked::before {
+    transform: scaleY(1);
+  }
+
+  .garden-archive-lock > p {
+    margin: 0;
+    color: var(--garden-muted);
+    font-size: 0.72rem;
+    line-height: 1.7;
+  }
+
+  .garden-progress {
+    height: 0.45rem;
+    margin: 1.25rem 0 0.65rem;
+    background: var(--garden-line);
+  }
+
+  .garden-progress span {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: var(--garden-lime);
+    transition: width 420ms var(--ease-signal);
+  }
+
+  .garden-archive-lock__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .garden-archive-lock__footer small {
+    color: var(--garden-muted);
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+  }
+
+  .garden-ranking {
+    margin: 0;
+    border-top: 1px solid var(--garden-line);
+    padding: 0;
+    list-style: none;
+  }
+
+  .garden-ranking li {
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.7rem;
+    border-bottom: 1px solid var(--garden-line);
+    padding: 0.7rem 0.4rem;
+  }
+
+  .garden-ranking li.is-me {
+    background: rgb(109 222 59 / 0.12);
+  }
+
+  .garden-ranking li > span:first-child {
+    color: var(--garden-orange);
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+  }
+
+  .garden-ranking li > span:nth-child(2) {
+    display: grid;
+    gap: 0.15rem;
+  }
+
+  .garden-ranking strong {
+    overflow: hidden;
+    font-size: 0.72rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .garden-ranking small {
+    overflow: hidden;
+    color: var(--garden-muted);
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .garden-ranking b {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+  }
+
+  .garden-ranking__empty {
+    display: block !important;
+    color: var(--garden-muted);
+    font-size: 0.7rem;
+  }
+
+  .garden-ranking__self {
+    margin: 0.85rem 0 0;
+    color: var(--garden-lime);
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+  }
+
+  .garden-settings {
+    padding: 0;
+  }
+
+  .garden-settings summary {
+    display: flex;
+    cursor: pointer;
+    justify-content: space-between;
+    padding: 1.2rem clamp(1.25rem, 2.5vw, 2.5rem);
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    list-style: none;
+  }
+
+  .garden-settings summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .garden-settings[open] summary span {
+    transform: rotate(45deg);
+  }
+
+  .garden-settings form,
+  .garden-settings__actions,
+  .garden-settings > p {
+    margin: 0 1.5rem 1.5rem;
+  }
+
+  .garden-settings .garden-field-row button,
+  .garden-settings__actions button {
+    border: 1px solid var(--garden-line);
+    background: transparent;
+    color: var(--garden-paper);
+    padding: 0.65rem 0.8rem;
+    font-size: 0.65rem;
+  }
+
+  .garden-settings__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .garden-settings__actions button:last-child {
+    color: #f19272;
+  }
+
+  .garden-settings > p {
+    min-height: 1.2rem;
+    color: var(--garden-muted);
+    font-size: 0.65rem;
+  }
+
+  .garden-outage {
+    position: fixed;
+    z-index: 60;
+    right: 1rem;
+    bottom: 1rem;
+    left: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border: 2px solid var(--garden-orange);
+    background: var(--garden-bg);
+    padding: 0.9rem 1rem;
+    box-shadow: 0 0 0 0.4rem rgb(23 23 19 / 0.75);
+  }
+
+  .garden-outage div {
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .garden-outage strong {
+    color: var(--garden-orange);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+  }
+
+  .garden-outage span {
+    color: var(--garden-muted);
+    font-size: 0.68rem;
+  }
+
+  .garden-outage button {
+    flex: none;
+    border: 1px solid var(--garden-paper);
+    background: var(--garden-paper);
+    color: var(--garden-bg);
+    padding: 0.65rem 0.9rem;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 600;
+  }
+
+  .garden-dialog {
+    width: min(94vw, 46rem);
+    max-height: 92vh;
+    margin: auto;
+    border: 1px solid var(--garden-paper);
+    background: var(--garden-bg);
+    color: var(--garden-paper);
+    padding: 0;
+    box-shadow: 1rem 1rem 0 rgb(109 222 59 / 0.8);
+  }
+
+  .garden-dialog::backdrop {
+    background: rgb(0 0 0 / 0.82);
+    backdrop-filter: blur(4px);
+  }
+
+  .garden-dialog__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border-bottom: 1px solid var(--garden-line);
+    padding: 1.2rem 1.5rem;
+  }
+
+  .garden-dialog__head h2 {
+    margin: 0.2rem 0 0;
+    font-family: var(--font-display);
+    font-size: 2rem;
+    letter-spacing: -0.04em;
+  }
+
+  .garden-dialog__head > button {
+    width: 2.6rem;
+    height: 2.6rem;
+    border: 1px solid var(--garden-line);
+    background: transparent;
+    color: var(--garden-paper);
+    font-size: 1.5rem;
+  }
+
+  .recovery-dialog__body {
+    display: grid;
+    gap: 1rem;
+    padding: 1.5rem;
+  }
+
+  .recovery-dialog__body > p {
+    margin: 0;
+    color: var(--garden-muted);
+    font-size: 0.78rem;
+    line-height: 1.7;
+  }
+
+  .recovery-dialog__body output {
+    overflow-x: auto;
+    border: 1px solid var(--garden-line);
+    background: var(--garden-surface);
+    padding: 1.5rem 1rem;
+    color: var(--garden-lime);
+    font-family: var(--font-mono);
+    font-size: clamp(1rem, 4vw, 1.7rem);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-align: center;
+  }
+
+  .archive-dialog {
+    width: min(96vw, 92rem);
+    max-height: 96vh;
+  }
+
+  .archive-dialog__body {
+    display: grid;
+    grid-template-columns: minmax(25rem, 7fr) minmax(21rem, 5fr);
+    max-height: calc(96vh - 5.5rem);
+    overflow: hidden;
+  }
+
+  .archive-preview {
+    overflow: auto;
+    border-right: 1px solid var(--garden-line);
+    background:
+      linear-gradient(45deg, #2b2c26 25%, transparent 25%) 0 0 / 1rem 1rem,
+      linear-gradient(45deg, transparent 75%, #2b2c26 75%) 0 0 / 1rem 1rem,
+      var(--garden-surface);
+    padding: clamp(1rem, 3vw, 3rem);
+  }
+
+  .archive-preview canvas {
+    display: block;
+    width: min(100%, 38rem);
+    height: auto;
+    margin: 0 auto;
+    border: 1px solid var(--garden-paper);
+    background: #f4f0e3;
+    box-shadow: 1rem 1rem 0 rgb(0 0 0 / 0.4);
+  }
+
+  .archive-preview p {
+    width: min(100%, 38rem);
+    margin: 1.5rem auto 0;
+    color: var(--garden-muted);
+    font-size: 0.68rem;
+    line-height: 1.6;
+  }
+
+  .archive-controls {
+    overflow-y: auto;
+    padding: 1.5rem;
+  }
+
+  .archive-controls__status {
+    margin-bottom: 1rem;
+    border-left: 0.35rem solid var(--garden-lime);
+    background: var(--garden-surface);
+    padding: 0.8rem;
+    color: var(--garden-muted);
+    font-size: 0.7rem;
+  }
+
+  .archive-controls__status[hidden] {
+    display: none;
+  }
+
+  .archive-controls fieldset {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin: 0 0 1.25rem;
+    border: 0;
+    padding: 0;
+  }
+
+  .archive-controls legend,
+  .archive-scene > span {
+    display: block;
+    grid-column: 1 / -1;
+    margin-bottom: 0.45rem;
+    color: var(--garden-muted);
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+  }
+
+  .archive-controls fieldset label {
+    display: flex;
+    min-height: 2.8rem;
+    cursor: pointer;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid var(--garden-line);
+    padding: 0.65rem;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+  }
+
+  .archive-controls fieldset label:has(input:checked) {
+    border-color: var(--garden-lime);
+    background: rgb(109 222 59 / 0.1);
+  }
+
+  .archive-controls input {
+    accent-color: var(--garden-lime);
+  }
+
+  .archive-scene {
+    display: block;
+    margin-bottom: 1.5rem;
+  }
+
+  .archive-scene select {
+    width: 100%;
+    border: 1px solid var(--garden-paper);
+    background: var(--garden-bg);
+    color: var(--garden-paper);
+    padding: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+  }
+
+  .archive-mirror {
+    border-top: 1px solid var(--garden-line);
+    padding-top: 1.25rem;
+  }
+
+  .archive-mirror h3 {
+    margin: 0 0 0.8rem;
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+  }
+
+  .archive-mirror dl {
+    margin: 0;
+  }
+
+  .archive-mirror dl div {
+    display: grid;
+    grid-template-columns: minmax(7rem, 0.8fr) 1.2fr;
+    gap: 0.7rem;
+    border-top: 1px solid var(--garden-line);
+    padding: 0.55rem 0;
+  }
+
+  .archive-mirror dt {
+    color: var(--garden-muted);
+    font-family: var(--font-mono);
+    font-size: 0.57rem;
+  }
+
+  .archive-mirror dd {
+    margin: 0;
+    font-size: 0.68rem;
+    overflow-wrap: anywhere;
+  }
+
+  .archive-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: 0.7rem;
+    margin-top: 1.5rem;
+  }
+
+  .archive-actions__status {
+    min-height: 1.5rem;
+    margin: 0.8rem 0 0;
+    color: var(--garden-muted);
+    font-size: 0.68rem;
+  }
+
+  @media (max-width: 64rem) {
+    .garden__workspace {
+      grid-template-columns: 1fr;
+    }
+
+    .garden-stage-panel {
+      border-right: 0;
+    }
+
+    .garden-console {
+      border-top: 1px solid var(--garden-line);
+    }
+
+    .archive-dialog__body {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 48rem) {
+    .garden__masthead {
+      min-height: 6rem;
+      align-items: center;
+      padding: 1rem 0.8rem 1rem 4.7rem;
+    }
+
+    .garden__connection {
+      max-width: 7rem;
+      justify-content: end;
+      text-align: right;
+    }
+
+    .garden-auth {
+      grid-template-columns: 1fr;
+    }
+
+    .garden-auth__portrait {
+      min-height: 18rem;
+      border-right: 0;
+      border-bottom: 1px solid var(--garden-line);
+    }
+
+    .garden-auth__crop {
+      width: 11rem;
+      border-width: 0.75rem;
+    }
+
+    .garden-auth__body {
+      padding: 2rem 1rem 4rem;
+    }
+
+    .garden-field-row {
+      display: grid;
+    }
+
+    .garden-stats {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .garden-stat:nth-child(2) {
+      border-right: 0;
+    }
+
+    .garden-stat:nth-child(-n + 2) {
+      border-bottom: 1px solid var(--garden-line);
+    }
+
+    .garden-stat {
+      min-height: 6rem;
+    }
+
+    .garden-stage {
+      min-height: 31rem;
+    }
+
+    .garden-specimen {
+      width: 17rem;
+    }
+
+    .garden-care {
+      align-items: start;
+    }
+
+    .garden-upgrade {
+      grid-template-columns: 2rem minmax(0, 1fr);
+    }
+
+    .garden-upgrade button {
+      grid-column: 2;
+      justify-items: start;
+    }
+
+    .garden-outage {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .archive-dialog {
+      width: 100vw;
+      max-width: none;
+      height: 100dvh;
+      max-height: none;
+      border: 0;
+      box-shadow: none;
+    }
+
+    .archive-dialog__body {
+      display: block;
+      max-height: calc(100dvh - 5.5rem);
+      overflow-y: auto;
+    }
+
+    .archive-preview,
+    .archive-controls {
+      overflow: visible;
+      border-right: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .garden__loader,
+    .garden-specimen.is-pulsing .garden-specimen__pulse {
+      animation: none;
+    }
+
+    .garden-specimen,
+    .garden-progress span,
+    .garden-archive-lock::before {
+      transition: none;
+    }
+  }
+</style>

@@ -22,6 +22,14 @@
 分からないエラーが出た場合、推測で本番設定を変えないでください。エラーメッセージ、実行したコマンド、
 変更したファイル、発生時刻を記録して、変更前の状態へ戻せるようにします。
 
+日常作業は、初心者向けの対話メニューから開始できます。
+
+```sh
+npm run manage
+```
+
+詳しい使い方は[サイト運用CLIガイド](cli-guide.md)を参照してください。
+
 ## やりたいことから探す
 
 | やりたいこと | 難易度 | 主に触る場所 | 手順 |
@@ -141,7 +149,8 @@ npm ci
 ### 2. 現在の状態を検証する
 
 ```sh
-npm run verify
+npm run manage -- doctor
+npm run manage -- verify
 ```
 
 完了まで待ち、終了コードが成功であることを確認します。警告やエラーが出た状態から新しい作業を
@@ -150,15 +159,15 @@ npm run verify
 ### 3. ローカル表示を確認する
 
 ```sh
-astro dev --background
-astro dev status
+npm run manage -- preview start
+npm run manage -- preview status
 ```
 
 ブラウザで `http://127.0.0.1:4321` を開きます。ログ確認と停止は次のコマンドです。
 
 ```sh
-astro dev logs
-astro dev stop
+npm run manage -- preview logs
+npm run manage -- preview stop
 ```
 
 ### 4. APIもローカルで確認する場合
@@ -212,7 +221,7 @@ astro dev --background
 ### 4. 自動検証する
 
 ```sh
-npm run verify
+npm run manage -- release
 ```
 
 失敗したまま公開しません。原因の見方は[検証が失敗したとき](#検証が失敗したとき)を参照してください。

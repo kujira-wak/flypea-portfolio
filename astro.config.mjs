@@ -17,6 +17,7 @@ export default defineConfig({
     server: {
       proxy: {
         "/api/reactions": "http://localhost:8787",
+        "/api/garden": "http://localhost:8787",
       },
     },
   },
