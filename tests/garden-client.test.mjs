@@ -38,7 +38,7 @@ test("CARE batches up to 25 CPS and discards unsent input when offline", async (
   const game = await readSource("../src/components/GardenGame.astro");
 
   assert.match(game, /const MAX_CARE_PER_SECOND = 25/);
-  assert.match(game, /const CARE_BATCH_MS = 100/);
+  assert.match(game, /const CARE_BATCH_MS = 1_000/);
   assert.match(game, /pendingCare\s*>=\s*MAX_CARE_PER_SECOND/);
   assert.match(game, /Math\.min\(MAX_CARE_PER_SECOND,\s*pendingCare\)/);
   assert.match(game, /setTimeout\(\(\)\s*=>\s*void flushCare\(\),\s*CARE_BATCH_MS\)/);

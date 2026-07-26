@@ -15,6 +15,7 @@ interface RateLimitBinding {
 interface Env extends GardenEnv {
   DB: D1Database;
   REACTION_RATE_LIMITER?: RateLimitBinding;
+  REACTION_READ_RATE_LIMITER?: RateLimitBinding;
   REACTION_COOKIE_NAME?: string;
   COOKIE_SECRET: string;
   ADMIN_TOKEN: string;
@@ -103,6 +104,20 @@ const withCookie = (response: Response, cookie: string | null) => {
 
 const validArticleId = (value: string) => value.length <= 80 && ARTICLE_ID_PATTERN.test(value);
 
+const requestRateLimitKey = (request: Request, scope: string) => {
+  const address = request.headers.get("cf-connecting-ip") ?? "unknown";
+  return `${scope}:${address}`;
+};
+
+const enforceRateLimit = async (
+  request: Request,
+  limiter: RateLimitBinding | undefined,
+  scope: string,
+) => {
+  const result = await limiter?.limit({ key: requestRateLimitKey(request, scope) });
+  return !result || result.success;
+};
+
 const sameOrigin = (request: Request, env: Env) => {
   const origin = request.headers.get("origin");
   return !origin || origin === env.SITE_ORIGIN;
@@ -190,36 +205,39 @@ export default {
         return json({ error: "not_found" }, { status: 404 });
       }
 
-      const voter = await readVoter(request, env);
-      const visitorId = await voterId(voter.value);
-
       if (
         (url.pathname === apiRoot || url.pathname === `${apiRoot}/batch`) &&
         request.method === "GET"
       ) {
         const ids = [...new Set((url.searchParams.get("ids") ?? "").split(",").filter(Boolean))];
         if (ids.length > MAX_IDS || ids.some((id) => !validArticleId(id))) {
-          return withCookie(json({ error: "invalid_ids" }, { status: 400 }), voter.cookie);
+          return json({ error: "invalid_ids" }, { status: 400 });
         }
+        if (!(await enforceRateLimit(request, env.REACTION_READ_RATE_LIMITER, "reaction-read"))) {
+          return json({ error: "rate_limited" }, { status: 429 });
+        }
+        const voter = await readVoter(request, env);
+        const visitorId = await voterId(voter.value);
         return withCookie(json({ reactions: await getCounts(env, ids, visitorId) }), voter.cookie);
       }
 
       const articleId = decodeURIComponent(url.pathname.slice(`${apiRoot}/`.length));
       if (!validArticleId(articleId)) {
-        return withCookie(json({ error: "invalid_article_id" }, { status: 400 }), voter.cookie);
+        return json({ error: "invalid_article_id" }, { status: 400 });
       }
       if (!sameOrigin(request, env)) {
-        return withCookie(json({ error: "invalid_origin" }, { status: 403 }), voter.cookie);
+        return json({ error: "invalid_origin" }, { status: 403 });
       }
       if (request.method !== "PUT" && request.method !== "DELETE") {
-        return withCookie(json({ error: "method_not_allowed" }, { status: 405 }), voter.cookie);
+        return json({ error: "method_not_allowed" }, { status: 405 });
       }
 
-      const rateLimit = await env.REACTION_RATE_LIMITER?.limit({ key: visitorId });
-      if (rateLimit && !rateLimit.success) {
-        return withCookie(json({ error: "rate_limited" }, { status: 429 }), voter.cookie);
+      if (!(await enforceRateLimit(request, env.REACTION_RATE_LIMITER, "reaction-write"))) {
+        return json({ error: "rate_limited" }, { status: 429 });
       }
 
+      const voter = await readVoter(request, env);
+      const visitorId = await voterId(voter.value);
       if (request.method === "PUT") {
         await env.DB.prepare("INSERT OR IGNORE INTO reactions (article_id, voter_id) VALUES (?, ?)")
           .bind(articleId, visitorId)

@@ -16,6 +16,8 @@ export interface GardenEnv {
   GARDEN_COOKIE_NAME?: string;
   GARDEN_COORDINATOR?: DurableObjectNamespace;
   GARDEN_RATE_LIMITER?: RateLimitBinding;
+  GARDEN_READ_RATE_LIMITER?: RateLimitBinding;
+  GARDEN_PLAYER_RATE_LIMITER?: RateLimitBinding;
 }
 
 export interface GardenPlayerRow {
@@ -251,14 +253,41 @@ const requireSameOrigin = (request: Request, env: GardenEnv) => {
   if (!sameOrigin(request, env)) throw new GardenError("invalid_origin", 403);
 };
 
-const parseJson = async (request: Request): Promise<unknown> => {
+const readBoundedBody = async (request: Request) => {
   const contentLength = Number(request.headers.get("content-length") ?? 0);
   if (Number.isFinite(contentLength) && contentLength > MAX_BODY_BYTES) {
     throw new GardenError("payload_too_large", 413);
   }
+  if (!request.body) throw new GardenError("invalid_json", 400);
+
+  const reader = request.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let byteLength = 0;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    byteLength += value.byteLength;
+    if (byteLength > MAX_BODY_BYTES) {
+      await reader.cancel().catch(() => undefined);
+      throw new GardenError("payload_too_large", 413);
+    }
+    chunks.push(value);
+  }
+  const body = new Uint8Array(byteLength);
+  let offset = 0;
+  for (const chunk of chunks) {
+    body.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return body;
+};
+
+const parseJson = async (request: Request): Promise<unknown> => {
   try {
-    return await request.json();
-  } catch {
+    const body = await readBoundedBody(request);
+    return JSON.parse(new TextDecoder().decode(body));
+  } catch (error) {
+    if (error instanceof GardenError) throw error;
     throw new GardenError("invalid_json", 400);
   }
 };
@@ -583,21 +612,17 @@ const recoveryHash = async (normalizedCode: string, env: GardenEnv) =>
   sign(`garden-recovery:${normalizedCode}`, env.COOKIE_SECRET);
 
 const rateLimitKey = (request: Request, scope: string) => {
-  const address =
-    request.headers.get("cf-connecting-ip") ??
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-    "unknown";
+  const address = request.headers.get("cf-connecting-ip") ?? "unknown";
   return `${scope}:${address}`;
 };
 
-const enforceRecoveryRateLimit = async (request: Request, env: GardenEnv) => {
-  const result = await env.GARDEN_RATE_LIMITER?.limit({
-    key: rateLimitKey(request, "recover"),
-  });
+const enforceRateLimit = async (limiter: RateLimitBinding | undefined, key: string) => {
+  const result = await limiter?.limit({ key });
   if (result && !result.success) throw new GardenError("rate_limited", 429);
 };
 
 const registerPlayer = async (request: Request, env: GardenEnv) => {
+  await enforceRateLimit(env.GARDEN_RATE_LIMITER, rateLimitKey(request, "garden-register"));
   if (await readCredential(request, env)) throw new GardenError("already_registered", 409);
   const body = await parseJson(request);
   if (!isRecord(body)) throw new GardenError("invalid_registration", 400);
@@ -757,7 +782,7 @@ const coordinateRecovery = async (
 };
 
 const recoverPlayer = async (request: Request, env: GardenEnv) => {
-  await enforceRecoveryRateLimit(request, env);
+  await enforceRateLimit(env.GARDEN_RATE_LIMITER, rateLimitKey(request, "garden-recover"));
   const body = await parseJson(request);
   if (!isRecord(body)) throw new GardenError("invalid_recovery", 400);
   const oldHash = await recoveryHash(normalizeRecoveryCode(body.recoveryCode), env);
@@ -816,6 +841,7 @@ const getLeaderboard = async (request: Request, env: GardenEnv) => {
     throw new GardenError("invalid_limit", 400);
   }
   const limit = Math.min(rawLimit, 20);
+  await enforceRateLimit(env.GARDEN_READ_RATE_LIMITER, rateLimitKey(request, "garden-leaderboard"));
   const now = Date.now();
   const result = await env.DB.prepare(
     `WITH effective AS (
@@ -1015,8 +1041,11 @@ const forwardToCoordinator = async (
   headers.delete("cookie");
   headers.delete("authorization");
   headers.delete("x-garden-operation");
+  headers.delete("content-length");
   const body =
-    request.method === "GET" || request.method === "HEAD" ? undefined : await request.arrayBuffer();
+    request.method === "GET" || request.method === "HEAD" || !request.body
+      ? undefined
+      : await readBoundedBody(request);
   const internalRequest = new Request(url, {
     method: request.method,
     headers,
@@ -1130,6 +1159,7 @@ export const handleGardenRequest = async (request: Request, env: GardenEnv) => {
 
     requireSameOrigin(request, env);
     const credential = await requireCredential(request, env);
+    await enforceRateLimit(env.GARDEN_PLAYER_RATE_LIMITER, `garden-player:${credential.playerId}`);
     let response = await forwardToCoordinator(
       request,
       env,

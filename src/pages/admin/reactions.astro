@@ -14,6 +14,9 @@ const noteMap = Object.fromEntries(
   <main id="main-content">
     <PageMasthead eyebrow="Admin / private utility" title="REACTION STATS" description="管理トークンはこのタブのsessionStorageだけに保持します。" currentLabel="高評価集計" />
     <Container class="py-section">
+      <p class="mb-8 text-sm">
+        <a class="text-link" href="/admin/">← 統合管理画面へ戻る</a>
+      </p>
       <form class="grid max-w-xl gap-4 border-y border-ink py-6" data-admin-form>
         <label class="micro-label grid gap-2" for="admin-token">管理トークン<input id="admin-token" class="border border-ink bg-surface px-3 py-3 font-mono text-sm normal-case" type="password" autocomplete="current-password" required data-admin-token /></label>
         <button class="action-link w-fit" type="submit">集計を表示</button>

@@ -1015,6 +1015,81 @@ test("recovery rate limiting returns 429 without changing the garden", async () 
   );
 });
 
+test("registration is limited before player allocation", async () => {
+  const env = makeEnv();
+  const keys = [];
+  env.GARDEN_RATE_LIMITER = {
+    async limit({ key }) {
+      keys.push(key);
+      return { success: false };
+    },
+  };
+  const response = await worker.fetch(
+    api("/players", {
+      method: "POST",
+      body: { nickname: "BLOCKED" },
+      headers: { "cf-connecting-ip": "203.0.113.20" },
+    }),
+    env,
+  );
+
+  assert.equal(response.status, 429);
+  assert.deepEqual(keys, ["garden-register:203.0.113.20"]);
+  assert.equal(env.DB.players.size, 0);
+});
+
+test("actual JSON bytes are capped even without Content-Length", async () => {
+  const env = makeEnv();
+  const payload = JSON.stringify({ nickname: "A".repeat(9_000) });
+  const request = new Request("https://flypea.tech/api/garden/players", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: payload,
+  });
+  assert.equal(request.headers.get("content-length"), null);
+
+  const response = await worker.fetch(request, env);
+
+  assert.equal(response.status, 413);
+  assert.deepEqual(await response.json(), { error: "payload_too_large" });
+  assert.equal(env.DB.players.size, 0);
+});
+
+test("public reads and authenticated player requests have independent request budgets", async () => {
+  const env = makeEnv();
+  const registered = await register(env);
+  let readCalls = 0;
+  let playerCalls = 0;
+  env.GARDEN_READ_RATE_LIMITER = {
+    async limit({ key }) {
+      readCalls += 1;
+      assert.equal(key, "garden-leaderboard:203.0.113.21");
+      return { success: false };
+    },
+  };
+  env.GARDEN_PLAYER_RATE_LIMITER = {
+    async limit({ key }) {
+      playerCalls += 1;
+      assert.match(key, /^garden-player:[0-9a-f-]{36}$/);
+      return { success: false };
+    },
+  };
+
+  const leaderboard = await worker.fetch(
+    api("/leaderboard", { headers: { "cf-connecting-ip": "203.0.113.21" } }),
+    env,
+  );
+  const session = await worker.fetch(
+    api("/session", { method: "POST", cookie: registered.cookie }),
+    env,
+  );
+
+  assert.equal(leaderboard.status, 429);
+  assert.equal(session.status, 429);
+  assert.equal(readCalls, 1);
+  assert.equal(playerCalls, 1);
+});
+
 test("rename updates the server profile and delete clears both garden and credential", async () => {
   const env = makeEnv();
   const registered = await register(env);
