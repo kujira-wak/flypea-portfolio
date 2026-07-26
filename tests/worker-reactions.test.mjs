@@ -25,12 +25,14 @@ class Statement {
 
 class MemoryD1 {
   reactions = new Set();
+  batchCalls = 0;
 
   prepare(sql) {
     return new Statement(this, sql);
   }
 
   async batch(statements) {
+    this.batchCalls += 1;
     const countIds = statements[0].args;
     const [voterId, ...reactedIds] = statements[1].args;
     const counts = countIds
@@ -106,4 +108,51 @@ test("invalid IDs, foreign origins, and unauthorized admin requests are rejected
     env,
   );
   assert.equal(admin.status, 401);
+});
+
+test("reaction mutation throttling uses a stable edge identity when cookies are discarded", async () => {
+  const env = makeEnv();
+  const keys = [];
+  env.REACTION_RATE_LIMITER = {
+    async limit({ key }) {
+      keys.push(key);
+      return { success: keys.length === 1 };
+    },
+  };
+  const request = () =>
+    new Request("https://flypea.tech/api/reactions/domain-and-deploy", {
+      method: "PUT",
+      headers: {
+        origin: "https://flypea.tech",
+        "cf-connecting-ip": "203.0.113.10",
+      },
+    });
+
+  const accepted = await worker.fetch(request(), env);
+  const blocked = await worker.fetch(request(), env);
+
+  assert.equal(accepted.status, 200);
+  assert.equal(blocked.status, 429);
+  assert.deepEqual(keys, ["reaction-write:203.0.113.10", "reaction-write:203.0.113.10"]);
+  assert.equal(env.DB.reactions.size, 1);
+});
+
+test("reaction batch reads are rejected before voter crypto and D1 work when limited", async () => {
+  const env = makeEnv();
+  env.REACTION_READ_RATE_LIMITER = {
+    async limit({ key }) {
+      assert.equal(key, "reaction-read:203.0.113.11");
+      return { success: false };
+    },
+  };
+  const response = await worker.fetch(
+    new Request("https://flypea.tech/api/reactions/batch?ids=domain-and-deploy", {
+      headers: { "cf-connecting-ip": "203.0.113.11" },
+    }),
+    env,
+  );
+
+  assert.equal(response.status, 429);
+  assert.equal(response.headers.get("set-cookie"), null);
+  assert.equal(env.DB.batchCalls, 0);
 });

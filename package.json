@@ -22,7 +22,7 @@
     "site:check": "node scripts/validate-built-site.mjs",
     "worker:typecheck": "tsc --project worker/tsconfig.json",
     "worker:test": "node --experimental-strip-types --test tests/worker-reactions.test.mjs tests/worker-garden.test.mjs",
-    "garden:test": "node --test tests/garden-admin-ui.test.mjs tests/garden-client.test.mjs tests/garden-discovery.test.mjs",
+    "garden:test": "node --test tests/admin-dashboard.test.mjs tests/garden-admin-ui.test.mjs tests/garden-client.test.mjs tests/garden-discovery.test.mjs",
     "worker:check": "npm run worker:typecheck && WRANGLER_LOG_PATH=.wrangler/wrangler.log WRANGLER_SEND_METRICS=false wrangler deploy --dry-run --config worker/wrangler.jsonc --outdir .wrangler/deploy",
     "worker:dev": "WRANGLER_LOG_PATH=.wrangler/wrangler.log WRANGLER_SEND_METRICS=false wrangler dev --config worker/wrangler.jsonc --var SITE_ORIGIN:http://localhost:4321",
     "worker:migrate:local": "WRANGLER_LOG_PATH=.wrangler/wrangler.log WRANGLER_SEND_METRICS=false wrangler d1 migrations apply flypea-portfolio --local --config worker/wrangler.jsonc",

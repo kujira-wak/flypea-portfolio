@@ -1,0 +1,510 @@
+---
+import { getCollection } from "astro:content";
+import Container from "../../components/Container.astro";
+import PageMasthead from "../../components/PageMasthead.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const notes = await getCollection("notes", ({ data }) => !data.draft);
+const noteMap = Object.fromEntries(
+  notes.map((note) => [note.data.reactionId, `/notes/${note.id}/`]),
+);
+const serializedNoteMap = JSON.stringify(noteMap).replaceAll("<", "\\u003c");
+---
+
+<BaseLayout
+  title="サイト管理"
+  description="高評価集計とGARDEN / 000の掲載状態をまとめて確認する管理画面です。"
+  pathname="/admin/"
+  robots="noindex, nofollow"
+>
+  <main id="main-content">
+    <PageMasthead
+      eyebrow="Admin / private utility"
+      title="CONTROL DESK"
+      description="高評価とGardenの状態を、一つの管理トークンで確認します。トークンはこのタブのsessionStorageだけに保持します。"
+      currentLabel="サイト管理"
+    />
+
+    <Container class="py-section">
+      <form class="grid max-w-xl gap-4 border-y border-ink py-6" data-admin-form>
+        <label class="micro-label grid gap-2" for="site-admin-token">
+          管理トークン
+          <input
+            id="site-admin-token"
+            class="border border-ink bg-surface px-3 py-3 font-mono text-sm normal-case"
+            type="password"
+            autocomplete="current-password"
+            required
+            data-admin-token
+          />
+        </label>
+        <div class="flex flex-wrap gap-3">
+          <button class="action-link" type="submit" data-admin-connect>管理画面を開く</button>
+          <button
+            class="action-link action-link--quiet"
+            type="button"
+            hidden
+            data-admin-forget
+          >
+            トークンを破棄
+          </button>
+        </div>
+        <p class="text-sm text-muted" aria-live="polite" data-admin-status>
+          Workerに設定したADMIN_TOKENを入力してください。
+        </p>
+      </form>
+
+      <div class="mt-10" hidden data-admin-dashboard>
+        <section aria-labelledby="admin-overview-title">
+          <div class="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p class="micro-label text-signal">Authenticated overview</p>
+              <h2 id="admin-overview-title" class="section-title mt-2">OVERVIEW</h2>
+            </div>
+            <button class="action-link action-link--quiet" type="button" data-admin-refresh>
+              すべて再読み込み
+            </button>
+          </div>
+          <dl
+            class="mt-6 grid border-y border-ink sm:grid-cols-2 lg:grid-cols-3"
+            data-admin-overview
+          >
+          </dl>
+        </section>
+
+        <section class="mt-section scroll-mt-8" id="reactions" aria-labelledby="reactions-title">
+          <div class="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p class="micro-label text-signal">Notes engagement</p>
+              <h2 id="reactions-title" class="section-title mt-2">REACTIONS</h2>
+            </div>
+            <a class="text-link text-sm" href="/admin/reactions/">個別画面を開く</a>
+          </div>
+          <div class="mt-6 overflow-x-auto border-y border-ink">
+            <table class="w-full min-w-3xl border-collapse text-left text-sm">
+              <thead class="bg-ink text-white">
+                <tr>
+                  <th class="px-4 py-3" scope="col">Note</th>
+                  <th class="px-4 py-3" scope="col">累計</th>
+                  <th class="px-4 py-3" scope="col">7日</th>
+                  <th class="px-4 py-3" scope="col">30日</th>
+                  <th class="px-4 py-3" scope="col">最終高評価</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-line" data-reaction-rows></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="mt-section scroll-mt-8" id="garden" aria-labelledby="garden-title">
+          <div class="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p class="micro-label text-signal">Server-authoritative records</p>
+              <h2 id="garden-title" class="section-title mt-2">GARDEN PLAYERS</h2>
+            </div>
+            <a class="text-link text-sm" href="/admin/garden/">個別画面を開く</a>
+          </div>
+
+          <div class="mt-6 flex flex-wrap gap-4 border-y border-line py-4">
+            <label class="micro-label grid min-w-64 flex-1 gap-2" for="garden-player-filter">
+              プレイヤーを絞り込む
+              <input
+                id="garden-player-filter"
+                class="border border-ink bg-surface px-3 py-2 font-sans text-sm normal-case"
+                type="search"
+                autocomplete="off"
+                placeholder="ニックネームまたはPlayer ID"
+                data-player-filter
+              />
+            </label>
+            <label class="micro-label grid gap-2" for="garden-visibility-filter">
+              掲載状態
+              <select
+                id="garden-visibility-filter"
+                class="border border-ink bg-surface px-3 py-2 font-sans text-sm normal-case"
+                data-visibility-filter
+              >
+                <option value="all">すべて</option>
+                <option value="visible">掲載中</option>
+                <option value="hidden">非表示</option>
+              </select>
+            </label>
+          </div>
+
+          <p class="mt-4 text-sm text-muted" aria-live="polite" data-garden-filter-status></p>
+          <div class="mt-4 overflow-x-auto border-y border-ink">
+            <table class="w-full min-w-5xl border-collapse text-left text-sm">
+              <thead class="bg-ink text-white">
+                <tr>
+                  <th class="px-4 py-3" scope="col">Nickname</th>
+                  <th class="px-4 py-3" scope="col">認定全長</th>
+                  <th class="px-4 py-3" scope="col">設備</th>
+                  <th class="px-4 py-3" scope="col">Revision</th>
+                  <th class="px-4 py-3" scope="col">更新</th>
+                  <th class="px-4 py-3" scope="col">掲載状態</th>
+                  <th class="px-4 py-3" scope="col"><span class="sr-only">操作</span></th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-line" data-garden-rows></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </Container>
+  </main>
+</BaseLayout>
+
+<script id="admin-note-map" type="application/json" set:html={serializedNoteMap} is:inline></script>
+<script>
+  interface ReactionArticle {
+    id: string;
+    count: number;
+    last7Days: number;
+    last30Days: number;
+    latestAt: number;
+  }
+
+  interface ReactionAdminResponse {
+    totals: { reactions: number; voters: number; articles: number };
+    articles: ReactionArticle[];
+  }
+
+  interface GardenAdminPlayer {
+    playerId: string;
+    nickname: string;
+    growthTicks: number;
+    lengthMm: number;
+    glovesLevel: number;
+    rainBarrelLevel: number;
+    revision: number;
+    hidden: boolean;
+    createdAt: number | string;
+    updatedAt: number | string;
+  }
+
+  interface GardenAdminResponse {
+    players: GardenAdminPlayer[];
+    generatedAt: number | string;
+  }
+
+  const form = document.querySelector<HTMLFormElement>("[data-admin-form]");
+  const tokenInput = document.querySelector<HTMLInputElement>("[data-admin-token]");
+  const connect = document.querySelector<HTMLButtonElement>("[data-admin-connect]");
+  const forget = document.querySelector<HTMLButtonElement>("[data-admin-forget]");
+  const status = document.querySelector<HTMLElement>("[data-admin-status]");
+  const dashboard = document.querySelector<HTMLElement>("[data-admin-dashboard]");
+  const overview = document.querySelector<HTMLElement>("[data-admin-overview]");
+  const refresh = document.querySelector<HTMLButtonElement>("[data-admin-refresh]");
+  const reactionRows = document.querySelector<HTMLTableSectionElement>("[data-reaction-rows]");
+  const gardenRows = document.querySelector<HTMLTableSectionElement>("[data-garden-rows]");
+  const playerFilter = document.querySelector<HTMLInputElement>("[data-player-filter]");
+  const visibilityFilter = document.querySelector<HTMLSelectElement>("[data-visibility-filter]");
+  const filterStatus = document.querySelector<HTMLElement>("[data-garden-filter-status]");
+  const noteMapElement = document.querySelector<HTMLScriptElement>("#admin-note-map");
+  const noteMap = JSON.parse(noteMapElement?.textContent ?? "{}") as Record<string, string>;
+  const storageKey = "flypea:admin-token";
+
+  let reactionData: ReactionAdminResponse | null = null;
+  let gardenPlayers: GardenAdminPlayer[] = [];
+
+  const formatInteger = new Intl.NumberFormat("ja-JP", { maximumFractionDigits: 0 });
+  const formatDecimal = new Intl.NumberFormat("ja-JP", { maximumFractionDigits: 2 });
+
+  const formatLength = (millimeters: number) => {
+    if (!Number.isFinite(millimeters)) return "—";
+    if (millimeters >= 1_000_000) return `${formatDecimal.format(millimeters / 1_000_000)} km`;
+    if (millimeters >= 1_000) return `${formatDecimal.format(millimeters / 1_000)} m`;
+    return `${formatDecimal.format(millimeters)} mm`;
+  };
+
+  const formatTime = (value: number | string) => {
+    const numeric = typeof value === "number" ? value : Number(value);
+    const date =
+      Number.isFinite(numeric) && numeric > 0
+        ? new Date(numeric < 1_000_000_000_000 ? numeric * 1000 : numeric)
+        : new Date(value);
+    return Number.isNaN(date.getTime()) ? "—" : date.toLocaleString("ja-JP");
+  };
+
+  const makeCell = (text: string, className = "px-4 py-3") => {
+    const element = document.createElement("td");
+    element.className = className;
+    element.textContent = text;
+    return element;
+  };
+
+  const responseError = async (response: Response) => {
+    if (response.status === 401) return "管理トークンが一致しません。";
+    if (response.status === 429) return "操作が多すぎます。少し待ってから再試行してください。";
+    const body = (await response.json().catch(() => null)) as { error?: string } | null;
+    return body?.error
+      ? `処理に失敗しました（${body.error}）。`
+      : `処理に失敗しました（${response.status}）。`;
+  };
+
+  const authenticatedFetch = async (path: string, token: string, init: RequestInit = {}) => {
+    const headers = new Headers(init.headers);
+    headers.set("authorization", `Bearer ${token}`);
+    const response = await fetch(path, {
+      ...init,
+      headers,
+      credentials: "same-origin",
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!response.ok) throw new Error(await responseError(response));
+    return response;
+  };
+
+  const renderOverview = () => {
+    if (!overview || !reactionData) return;
+    const visible = gardenPlayers.filter((player) => !player.hidden).length;
+    const values: Array<[string, number, string]> = [
+      ["高評価", reactionData.totals.reactions, "REACTIONS"],
+      ["高評価したブラウザ", reactionData.totals.voters, "VOTERS"],
+      ["対象Note", reactionData.totals.articles, "NOTES"],
+      ["Garden登録", gardenPlayers.length, "GARDENS"],
+      ["ランキング掲載", visible, "VISIBLE"],
+      ["Garden非表示", gardenPlayers.length - visible, "HIDDEN"],
+    ];
+    overview.replaceChildren(
+      ...values.map(([label, value, code]) => {
+        const wrapper = document.createElement("div");
+        wrapper.className =
+          "border-b border-ink p-4 sm:odd:border-r lg:border-b-0 lg:border-r lg:nth-[3n]:border-r-0";
+        const codeElement = document.createElement("p");
+        codeElement.className = "font-mono text-[0.65rem] text-muted";
+        codeElement.textContent = code;
+        const term = document.createElement("dt");
+        term.className = "micro-label mt-2 text-muted";
+        term.textContent = label;
+        const description = document.createElement("dd");
+        description.className = "mt-2 font-display text-3xl font-extrabold";
+        description.textContent = formatInteger.format(value);
+        wrapper.append(codeElement, term, description);
+        return wrapper;
+      }),
+    );
+  };
+
+  const renderReactionRows = () => {
+    if (!reactionRows || !reactionData) return;
+    if (reactionData.articles.length === 0) {
+      const row = document.createElement("tr");
+      const empty = makeCell("まだ高評価はありません。", "px-4 py-8 text-center text-muted");
+      empty.colSpan = 5;
+      row.append(empty);
+      reactionRows.replaceChildren(row);
+      return;
+    }
+
+    reactionRows.replaceChildren(
+      ...reactionData.articles.map((article) => {
+        const row = document.createElement("tr");
+        const note = makeCell("", "px-4 py-3 font-bold");
+        const link = document.createElement("a");
+        link.className = "text-link";
+        link.href = noteMap[article.id] ?? `/notes/${encodeURIComponent(article.id)}/`;
+        link.textContent = article.id;
+        note.append(link);
+        row.append(
+          note,
+          makeCell(formatInteger.format(article.count)),
+          makeCell(formatInteger.format(article.last7Days)),
+          makeCell(formatInteger.format(article.last30Days)),
+          makeCell(article.latestAt ? formatTime(article.latestAt) : "—"),
+        );
+        return row;
+      }),
+    );
+  };
+
+  const filteredPlayers = () => {
+    const query = playerFilter?.value.trim().toLocaleLowerCase("ja-JP") ?? "";
+    const visibility = visibilityFilter?.value ?? "all";
+    return gardenPlayers.filter((player) => {
+      const matchesQuery =
+        !query ||
+        player.nickname.toLocaleLowerCase("ja-JP").includes(query) ||
+        player.playerId.toLocaleLowerCase("ja-JP").includes(query);
+      const matchesVisibility =
+        visibility === "all" ||
+        (visibility === "visible" && !player.hidden) ||
+        (visibility === "hidden" && player.hidden);
+      return matchesQuery && matchesVisibility;
+    });
+  };
+
+  const renderGardenRows = () => {
+    if (!gardenRows) return;
+    const players = filteredPlayers();
+    if (filterStatus) {
+      filterStatus.textContent = `${formatInteger.format(gardenPlayers.length)}件中${formatInteger.format(players.length)}件を表示`;
+    }
+    if (players.length === 0) {
+      const row = document.createElement("tr");
+      const empty = makeCell(
+        gardenPlayers.length === 0
+          ? "登録されたプレイヤーはいません。"
+          : "条件に一致するプレイヤーはいません。",
+        "px-4 py-8 text-center text-muted",
+      );
+      empty.colSpan = 7;
+      row.append(empty);
+      gardenRows.replaceChildren(row);
+      return;
+    }
+
+    gardenRows.replaceChildren(
+      ...players.map((player) => {
+        const row = document.createElement("tr");
+        if (player.hidden) row.className = "bg-micro/10 text-muted";
+
+        const nickname = makeCell(player.nickname, "px-4 py-3 font-bold");
+        const playerId = document.createElement("span");
+        playerId.className = "mt-1 block font-mono text-[0.65rem] font-normal text-muted";
+        playerId.textContent = player.playerId;
+        nickname.append(playerId);
+
+        const visibility = makeCell(player.hidden ? "非表示" : "掲載中");
+        const badge = document.createElement("span");
+        badge.className = player.hidden
+          ? "micro-label border border-ink px-2 py-1"
+          : "micro-label border border-ink bg-signal px-2 py-1 text-ink";
+        badge.textContent = player.hidden ? "非表示" : "掲載中";
+        visibility.replaceChildren(badge);
+
+        const actionCell = makeCell("", "px-4 py-3 text-right");
+        const action = document.createElement("button");
+        action.className = "action-link action-link--quiet whitespace-nowrap";
+        action.type = "button";
+        action.dataset.playerAction = "visibility";
+        action.dataset.playerId = player.playerId;
+        action.dataset.nextHidden = String(!player.hidden);
+        action.textContent = player.hidden ? "掲載へ戻す" : "非表示にする";
+        action.setAttribute(
+          "aria-label",
+          `${player.nickname}を${player.hidden ? "ランキングへ戻す" : "ランキングから非表示にする"}`,
+        );
+        actionCell.append(action);
+
+        row.append(
+          nickname,
+          makeCell(formatLength(player.lengthMm)),
+          makeCell(
+            `Gloves ${formatInteger.format(player.glovesLevel)} / Rain ${formatInteger.format(player.rainBarrelLevel)}`,
+          ),
+          makeCell(formatInteger.format(player.revision)),
+          makeCell(formatTime(player.updatedAt)),
+          visibility,
+          actionCell,
+        );
+        return row;
+      }),
+    );
+  };
+
+  const setBusy = (busy: boolean) => {
+    if (connect) connect.disabled = busy;
+    if (refresh) refresh.disabled = busy;
+  };
+
+  const loadDashboard = async () => {
+    if (!tokenInput || !status || !dashboard) return;
+    const token = tokenInput.value.trim();
+    if (!token) return;
+    setBusy(true);
+    status.textContent = "高評価とGardenの状態を読み込んでいます。";
+
+    try {
+      const [reactionResponse, gardenResponse] = await Promise.all([
+        authenticatedFetch("/api/reactions/admin/stats", token),
+        authenticatedFetch("/api/garden/admin/players?limit=100&includeHidden=true", token),
+      ]);
+      reactionData = (await reactionResponse.json()) as ReactionAdminResponse;
+      const gardenData = (await gardenResponse.json()) as GardenAdminResponse;
+      gardenPlayers = Array.isArray(gardenData.players) ? gardenData.players : [];
+      window.sessionStorage.setItem(storageKey, token);
+      renderOverview();
+      renderReactionRows();
+      renderGardenRows();
+      dashboard.hidden = false;
+      if (forget) forget.hidden = false;
+      status.textContent = `更新: ${formatTime(gardenData.generatedAt)}`;
+    } catch (error) {
+      status.textContent =
+        error instanceof Error ? error.message : "管理情報を取得できませんでした。";
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  if (
+    form &&
+    tokenInput &&
+    status &&
+    dashboard &&
+    overview &&
+    reactionRows &&
+    gardenRows
+  ) {
+    tokenInput.value = window.sessionStorage.getItem(storageKey) ?? "";
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      void loadDashboard();
+    });
+    refresh?.addEventListener("click", () => void loadDashboard());
+    forget?.addEventListener("click", () => {
+      window.sessionStorage.removeItem(storageKey);
+      tokenInput.value = "";
+      reactionData = null;
+      gardenPlayers = [];
+      dashboard.hidden = true;
+      forget.hidden = true;
+      status.textContent = "管理トークンをこのタブから破棄しました。";
+      tokenInput.focus();
+    });
+    playerFilter?.addEventListener("input", renderGardenRows);
+    visibilityFilter?.addEventListener("change", renderGardenRows);
+
+    gardenRows.addEventListener("click", async (event) => {
+      const target = event.target;
+      const action =
+        target instanceof Element
+          ? target.closest<HTMLButtonElement>("[data-player-action]")
+          : null;
+      if (!action) return;
+
+      const playerId = action.dataset.playerId;
+      const hidden = action.dataset.nextHidden === "true";
+      const token = tokenInput.value.trim();
+      if (!playerId || !token) return;
+
+      action.disabled = true;
+      status.textContent = hidden
+        ? "ランキングから非表示にしています。"
+        : "ランキングへの掲載を戻しています。";
+      try {
+        const response = await authenticatedFetch(
+          `/api/garden/admin/players/${encodeURIComponent(playerId)}`,
+          token,
+          {
+            method: "PATCH",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ hidden }),
+          },
+        );
+        const data = (await response.json()) as { player: GardenAdminPlayer };
+        gardenPlayers = gardenPlayers.map((player) =>
+          player.playerId === data.player.playerId ? data.player : player,
+        );
+        renderOverview();
+        renderGardenRows();
+        status.textContent = `${data.player.nickname}を${hidden ? "非表示にしました" : "掲載へ戻しました"}。`;
+      } catch (error) {
+        status.textContent =
+          error instanceof Error ? error.message : "掲載状態を変更できませんでした。";
+        action.disabled = false;
+      }
+    });
+  }
+</script>
