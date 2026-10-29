@@ -1,6 +1,6 @@
-# Cloudflare Worker + D1 高評価機能
+# Cloudflare Worker / D1 運用
 
-静的サイトは引き続きロリポップから配信し、`/api/reactions/*`だけをCloudflare Workerへ送ります。WorkerやD1に障害が起きた場合も、記事ページ自体は影響を受けません。
+静的サイトは引き続きロリポップから配信し、`/api/reactions/*`、`/api/garden/*`、`/terminal*`をCloudflare Workerへ送ります。WorkerやD1に障害が起きた場合も、記事ページ自体は影響を受けません。
 
 ## 実装済みの機能
 
@@ -31,11 +31,11 @@ npx wrangler secret put ADMIN_TOKEN --config worker/wrangler.jsonc
 npx wrangler deploy --config worker/wrangler.jsonc
 ```
 
-`COOKIE_SECRET` と `ADMIN_TOKEN` には、それぞれ別の長いランダム文字列を設定します。値はGitへ保存しません。Worker Routeは `worker/wrangler.jsonc` に定義されており、`flypea.tech/api/reactions/*` だけに適用されます。
+`COOKIE_SECRET` と `ADMIN_TOKEN` には、それぞれ別の長いランダム文字列を設定します。値はGitへ保存しません。Worker Routeは `worker/wrangler.jsonc` に定義されています。`/terminal/`はJavaScript無効時に表示するテキストページで、User-AgentとJSTの現在時刻をそのリクエストへの応答に使います。Workerはこれらをアプリデータとして保存しません。
 
 書き込み元は`SITE_ORIGIN`（本番は`https://flypea.tech`）と一致するOriginだけに制限しています。
 
-ローカルでAPIも確認する場合は `worker/.dev.vars.example` を `worker/.dev.vars` へコピーし、値を設定します。WorkerとAstroは別々のターミナルで起動します。Astroの `/api/reactions` はローカルWorkerへプロキシされます。
+ローカルでWorkerを確認する場合は `worker/.dev.vars.example` を `worker/.dev.vars` へコピーし、値を設定します。WorkerとAstroは別々のターミナルで起動します。Astroは `/api/reactions`、`/api/garden`、`/terminal/`をローカルWorkerへプロキシします。
 
 ```sh
 npm run worker:migrate:local

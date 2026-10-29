@@ -11,6 +11,7 @@ flypea.techは、趣味と制作を同じ目録で辿る静的な個人アーカ
 - `/notes/` と `/notes/{id}/`: 技術と趣味を含む記録、リアクション
 - `/shelf/` と `/shelf/{id}/`: 好きなものと使用中のもの
 - `/about/`: 興味、活動、技術、外部リンク
+- `/terminal/`: JavaScript無効時に表示するテキスト挨拶、User-Agent、JSTの現在時刻
 - `/admin/reactions/`: noindexのリアクション集計画面
 
 旧 `/works/`、`/log/`、`/profile/` はAstro fallbackとCloudflare Bulk Redirectで新URLへ301転送します。
@@ -30,7 +31,7 @@ flypea.techは、趣味と制作を同じ目録で辿る静的な個人アーカ
 
 ## Progressive enhancement
 
-ページ本文、一覧、分類リンク、ナビゲーションは静的HTMLです。ブラウザJavaScriptはIndex/NotesフィルターとNotesリアクションだけに限定します。API障害時も本文は閲覧できます。
+ページ本文、一覧、分類リンク、ナビゲーションは静的HTMLです。ブラウザJavaScriptはIndex/NotesフィルターとNotesリアクションだけに限定します。JavaScriptを無効にした場合はCloudflare Workerの `/terminal/` へ遷移します。API障害時も本文は閲覧できます。
 
 ## Privacy
 

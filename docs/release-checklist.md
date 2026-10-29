@@ -42,6 +42,7 @@
 - [ ] 現在の安定したWorker deploymentを記録した
 - [ ] binding、route、secretへの影響を確認した
 - [ ] `npx wrangler deploy --config worker/wrangler.jsonc` が成功した
+- [ ] 変更したWorker Routeの応答を確認した（`/terminal/`はUser-AgentとJST時刻を表示）
 - [ ] Worker rollbackだけではD1/DOが戻らないことを確認した
 
 ## D1 migrationを行う場合
