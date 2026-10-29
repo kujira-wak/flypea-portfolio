@@ -13,6 +13,10 @@
     {
       "pattern": "flypea.tech/api/garden/*",
       "zone_name": "flypea.tech"
+    },
+    {
+      "pattern": "flypea.tech/terminal*",
+      "zone_name": "flypea.tech"
     }
   ],
   "durable_objects": {

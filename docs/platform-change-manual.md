@@ -190,7 +190,7 @@ Cloudflare DNSとWorkerを維持し、ロリポップだけを別の静的ホス
 
 - `flypea.tech` の公開URL
 - Astroの静的出力
-- `/api/reactions/*` と `/api/garden/*` のWorker Route
+- `/api/reactions/*`、`/api/garden/*`、`/terminal*` のWorker Route
 - D1、Durable Objects、Cookie
 - contentとページ構成
 
@@ -237,7 +237,7 @@ Cloudflare DNSとWorkerを維持し、ロリポップだけを別の静的ホス
 2. 新ホストの一時URLで最終確認する。
 3. Cloudflareの現在のWeb向けDNS recordを保存する。
 4. Web向けrecordだけを新originへ変更する。
-5. `/api/reactions/*` と `/api/garden/*` が引き続きWorkerへ進むことを確認する。
+5. `/api/reactions/*`、`/api/garden/*`、`/terminal*` が引き続きWorkerへ進むことを確認する。
 6. 本番URLとGitHub Actionsの再公開を確認する。
 
 MX、TXT、DKIM、DMARCなどWeb以外のDNS recordをホスト変更に巻き込まないでください。
@@ -351,7 +351,7 @@ DNS伝播だけに依存した即時rollbackは保証できません。
 | Workers runtime | compatibility date / flags | 対象日以降の変更を確認して別PRで更新 |
 | Wrangler CLI / config | Wrangler release、config schema | CLIとtypesを更新しdry-run |
 | DNS / Proxy / TLS | Cloudflare DNS・SSL告知 | zoneとcertificateへの影響を確認 |
-| Worker Routes | Routes仕様 | `/api/reactions/*` と `/api/garden/*` を確認 |
+| Worker Routes | Routes仕様 | `/api/reactions/*`、`/api/garden/*`、`/terminal*` を確認 |
 | D1 | D1 changelog、migration、backup | export、SQL互換性、件数を確認 |
 | Durable Objects | lifecycle/migration docs | storage、rollback境界、data lossを確認 |
 | Rate Limiting | binding仕様とlimit | 429、key、periodをテスト |

@@ -57,7 +57,7 @@ Astroの確認が必要です。「インフラ作業」は本番データやAPI
 flowchart LR
   visitor["閲覧者"] --> cf["Cloudflare<br>DNS・HTTPS・経路制御"]
   cf -->|通常ページ| lolipop["ロリポップ<br>静的ファイル"]
-  cf -->|/api/reactions/*<br>/api/garden/*| worker["Cloudflare Worker<br>flypea-reactions"]
+  cf -->|/api/reactions/*<br>/api/garden/*<br>/terminal*| worker["Cloudflare Worker<br>flypea-reactions"]
   worker --> d1["D1<br>flypea-portfolio"]
   worker --> durable["Durable Objects<br>GardenCoordinator"]
 
@@ -70,7 +70,8 @@ flowchart LR
 重要な境界は次のとおりです。
 
 - 通常ページはAstroが生成する静的ファイルです。`dist/` の中身をロリポップから配信します。
-- `/api/reactions/*` と `/api/garden/*` だけがCloudflare Workerへ進みます。
+- `/api/reactions/*`、`/api/garden/*`、`/terminal*` がCloudflare Workerへ進みます。
+- JavaScriptが無効なページは `/terminal/` へ案内され、WorkerがリクエストのUser-Agentと応答時刻（JST）を表示します。Workerはこれらをアプリデータとして保存しません。
 - 記事本文はAPIから独立しています。Workerが止まっても、通常ページは読めます。
 - `main` への反映で自動公開されるのはロリポップ側の静的サイトです。
 - Worker、D1 migration、Cloudflare Bulk Redirectsは自動公開されません。必要な場合は手動作業です。
@@ -424,7 +425,7 @@ GitHub Actionsの設定と必要なSecretsは[ロリポップへのデプロイ]
 
 ## Workerを公開する
 
-対象はリアクションAPI、GARDEN API、Worker設定です。`main` へのマージだけではWorkerは更新されません。
+対象はリアクションAPI、GARDEN API、テキスト表示ページ、Worker設定です。`main` へのマージだけではWorkerは更新されません。
 
 ### コードまたは設定だけを変える
 

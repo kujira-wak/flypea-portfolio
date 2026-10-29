@@ -1,6 +1,7 @@
 /// <reference types="@cloudflare/workers-types" />
 
 import { type GardenEnv, handleGardenRequest } from "./garden.ts";
+import { handleTerminalRequest } from "./terminal.ts";
 
 export { GardenCoordinator } from "./garden.ts";
 
@@ -191,6 +192,11 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
     const apiRoot = "/api/reactions";
+
+    if (url.pathname === "/terminal" || url.pathname === "/terminal/") {
+      return handleTerminalRequest(request);
+    }
+    if (url.pathname.startsWith("/terminal")) return fetch(request);
 
     if (url.pathname === "/api/garden" || url.pathname.startsWith("/api/garden/")) {
       return handleGardenRequest(request, env);
