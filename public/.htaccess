@@ -9,3 +9,14 @@
     Header set Cache-Control "no-cache, must-revalidate"
   </FilesMatch>
 </IfModule>
+
+# BEGIN TEMPORARY PORTFOLIO PAUSE 2026-11-04
+# Remove this marked block to restore the original site.
+Require all denied
+ErrorDocument 403 "<!doctype html><html lang='ja'><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><meta name='robots' content='noindex,nofollow'><title>Temporarily unavailable</title><body><main><h1>&#29694;&#22312;&#20844;&#38283;&#12434;&#20572;&#27490;&#12375;&#12390;&#12356;&#12414;&#12377;&#12290;</h1></main></body></html>"
+<IfModule mod_headers.c>
+  Header unset Cache-Control
+  Header always set Cache-Control "private, no-store"
+  Header always set X-Robots-Tag "noindex, nofollow"
+</IfModule>
+# END TEMPORARY PORTFOLIO PAUSE
